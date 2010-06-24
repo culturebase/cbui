@@ -1,0 +1,76 @@
+@CHARSET "UTF-8";
+
+.__CbUiInput, .__CbUiPassword, .__CbUiSelect {
+	border:1px solid #000000;
+	height:16px;
+	font-size:14px;
+	display:block;
+	float:left;
+}
+
+.__CbUiFieldEdited {
+	color:#000000;
+}
+
+.__CbUiFieldUnedited {
+	color:#c0c0c0;
+}
+
+.__CbUiTextButton {
+	border:1px solid #000000;
+	padding:1px 10px;
+	cursor:pointer;
+	background-color:#c0c0c0;
+}
+
+.__CbUiImgButton {
+	position:absolute;
+	right:2px;
+	top:2px;
+	cursor:pointer;
+	z-index:1338;
+}
+
+.__CbUiLayer {	
+    width:100%;
+    height:100%;
+    position:absolute;
+    left:0px;
+    top:0px;
+    z-index:1336;
+    opacity:0;
+}
+
+.__CbUiFrame, .__CbUiLayerFrame {
+	background-color:#ffffff;
+    position:absolute;
+    z-index:1337;
+    opacity:0;
+}
+
+.__CbUiLayerFrame {
+	border:2px solid rgb(180, 0, 0);
+    padding:35px 20px;
+    border-radius:28px;
+    -moz-border-radius:28px;
+    -opera-border-radius:28px;
+    -o-border-radius:28px;
+    -webkit-border-radius:28px;
+}
+
+.__CbUiInputError {
+	border-color:#ff0000;
+}
+
+.__CbUiLangSelect {
+	border:1px solid #000000;
+	line-height:9px;
+	position:absolute;
+	right:17px;
+	top:2px;
+	font-size:10px;
+	font-family:arial;
+	cursor:pointer;
+	padding: 0px 5px 0px 5px;
+	background-color:#ffffff;
+}
