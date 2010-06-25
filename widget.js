@@ -90,7 +90,7 @@ jQuery.CbWidgetRegistry = {
             "project" : this.project, 
             "base_project" : this.base_project, 
             "language" : this.language, 
-            "labels" : labels
+            "labels[]" : labels
          }, function(bricks) {
          /* loop over widgets again and apply bricks */
          self.bricks = bricks;

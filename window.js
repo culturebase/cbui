@@ -134,7 +134,7 @@ var CbWindow = base2.Base.extend({
          self.beforeApplyWidgets();
          $.CbWidgetRegistry.apply(self.frame);
          self.afterApplyWidgets();
-         self.frame.fadeTo(delay, 1);
+         self.frame.fadeIn(delay);
          
          self.frame.keypress(function(key) {
             if (key.keyCode == 27) {
