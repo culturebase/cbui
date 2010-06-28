@@ -16,14 +16,29 @@
  * - cb_ui/widget.js (if there are any widgets in the window)
  * - some styles for __CbUi* - otherwise it'll look strange
  * 
- * TODO: actually a window is a widget, too.
- * TODO: hide/show, standard buttons, title bar, logo
+ * TODO: standard buttons, title bar, logo
  * TODO: refactor to get more convenient smaller classes
  */
-var CbWindow = base2.Base.extend({
+jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
+   
+   defaultOptions : {
+      'logo'          : false,
+      'language'      : 'en_EN',
+      'showShadow'    : true,
+      'modal'         : true,
+      'layerColor'    : '#000000',
+      'layerFrame'    : true,
+      'showButtons'   : true,
+      'layerOpacity'  : 0.25,
+      'overlayClose'  : false,
+      'width'         : 450,
+      'height'        : 450
+   },
    
    /**
     * create a window.
+    * @param element the frame for the window. Can be omitted, then a new one is
+    *    created and appended to <body>.
     * @param template a URL to load the structure from
     * @param options options you might want to refert to later. The base window uses:
     *    - 'width' and 'height': to determine its initial dimensions.
@@ -36,11 +51,16 @@ var CbWindow = base2.Base.extend({
     *    - 'showShadow': create a shadow for the window if possible
     * obviously some combinations don't make sense. Results for those are undefined.
     */
-   constructor : function(template, options) {
-      this.base();
+   constructor : function(element, template, options) {
+      if (!element) {
+         element = $(document.createElement('div')).addClass("__CbUiFrame");
+         this.insertElement = true;
+      }
+      if (!options) options = {};
+      this.options = jQuery.extend(this.defaultOptions, options);
+      this.base(element);
       this.template = template;
       this.include = [];
-      this.options = options;
    },
 
    /**
@@ -71,7 +91,7 @@ var CbWindow = base2.Base.extend({
     * @param top Y coordinate in pixels
     */
    moveTo : function(left, top) {
-      this.frame.css({
+      this.element().css({
          'left': left + 'px',
          'top': top + 'px'
       });
@@ -89,7 +109,7 @@ var CbWindow = base2.Base.extend({
    validateInput : function() {
       var valid = true;
       var self = this;
-      $('[class*="__CbValidate"]', this.frame).each(function() {
+      $('[class*="__CbValidate"]', this.element()).each(function() {
          var widget_valid = $(this).CbWidget().validate();
          if (!widget_valid) {
             self.showError(this);
@@ -97,6 +117,26 @@ var CbWindow = base2.Base.extend({
          }
       });
       return valid;
+   },
+   
+   postLoadFrame : function(delay) {
+      if (this.insertElement) {
+         this.element().appendTo('body');
+      }
+      
+      this.refreshElement();
+      
+      if (this.options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
+         addShadow(this.element());
+      }
+      this.beforeApplyWidgets();
+      jQuery.CbWidgetRegistry.apply(this.element());
+      this.afterApplyWidgets();
+      this.element().fadeIn(delay);
+      
+      this.element().keypress(function(key) {
+         if (key.keyCode == 27) self.close(500);
+      });
    },
    
    /**
@@ -109,39 +149,25 @@ var CbWindow = base2.Base.extend({
       }
       
       var self = this;
-      self.frame = $(document.createElement('div')).addClass("__CbUiFrame");
-      self.frame.css('width', self.options.width+'px');
+      this.element().css('width', self.options.width+'px');
       
-      if (self.options.layerFrame) {
-         self.center();
+      if (this.options.layerFrame) {
+         this.center();
          $(window).resize(function() {self.center();});
-         self.frame.addClass('__CbUiLayerFrame');
-         self.frame.css('height', self.options.height+'px');
+         this.element().addClass('__CbUiLayerFrame');
+         this.element().css('height', self.options.height+'px');
 
-         if ($.browser.msie && $.browser.version < 7) {
-            self.frame.css('position', 'absolute');
+         if (jQuery.browser.msie && jQuery.browser.version < 7) {
+            this.element().css('position', 'absolute');
          }
       }
-
-      self.frame.load(this.template, function() {
-         self.frame.hide();
-         self.frame.appendTo('body');
-         self.frame = $(self.frame);
-         
-         if (self.options.showShadow && (!$.browser.msie || $.browser.version >= 7)) {
-            addShadow(self.frame);
-         }
-         self.beforeApplyWidgets();
-         $.CbWidgetRegistry.apply(self.frame);
-         self.afterApplyWidgets();
-         self.frame.fadeIn(delay);
-         
-         self.frame.keypress(function(key) {
-            if (key.keyCode == 27) {
-               self.close(true);
-            }
-         });
-      });
+      
+      this.element().hide();
+      if (this.template) {
+         this.element().load(this.template, function() {self.postLoadFrame(delay);});
+      } else {
+         this.postLoadFrame(delay);
+      }
    },
    
    /**
@@ -149,7 +175,6 @@ var CbWindow = base2.Base.extend({
     * @param delay if set to > 0 the window will fade in slowly in <delay> milliseconds.
     */
    open : function(delay) {
-      if (!delay) delay = 0;
       var self = this;
       if (self.options.modal) {
          var layer = $(document.createElement('div')).addClass('__CbUiLayer');
@@ -173,16 +198,16 @@ var CbWindow = base2.Base.extend({
     * @param delay if set to > 0 the window will fade out slowly in <delay> milliseconds.
     */
    close : function(delay) {
-      $('[class*="__CbUi"]', this.frame).each(function() {
+      var self = this;
+      $('[class*="__CbUi"]', this.element()).each(function() {
          var widget = $(this).CbWidget();
-         if (widget) {
+         if (widget && widget != self) {
             widget.destructor();
          }
       });
 
       if (!delay) delay = 0;
-      var self = this;
-      this.frame.fadeOut(delay, function() {
+      this.element().fadeOut(delay, function() {
          if (self.options.modal) {
             self.layer.fadeOut(delay, function() {
                $(this).remove();

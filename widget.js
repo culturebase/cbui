@@ -111,8 +111,11 @@ jQuery.CbWidget = function() {}; // maybe do something useful here; e.g. find el
  * @param widget if set attach the widget to the element otherwise find the 
  *    widget belonging to the element. If set to null remove widget information
  *    from the element.
+ *    When querying for the widget CbWidget will recursively search the elements
+ *    parent nodes.
  */
 jQuery.fn.CbWidget = function(widget) {
+   if (this.length == 0) return undefined;
    if (widget !== undefined) {
       if (widget !== null) {
          this.data("cb_widget", widget);
@@ -120,7 +123,18 @@ jQuery.fn.CbWidget = function(widget) {
          this.removeData("cb_widget");
       }
    }
-   return this.data("cb_widget");
+   
+   if (!this.data("cb_widget")) {
+      var parent = this.parent();
+      if (parent && parent != this) {
+         return parent.CbWidget();
+      } else {
+         return undefined;
+      }
+   } else {
+      var widget = this.data("cb_widget");
+      return widget;
+   }
 };
 
 /**
@@ -136,8 +150,9 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.base();
       this.parent_element = element;
       var self = this;
-      this.parent_element.unload(function() {self.destructor();});
       this.element().CbWidget(this);
+      /* element() and parent_element may differ */
+      this.parent_element.CbWidget(this);
       
       /**
        * association of positions -> labels
@@ -152,6 +167,16 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    element : function() {
       return this.parent_element;
+   },
+   
+   /**
+    * Refresh the element associated with this widget. This is necessary if it
+    * has been inserted or moved in the DOM. You will want to rebind all events
+    * here. 
+    */
+   refreshElement : function() {
+      this.parent_element = $(this.parent_element);
+      this.element().CbWidget(this);
    },
    
    /**
@@ -199,410 +224,4 @@ jQuery.CbWidget.widget = base2.Base.extend({
 });
 
 
-/**
- * An input widget. Input widgets can be validated, they have centralized focus
- * handling, they have a value and they can be marked as containing an input 
- * error.
- * 
- * Input fields are expected to have apredefined standard value which is the ML
- * brick associated with the label registered at position "text" (i.e. 
- * this.bricks[this.texts.text]).
- * 
- * The input widget by itself can be used for text fields.
- * 
- * TODO: split up into generalized input widget and text input widget.
- */
-jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
-   
-   /**
-    * change the language. The description of the widget is usually shown in
-    * the input field itself if it hasn't been edited yet. This is reflected
-    * here. You can override this function or value() to change the behaviour.
-    * 
-    * For external labels, consider using separate text widgets, though.
-    */
-   changeLanguage : function(bricks) {
-      var label = this.texts.text;
-      if (this.value() == '' || this.value() == this.bricks[label]) {
-         this.value(bricks[label]);
-      }
-      this.bricks[label] = bricks[label];
-   },
-   
-   /**
-    * focus handler. Sets the class '__CbUiFieldEdited' on the element.
-    */
-   focus : function() {
-      if (!this.editing) {
-         this.editing = true;
-         this.element().select();
-         this.element().removeClass('__CbUiFieldUnedited');
-         this.element().addClass('__CbUiFieldEdited');
-      }
-   },
-   
-   /**
-    * blur handler. Sets the class '__CbUiFieldUnedited' on the element if it's
-    * empty or contains the standard value.
-    */
-   blur : function() {
-      if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         this.editing = false;
-         this.value(this.bricks[this.texts.text]);
-         this.element().removeClass('__CbUiFieldEdited');
-         this.element().addClass('__CbUiFieldUnedited');
-      }
-   },
-   
-   /**
-    * Create the input widget. Assigns the class __CbUiFieldUnedited to its element  
-    */
-   constructor : function(element) {
-      this.base(element);
-      
-      /**
-       * tells if the field is being edited.
-       */
-      this.editing = false;
-      
-      /**
-       * bricks to be used for translation and for comparing with standard value.
-       */
-      this.bricks = {};
-      
-      /**
-       * validators for this widget.
-       */
-      this.validators = [];
-      
-      var label = this.value();
-      this.texts = {text : label};
-      this.bricks[label] = label;
-      var self = this;
-      this.element().addClass('__CbUiFieldUnedited');
-      this.element().focus(function() {
-         self.focus();
-      }).blur(function() {
-         self.blur();
-      });
-   },
-   
-   /**
-    * Query the current value of the field.
-    */
-   value : function(val) {
-      return this.element().val(val);
-   },
-   
-   /**
-    * Run all validators on this widget.
-    */
-   validate : function() {
-      this.clearError();
-      for (i in this.validators) {
-         if (!this.validators[i].valid(this)) {
-            this.setError();
-            return false;
-         }
-      }
-      return true;
-   },
-   
-   /**
-    * callback to announce that this field has an input error. Assigns the
-    * class '__CbUiInputError' to the element.
-    */
-   setError : function() {
-      this.element().addClass("__CbUiInputError");
-   },
-   
-   /**
-    * clear the error state and remove the CSS class '__CbUiInputError'.
-    */
-   clearError : function() {
-      this.element().removeClass("__CbUiInputError");
-   },
-   
-   /**
-    * Remove the widget and all its validators.
-    */
-   destructor : function() {
-      for (index in this.validators) {
-         this.validators[index].destructor();
-      }
-      this.base();
-   }
-   
-});
-
-/**
- * A password entry widget. This is basically a text entry widget which changes
- * its type to "password" as soon as you type anything into it. It can optionally
- * use strength checking on the password field and open a hint element to explain
- * that.
- * 
- * TODO: destructor; revert to original state.
- */
-jQuery.CbWidget.password = jQuery.CbWidget.input.extend({
-   
-   /** 
-    * Swap the field with the one from backup_passwd_node.
-    * Changing types on an existing node is not properly supported in IE
-    * so we have to do it this way.
-    */
-   swapElement : function() {
-      var hidden_field = $('input:hidden', this.element());
-      var id = this.shown_field.attr('id');
-      this.shown_field.hide();
-      this.shown_field.removeAttr('id');
-      hidden.val(this.shown_field.val());
-      hidden.attr('id', id);
-      hidden.show();
-      this.shown_field = hidden;
-   },
-   
-   /**
-    * overriden focus handler.
-    * Change the type attribute of the password field. This is complicated because of
-    * cross browser issues.
-    */
-   focus : function() {
-      if ($.browser.msie || $.browser.opera) {
-         this.swapElement();
-         /* you should be able to type a password now */
-
-         /* pass the focus and rebind the keypress as we have swapped the
-          * node */
-         this.shown_field.focus();
-         /* The field should have focus so that you can type a password now. */
-      } else {
-         /* Firefox messes up the focus handling when replacing nodes.
-          * Especially on tab it forgets the order of input fields and when
-          * changing anything in a "blur" event handler it doesn't call the
-          * focus event for the same click. So we have to change the 'type' 
-          * attribute in this case.
-          */
-
-         /* jquery doesn't like changing the type on live nodes, so we do it
-          * with native DOM methods ... */
-         this.shown_field[0].type = 'password';
-      }
-      
-      if (this.strength_check) {
-         this.shown_field.css('background-color', this.current_color);
-         if (this.hint_element !== undefined) this.hint_element.slideDown();
-      }
-      
-      if (this.value() == jQuery.CbWidgetRegistry.bricks[this.texts.text]) {
-         this.value('');
-      }
-      
-      this.base();
-   },
-
-   /**
-    * overriden blur handler.
-    * change the type back to 'text' if the content hasn't been edited.
-    */
-   blur : function() {
-      if (this.strength_check) {
-         this.current_color = this.shown_field.css('background-color');
-         this.shown_field.css('background-color', this.default_color);
-         if (this.hint_element !== undefined) this.hint_element.slideUp();
-      }
-      
-      if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         if ($.browser.msie || $.browser.opera) {
-            this.swapElement();
-            /* you've left the password field */
-         } else {
-            this.shown_field[0].type = 'text';
-         }
-      }
-      
-      this.base();
-   },
-   
-   /**
-    * add a strength check. The background color will appear in various shades
-    * of green and red depending on the strength of the password.
-    * @param hint_element an optional hint to be shown while editing the password.
-    */
-   addStrengthCheck : function(hint_element) {
-      this.strength_check = true;
-      this.hint_element = hint_element;
-      this.default_color = this.element().css('background-color');
-      this.element().pstrength();
-   },
-   
-   /**
-    * create the password widget.
-    * This actually replaces the given field with a span containing two input
-    * fields: one with type 'password' and one with type 'text'. During the life
-    * time of the widgets those are shown and hidden to conform to the standard
-    * behaviour of text input widgets.
-    */
-   constructor : function(field) { 
-      var parent_element = $(document.createElement('span'));
-      parent_element.insertAfter(field);
-      parent_element = $(parent_element);
-      this.shown_field = field.clone().attr('type', 'text');
-      parent_element.append(field.hide().removeAttr('id').remove());
-      parent_element.append(this.shown_field);
-      this.shown_field = $(this.shown_field);
-      this.base(parent_element);
-      var self = this;
-      this.element().focus(function () {self.focus();});
-      this.element().blur(function () {self.blur();});
-   },
-   
-   /**
-    * Get the elements associated with this widget-
-    * @return both of the actual input fields, but not the span 
-    */
-   element : function() {
-      return this.base().children();
-   },
-   
-   /**
-    * get the current value for the password
-    * @return the value of the currently active field
-    */
-   value : function(val) {
-      return this.shown_field.val(val);
-   }
-});
-
-/**
- * A text widget. This simply shows the text for some ML label retrieved via
- * $(element).text().
- */
-jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
-   
-   changeLanguage : function(bricks) {
-      this.element().html(bricks[this.texts.text]);
-   },
-   
-   constructor : function(element) {
-      this.base(element);
-      var label = this.element().text();
-      this.texts = {text : label};
-   }
-});
-
-/**
- * A widget showing alternate texts which can be switched using show(). By
- * default no text is shown. This is particularly useful for error messages.
- * 
- * It expects a DOM element with children, each of which has an ML label as
- * text.
- */
-jQuery.CbWidget.multi_text = jQuery.CbWidget.widget.extend({
-   
-   constructor : function(element) {
-      this.base(element);
-      var self = this;
-      this.element().children().each(function(index) {
-         var label = $(this).text();
-         self.texts[index] = label;
-         $(this).hide();
-      });
-   },
-   
-   /**
-    * show the text belonging to the given label, provided it is available.
-    * Hide any other text.
-    */
-   show : function(label) {
-      this.element().children().hide();
-      for (pos in this.texts) {
-         if (this.texts[pos] == label) {
-            $(this.element().children()[pos]).show();
-         }
-      }
-   },
-   
-   hide : function() {
-      this.element().children().hide();
-   },
-   
-   changeLanguage : function(bricks) {
-      var self = this;
-      this.element().children().each(function(index) {
-         $(this).html(bricks[self.texts[index]]);
-      });
-   }
-});
-
-/**
- * A text button. I'm sure we'll eventually need some kind of special behaviour
- * here. Maybe the click handler should be centralized.
- */
-jQuery.CbWidget.text_button = jQuery.CbWidget.text.extend({
-   // nothing special for now
-});
-
-/**
- * A button intended for language selection. It always shows an isocode for the
- * current language. 
- */
-jQuery.CbWidget.lang_select = jQuery.CbWidget.text_button.extend({
-
-   constructor : function(element) {
-      this.base(element);
-      this.element().html(jQuery.CbWidgetRegistry.language.split('_')[0]);
-   },
-   
-   changeLanguage : function(bricks) {
-      this.element().html(jQuery.CbWidgetRegistry.language.split('_')[0]);
-   }
-});
-
-/**
- * A widget for the "select" input. It translates all its options on 
- * changeLanguage.
- */
-jQuery.CbWidget.select = jQuery.CbWidget.widget.extend({
-   constructor : function(element) {
-      this.base(element);
-      var self = this;
-      this.element().children().each(function(index) {
-         var label = jQuery(this).text();
-         self.texts[jQuery(this).val()] = label;
-      });
-   },
-
-   changeLanguage : function(bricks) {
-      var self = this;
-      this.element().children().each(function(index) {
-         var label = self.texts[jQuery(this).val()];
-         jQuery(this).html(bricks[label]);
-      });
-   }
-});
-
-/**
- * a searchbox widget. It invokes autocomplete() on its element's second child
- * and has the ID recorded in its element's first child. You can configure it 
- * using the "options" member. All options are passed on to autocomplete.
- * Autocomplete is reinitialized when changing the language.
- */
-jQuery.CbWidget.search_box = jQuery.CbWidget.widget.extend({
-   
-   constructor : function(element) {
-      this.base(element);
-      this.options = {};
-      
-      options.putIdInto = jQuery(this.element().children()[0]).attr('id');
-      options.language = jQuery.CbWidgetRegistry.language;
-   },
-   
-   changeLanguage : function(bricks) {
-      this.base(bricks);
-      options.language = jQuery.CbWidgetRegistry.language;
-      var field = jQuery(this.element().children()[1]);
-      field.unbind();
-      field.autoComplete(this.params);
-   }
-});
 
