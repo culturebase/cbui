@@ -17,6 +17,7 @@ var CbElementCycler = base2.Base.extend({
    },
    
    hide : function() {
+      if (this.shown_field < 0) return;
       $(this.elements[this.shown_field]).hide();
       this.shown_field = -1;
    },
