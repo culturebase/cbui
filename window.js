@@ -23,7 +23,6 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    
    defaultOptions : {
       'logo'          : false,
-      'language'      : 'en_EN',
       'showShadow'    : true,
       'modal'         : true,
       'layerColor'    : '#000000',
@@ -54,16 +53,15 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     * obviously some combinations don't make sense. Results for those are undefined.
     */
    constructor : function(loadOptions, options) {
-      if (!options) options = {};
-      if (!loadOptions) loadOptions = {};
-      
-      if (!loadOptions.element) {
-         loadOptions.element = $(document.createElement('div')).addClass("__CbUiFrame");
+      this.options = jQuery.extend({}, this.defaultOptions, options);
+          
+      var element = loadOptions.element;
+      if (element == undefined) {
+         element = $(document.createElement('div')).addClass("__CbUiFrame");
          this.insertElement = true;
       }
       
-      this.options = jQuery.extend(this.defaultOptions, options);
-      this.base(loadOptions.element);
+      this.base(element);
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
       this.include = [];
@@ -247,16 +245,7 @@ function language_window_callback(locale) {
 
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(options) {
-      if (options == undefined) {
-         options = {"showButtons" : false, 'useFlags' : false};
-      } else {
-         if (options.showButtons == undefined) {
-            options.showButtons = false;
-         }
-         if (options.useFlags == undefined) {
-            options.useFlags = false;
-         }
-      }
+      options = jQuery.extend({"showButtons" : false, 'useFlags' : false}, options);
       this.base({template : '/module/lib/framework/getLanguageWindow.php',
          postParams : {
             'use_callback' : true,
