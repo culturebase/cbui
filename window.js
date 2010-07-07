@@ -16,7 +16,7 @@
  * - cb_ui/widget.js (if there are any widgets in the window)
  * - some styles for __CbUi* - otherwise it'll look strange
  * 
- * TODO: standard buttons, title bar, logo
+ * TODO: logo
  * TODO: refactor to get more convenient smaller classes
  */
 jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
@@ -37,10 +37,12 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    
    /**
     * create a window.
-    * @param element the frame for the window. Can be omitted, then a new one is
-    *    created and appended to <body>.
-    * @param template a URL to load the structure from
-    * @param options options you might want to refert to later. The base window uses:
+    * @param loadOptions options for loading the content:
+    *    - element the frame for the window. Can be omitted, then a new one is
+    *      created and appended to <body>.
+    *    - template a URL to load the structure from
+    *    - postParams POST parameters to be passed when loading the template
+    * @param options options you might want to refer to later. The base window uses:
     *    - 'width' and 'height': to determine its initial dimensions.
     *    - 'layerFrame': if set, have the window floating on top of existing content,
     *       otherwise just append it to <body>.
@@ -51,15 +53,19 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     *    - 'showShadow': create a shadow for the window if possible
     * obviously some combinations don't make sense. Results for those are undefined.
     */
-   constructor : function(element, template, options) {
-      if (!element) {
-         element = $(document.createElement('div')).addClass("__CbUiFrame");
+   constructor : function(loadOptions, options) {
+      if (!options) options = {};
+      if (!loadOptions) loadOptions = {};
+      
+      if (!loadOptions.element) {
+         loadOptions.element = $(document.createElement('div')).addClass("__CbUiFrame");
          this.insertElement = true;
       }
-      if (!options) options = {};
+      
       this.options = jQuery.extend(this.defaultOptions, options);
-      this.base(element);
-      this.template = template;
+      this.base(loadOptions.element);
+      this.template = loadOptions.template;
+      this.postParams = loadOptions.postParams;
       this.include = [];
    },
 
@@ -126,6 +132,16 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       
       this.refreshElement();
       
+      if (this.options.showButtons) {
+         var self = this;
+         var close_button = $(document.createElement('img'))
+            .attr('src', '/module/lib/framework/pics/delete.gif')
+            .addClass('__CbUiCloseButton');
+         $('.__CbUiTitle', this.element()).prepend(close_button);
+         $('.__CbUiTitle', this.element()).append(
+               $(document.createElement('span')).addClass('__CbUiLangSelect'));
+      }
+      
       if (this.options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
          addShadow(this.element());
       }
@@ -164,7 +180,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       
       this.element().hide();
       if (this.template) {
-         this.element().load(this.template, function() {self.postLoadFrame(delay);});
+         if (this.postParams) {
+            this.element().load(this.template, this.postParams, function() {self.postLoadFrame(delay);});
+         } else {
+            this.element().load(this.template, function() {self.postLoadFrame(delay);});
+         }
       } else {
          this.postLoadFrame(delay);
       }
@@ -215,5 +235,35 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
          }
          $(this).remove();
       });
+   }
+});
+
+
+function language_window_callback(locale) {
+   jQuery.CbWidgetRegistry.changeLanguage(locale);
+   language_window_callback.window.close();
+}
+
+
+jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
+   constructor : function(options) {
+      if (options == undefined) {
+         options = {"showButtons" : false, 'useFlags' : false};
+      } else {
+         if (options.showButtons == undefined) {
+            options.showButtons = false;
+         }
+         if (options.useFlags == undefined) {
+            options.useFlags = false;
+         }
+      }
+      this.base({template : '/module/lib/framework/getLanguageWindow.php',
+         postParams : {
+            'use_callback' : true,
+            'no_close_icon' : true,
+            'use_flags' : options.useFlags,
+            'project' : jQuery.CbWidgetRegistry.project
+         }
+      }, options);
    }
 });

@@ -60,31 +60,19 @@ jQuery.CbWidgetRegistry = {
     */
    bricks : {},
    
-   /**
-    * Instantiate widgets and validators in the given context and translate them.
-    * @param context A DOM element to restrict the operation to (e.g. a window) 
-    */
-   apply : function(context) {
-      var self = this;
+   changeLanguage : function(language, context) {
       var labels = [];
-      /* create widgets and collect bricks */
+      this.language = language;
+      var self = this;
+      
+      /* collect labels */
       for (var name in jQuery.CbWidget) {
-         var elements = jQuery(self.translateToClass(name, 'Ui'), context);
-
-         elements.each(function() {
-            var widget = new (jQuery.CbWidget[name])(jQuery(this));
-            jQuery.merge(labels, widget.getLabels());
+         jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
+            jQuery.merge(labels, jQuery(this).CbWidget().getLabels());
          });
          labels = jQuery.unique(labels);
       }
-      
-      for (var name in jQuery.CbValidate) {
-         var elements = jQuery(self.translateToClass(name, 'Validate'), context);
-         elements.each(function() {
-            new (jQuery.CbValidate[name])(jQuery(this).CbWidget());
-         });
-      }
-      
+         
       /* fetch bricks */
       jQuery.getJSON("/module/lib/framework/getMlBricks.php", {
             "project" : this.project, 
@@ -100,6 +88,30 @@ jQuery.CbWidgetRegistry = {
             });
          }
       });
+   },
+   
+   /**
+    * Instantiate widgets and validators in the given context and translate them.
+    * @param context A DOM element to restrict the operation to (e.g. a window) 
+    */
+   apply : function(context) {
+      var self = this;
+      
+      /* create widgets */
+      for (var name in jQuery.CbWidget) {
+         jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
+            new (jQuery.CbWidget[name])(jQuery(this));
+         });
+      }
+      
+      for (var name in jQuery.CbValidate) {
+         jQuery(self.translateToClass(name, 'Validate'), context).each(function() {
+            new (jQuery.CbValidate[name])(jQuery(this).CbWidget());
+         });
+      }
+      
+      this.changeLanguage(this.language);
+      
    }
 };
 
