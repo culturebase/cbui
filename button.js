@@ -46,5 +46,34 @@ jQuery.CbWidget.close_button = jQuery.CbWidget.img_button.extend({
          element.CbWidget().close();
       });
    }
-
 });
+
+jQuery.CbWidget.choose_list = jQuery.CbWidget.widget.extend({
+   setCallback : function(callback) {
+      this.callback = callback;
+   },
+   
+   constructor : function(element) {
+      this.base(element);
+      this.callback = function(id) {};
+      var self = this;
+      this.element().children().each(function() {
+         $(this).click(function() {
+            self.callback($($(this).children()[0]).text());
+         });
+      });
+   }
+}, {
+   /**
+    * has to be done before applying widgets as additional
+    * widgets might be defined in the description.
+    */
+   addOption : function(element, id, description) {
+      var node = $(document.createElement('div'));
+      node.append($(document.createElement('span')).text(id).hide());
+      node.append(description);
+      if (element.children().length % 2) node.addClass("__CbUiListOddColor");
+      element.append(node);
+   }
+});
+
