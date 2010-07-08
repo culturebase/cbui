@@ -55,6 +55,8 @@ jQuery.CbWidgetRegistry = {
     */
    language : 'en_EN',
    
+   brick_source : "/module/lib/framework/getMlBricks.php", 
+   
    /**
     * The actual translated bricks. Be careful when modifying this.
     */
@@ -74,7 +76,7 @@ jQuery.CbWidgetRegistry = {
       }
          
       /* fetch bricks */
-      jQuery.getJSON("/module/lib/framework/getMlBricks.php", {
+      jQuery.getJSON(this.brick_source, {
             "project" : this.project, 
             "base_project" : this.base_project, 
             "language" : this.language, 
