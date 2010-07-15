@@ -76,12 +76,18 @@ jQuery.CbWidgetRegistry = {
       }
          
       /* fetch bricks */
-      jQuery.getJSON(this.brick_source, {
+      jQuery.ajax({
+         type : 'GET',
+         url : this.brick_source,
+         async : false,
+         dataType : 'json',
+         data : {
             "project" : this.project, 
             "base_project" : this.base_project, 
-            "language" : this.language, 
+            "language" : this.language,
             "labels[]" : labels
-         }, function(bricks) {
+         },
+         success : function(bricks) {
          /* loop over widgets again and apply bricks */
          self.bricks = bricks;
          for (var name in jQuery.CbWidget) {
@@ -89,7 +95,7 @@ jQuery.CbWidgetRegistry = {
                jQuery(this).CbWidget().changeLanguage(bricks);
             });
          }
-      });
+      }});
    },
    
    /**
