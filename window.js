@@ -27,7 +27,6 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       'modal'         : true,
       'layerColor'    : '#000000',
       'layerFrame'    : true,
-      'showButtons'   : true,
       'layerOpacity'  : 0.25,
       'overlayClose'  : false,
       'width'         : 450,
@@ -129,16 +128,6 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       }
       
       this.refreshElement();
-      
-      if (this.options.showButtons) {
-         var self = this;
-         var close_button = $(document.createElement('img'))
-            .attr('src', '/module/lib/framework/pics/delete.gif')
-            .addClass('__CbUiCloseButton');
-         $('.__CbUiTitle', this.element()).prepend(close_button);
-         $('.__CbUiTitle', this.element()).append(
-               $(document.createElement('span')).addClass('__CbUiLangSelect'));
-      }
       
       if (this.options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
          addShadow(this.element());
@@ -245,7 +234,7 @@ function language_window_callback(locale) {
 
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(options) {
-      options = jQuery.extend({"showButtons" : false, 'useFlags' : false}, options);
+      options = jQuery.extend({'useFlags' : false}, options);
       this.base({template : '/module/lib/framework/getLanguageWindow.php',
          postParams : {
             'use_callback' : true,
