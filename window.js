@@ -133,7 +133,8 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
          addShadow(this.element());
       }
       this.beforeApplyWidgets();
-      jQuery.CbWidgetRegistry.apply(this.element(), this.afterApplyWidgets);
+      jQuery.CbWidgetRegistry.apply(this.element());
+      this.afterApplyWidgets();
       this.element().fadeIn(delay);
       
       this.element().keypress(function(key) {
