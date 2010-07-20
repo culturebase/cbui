@@ -134,8 +134,8 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       }
       this.beforeApplyWidgets();
       jQuery.CbWidgetRegistry.apply(this.element());
-      this.afterApplyWidgets();
       this.element().fadeIn(delay);
+      this.afterApplyWidgets();
       
       this.element().keypress(function(key) {
          if (key.keyCode == 27) self.close(500);
