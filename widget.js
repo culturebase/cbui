@@ -62,7 +62,7 @@ jQuery.CbWidgetRegistry = {
     */
    bricks : {},
    
-   changeLanguage : function(language, context) {
+   changeLanguage : function(language, context, callback) {
       var labels = [];
       this.language = language;
       var self = this;
@@ -90,9 +90,19 @@ jQuery.CbWidgetRegistry = {
          success : function(bricks) {
          /* loop over widgets again and apply bricks */
          self.bricks = bricks;
+         
+         var runningCallbacks = 0; // track number of running callbacks
          for (var name in jQuery.CbWidget) {
             jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
-               jQuery(this).CbWidget().changeLanguage(bricks);
+               runningCallbacks++;
+               jQuery(this).CbWidget().changeLanguage(bricks, undefined, function() {
+                  runningCallbacks--;
+
+                  // last callback is ready
+                  if (runningCallbacks == 0) {
+                     callback();
+                  }
+               });
             });
          }
       }});
@@ -100,9 +110,10 @@ jQuery.CbWidgetRegistry = {
    
    /**
     * Instantiate widgets and validators in the given context and translate them.
-    * @param context A DOM element to restrict the operation to (e.g. a window) 
+    * @param context A DOM element to restrict the operation to (e.g. a window)
+    * @param callback A function to be executed after translation has taken place.
     */
-   apply : function(context) {
+   apply : function(context, callback) {
       var self = this;
       
       /* create widgets */
@@ -118,7 +129,7 @@ jQuery.CbWidgetRegistry = {
          });
       }
       
-      this.changeLanguage(this.language);
+      this.changeLanguage(this.language, undefined, callback);
       
    }
 };
