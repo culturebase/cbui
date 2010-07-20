@@ -80,8 +80,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     * center the window on the screen. This is the default behaviour for newly opened windows.
     */
    center : function() {
-      var width = $(window).width();
-      var height = $(widnow).height();
+      var self = this;
+      var width = $.support.boxModel ? window.innerWidth : window.document.documentElement.clientWidth;
+      var height = $.support.boxModel ? window.innerHeight : window.document.documentElement.clientHeight;
       
       this.moveTo(Math.max(Math.floor(width / 2 - self.options.width / 2) - 10, 0), 
             Math.max(Math.floor(height / 2 - self.options.height / 2) - 30, 0));
