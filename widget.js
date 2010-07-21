@@ -187,20 +187,14 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.event('show');
       this.event('hide');
       this.event('destroy');
-      
-      this.destroy(function() {
-         self.destructor();
-      });
-      
-      this.show(function() {
-         self.element().show();
-      });
-      
-      this.hide(function() {
-         self.element().hide();
-      });
-      
-      
+   },
+   
+   handleShow : function() {
+      this.element().show();
+   },
+   
+   handleHide : function() {
+      this.element().hide();
    },
    
    /**
@@ -249,8 +243,15 @@ jQuery.CbWidget.widget = base2.Base.extend({
             this.trigger(name);
          }
       };
+      var self = this;
+      var handleName = "handle" + name.substring(0,1).toUpperCase() + name.substring(1); 
+      if (this[handleName] === undefined) {
+         this[handleName] = function() {return self;};
+      }
       this[name].callbacks = [];
       this[name].params = [];
+      
+      this[name](function(p) {self[handleName](p);});
       return this[name];
    },
    
@@ -326,7 +327,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
     * might have created and revert the original element to its original state,
     * though.
     */
-   destructor : function() {
+   handleDestroy : function() {
       this.element().CbWidget(null);
    }
 });

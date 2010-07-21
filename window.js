@@ -1,7 +1,7 @@
 /**
  * Base class for all kinds of "window-like" things. Windows are supposed to be
  * contained in a DOM element (the "frame") and may have various widgets whose 
- * life cycles are managed by the window. When calling show() window's structure
+ * life cycles are managed by the window. When calling open() window's structure
  * is loaded from a 'template' using AJAX. After that it's widgets and 
  * validators are instantiated. Before and after that hooks are called to allow
  * for customization in derived classes.
@@ -53,7 +53,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
           
       var element = loadOptions.element;
       if (element == undefined) {
-         element = $(document.createElement('div')).addClass("__CbUiFrame");
+         element = jQuery(document.createElement('div')).addClass("__CbUiFrame");
          this.insertElement = true;
       }
       
@@ -71,6 +71,12 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
        * error is called when a widget cannot be validated.
        */
       this.event('error');
+      
+      /**
+       * called when all widgets have passed validation.
+       */
+      this.event('valid');
+      
    },
    
    /**
@@ -113,7 +119,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       });
    },
    
-   destructor : function() {
+   handleDestroy : function() {
       var self = this;
       jQuery(window).unbind('resize.window' + this.id);
       
@@ -144,6 +150,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
             valid = false;
          }
       });
+      if (valid) self.valid();
       return valid;
    },
    

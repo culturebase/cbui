@@ -59,7 +59,8 @@ jQuery.CbWidget.choose_list = jQuery.CbWidget.widget.extend({
             self.trigger('select', {id : $($(this).children()[0]).text()});
          });
       });
-   }
+   },
+   
 }, {
    /**
     * has to be done before applying widgets as additional

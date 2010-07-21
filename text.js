@@ -33,23 +33,26 @@ jQuery.CbWidget.multi_text = jQuery.CbWidget.widget.extend({
          var label = $(this).text();
          self.texts[index] = label;
       });
-      
-      this.hide(function() {
-         self.cycler.hide();
-      });
-      
-      this.show(function(params) {
-         for (pos in self.texts) {
-            if (self.texts[pos] == params.label) {
-               self.cycler.show(pos);
-            }
-         }
-      });
    },
+   
+   handleHide : function(params) {
+      this.base();
+      this.cycler.hide();
+   },
+   
+   handleShow : function(params) {
+      this.base();
+      for (pos in this.texts) {
+         if (this.texts[pos] == params.label) {
+            this.cycler.show(pos);
+         }
+      }
+   },
+      
    
    /**
     * show the text belonging to the given label, provided it is available.
-    * Hide any other text.
+    * Hide any other text. short for trigger('show', ...)
     */
    showText : function(label) {
       this.trigger('show', {'label' : label});
@@ -66,8 +69,8 @@ jQuery.CbWidget.multi_text = jQuery.CbWidget.widget.extend({
       });
    },
    
-   destructor : function() {
+   handleDestroy : function() {
       this.base();
-      this.cycler.destructor();
+      this.cycler.destroy();
    }
 });

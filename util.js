@@ -40,7 +40,7 @@ var CbElementCycler = base2.Base.extend({
       $(this.elements[0]).show();
    },
    
-   destructor : function() {
+   destroy : function() {
       var self = this;
       this.elements.each(function(index) {
          $(this).css('display', self.original_state[index]);
@@ -65,7 +65,7 @@ var CbElementPivot = base2.Base.extend({
       this.child = this.parent.children();
    },
    
-   destructor : function() {
+   destroy : function() {
       this.child.insertAfter(this.parent).attr('id', this.parent.attr('id'));
       this.parent.remove();
    },

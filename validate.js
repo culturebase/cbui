@@ -17,7 +17,7 @@ jQuery.CbValidate.validator = base2.Base.extend({
       return true;
    },
    
-   destructor : function() {}
+   destroy : function() {}
 });
 
 /**
@@ -75,12 +75,13 @@ jQuery.CbValidate.equals = jQuery.CbValidate.nonempty.extend({
       return true;
    },
    
-   destructor : function() {
+   destroy : function() {
       for (index in this.group) {
          if (this.group[index] == this) {
             this.group.splice(index, 1);
          }
-      } 
+      }
+      this.base();
    }
 }, {
    groups : {}  
