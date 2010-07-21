@@ -4,9 +4,7 @@
  * life cycles are managed by the window. When calling show() window's structure
  * is loaded from a 'template' using AJAX. After that it's widgets and 
  * validators are instantiated. Before and after that hooks are called to allow
- * for customization in derived classes. You can also add custom Javascript code
- * to be used in derived classes by adding URLs to the "include" array. The 
- * scripts at those URLs will be added to the 'head' section of the document.
+ * for customization in derived classes.
  * 
  * In order for this to work you need to include:
  * - jquery.js
@@ -16,13 +14,11 @@
  * - cb_ui/widget.js (if there are any widgets in the window)
  * - some styles for __CbUi* - otherwise it'll look strange
  * 
- * TODO: logo
  * TODO: refactor to get more convenient smaller classes
  */
 jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    
    defaultOptions : {
-      'logo'          : false,
       'showShadow'    : true,
       'modal'         : true,
       'layerColor'    : '#000000',
@@ -30,7 +26,8 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       'layerOpacity'  : 0.25,
       'overlayClose'  : false,
       'width'         : 450,
-      'height'        : 450
+      'height'        : 450,
+      'delay'         : 0
    },
    
    /**
@@ -63,48 +60,76 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       this.base(element);
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
-      this.include = [];
+      
+      /**
+       * load is called after the template has been loaded, but before
+       * the widgets are initialized.
+       */
+      this.event('load');
+      
+      /**
+       * error is called when a widget cannot be validated.
+       */
+      this.event('error');
+   },
+   
+   /**
+    * Open the window.
+    * @param params if contains "delay" which is set to > 0 the window will fade in slowly in <delay> milliseconds.
+    */
+   open : function(params) {
+      var options = jQuery.extend({}, this.options, params);
+      var self = this;
+      if (options.modal) {
+         var layer = jQuery(document.createElement('div')).addClass('__CbUiLayer');
+         layer.appendTo('body').fadeTo(options.delay, options.layerOpacity, function() {
+            self.layer = $(layer);
+            self.layer.css({'background-color': self.options.layerColor});
+            if (options.overlayClose) {
+               self.layer.click(function() {
+                  self.close(true);
+               });
+            }
+            self.loadFrame(options);
+         });
+      } else {
+         this.loadFrame(options);
+      }
    },
 
    /**
-    * hook which is executed before instantiating the widgets
+    * Close the window and destroy all its widgets.
+    * @param params if contains "delay" which is set to > 0 the window will fade out slowly in <delay> milliseconds.
     */
-   beforeApplyWidgets : function() {},
-   
-   /**
-    * hook which is executed after instantiating the widgets
-    */
-   afterApplyWidgets : function() {},
-   
-   /**
-    * center the window on the screen. This is the default behaviour for newly opened windows.
-    */
-   center : function() {
+   close : function(params) {
+      var options = jQuery.extend({}, params || {}, this.options);
       var self = this;
-      var width = $.support.boxModel ? window.innerWidth : window.document.documentElement.clientWidth;
-      var height = $.support.boxModel ? window.innerHeight : window.document.documentElement.clientHeight;
       
-      this.moveTo(Math.max(Math.floor(width / 2 - self.options.width / 2) - 10, 0), 
-            Math.max(Math.floor(height / 2 - self.options.height / 2) - 30, 0));
-   },
-   
-   /**
-    * move the window to the specified position
-    * @param left X coordinate in pixels
-    * @param top Y coordinate in pixels
-    */
-   moveTo : function(left, top) {
-      this.element().css({
-         'left': left + 'px',
-         'top': top + 'px'
+      if (options.modal) {
+         self.layer.fadeOut(options.delay);
+      }
+      this.element().fadeOut(options.delay, function() {
+         self.destroy();
       });
    },
    
-   /**
-    * hook which is executed when the validation fails
-    * @param element the element for which the validation has failed
-    */
-   showError : function(element) {},
+   destructor : function() {
+      var self = this;
+      jQuery(window).unbind('resize.window' + this.id);
+      
+      jQuery('[class*="__CbUi"]', this.element()).each(function() {
+         var widget = jQuery(this).CbWidget();
+         if (widget && widget != self) {
+            widget.destroy();
+         }
+      });
+      
+      if (this.options.modal) this.layer.remove();
+      
+      if (this.insertElement) this.element().remove();
+
+      this.base();
+   },
    
    /**
     * Validate all validatable widgets in the window (those with a class __CbValidate*). 
@@ -112,33 +137,33 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    validateInput : function() {
       var valid = true;
       var self = this;
-      $('[class*="__CbValidate"]', this.element()).each(function() {
-         var widget_valid = $(this).CbWidget().validate();
+      jQuery('[class*="__CbValidate"]', this.element()).each(function() {
+         var widget_valid = jQuery(this).CbWidget().validate();
          if (!widget_valid) {
-            self.showError(this);
+            self.trigger('error', {element : this});
             valid = false;
          }
       });
       return valid;
    },
    
-   postLoadFrame : function(delay) {
+   postLoadFrame : function(options) {
       if (this.insertElement) {
          this.element().appendTo('body');
       }
       
       this.refreshElement();
       
-      if (this.options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
+      if (options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
          addShadow(this.element());
       }
-      this.beforeApplyWidgets();
+      this.load();
       jQuery.CbWidgetRegistry.apply(this.element());
-      this.element().fadeIn(delay);
-      this.afterApplyWidgets();
+      this.element().fadeIn(options.delay);
+      this.ready();
       
       this.element().keypress(function(key) {
-         if (key.keyCode == 27) self.close(500);
+         if (key.keyCode == 27) self.close(options.delay);
       });
    },
    
@@ -146,82 +171,67 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     * called by open(); loads the structure and instantiates the widgets. 
     * Don't call it from outside. Use open() and close().
     */
-   loadFrame : function(delay) {
-      for (var index in this.include) {
-         $('head').append("<script type='text/javascript' src='" + this.include[index] + "'></script>");
-      }
+   loadFrame : function(options) {
       
       var self = this;
-      this.element().css('width', self.options.width+'px');
+      this.element().css('width', options.width + 'px');
       
-      if (this.options.layerFrame) {
-         this.center();
-         $(window).resize(function() {self.center();});
+      if (options.layerFrame) {
          this.element().addClass('__CbUiLayerFrame');
-         this.element().css('height', self.options.height+'px');
+         this.element().css('height', options.height + 'px');
 
          if (jQuery.browser.msie && jQuery.browser.version < 7) {
             this.element().css('position', 'absolute');
          }
       }
       
-      this.element().hide();
+      this.element().hide(); // don't fire the event here
       if (this.template) {
          if (this.postParams) {
-            this.element().load(this.template, this.postParams, function() {self.postLoadFrame(delay);});
+            this.element().load(this.template, this.postParams, function() {self.postLoadFrame(options);});
          } else {
-            this.element().load(this.template, function() {self.postLoadFrame(delay);});
+            this.element().load(this.template, function() {self.postLoadFrame(options);});
          }
       } else {
-         this.postLoadFrame(delay);
+         this.postLoadFrame(options);
       }
    },
    
-   /**
-    * Open the window.
-    * @param delay if set to > 0 the window will fade in slowly in <delay> milliseconds.
-    */
-   open : function(delay) {
-      var self = this;
-      if (self.options.modal) {
-         var layer = $(document.createElement('div')).addClass('__CbUiLayer');
-         layer.appendTo('body').fadeTo(delay, self.options.layerOpacity, function() {
-            self.layer = $(layer);
-            self.layer.css({'background-color': self.options.layerColor});
-            if (self.options.overlayClose) {
-               self.layer.click(function() {
-                  self.close(true);
-               });
-            }
-            self.loadFrame(delay);
-         });
-      } else {
-         this.loadFrame(delay);
-      }
+   centerX : function() {
+      var width = jQuery.support.boxModel ? window.innerWidth : window.document.documentElement.clientWidth;
+      this.moveToX(Math.max(Math.floor(width / 2 - this.width() / 2) - 10, 0));
+      return this;
    },
    
-   /**
-    * Close the window and destroy all its widgets.
-    * @param delay if set to > 0 the window will fade out slowly in <delay> milliseconds.
-    */
-   close : function(delay) {
+   centerY : function() {
+      var height = jQuery.support.boxModel ? window.innerHeight : window.document.documentElement.clientHeight;
+      this.moveToY(Math.max(Math.floor(height / 2 - this.height() / 2) - 30, 0));
+      return this;
+   },
+   
+   center  : function() {
+      this.centerX();
+      this.centerY();
+      return this;
+   },
+   
+   autoposition : function(method, params) {
       var self = this;
-      $('[class*="__CbUi"]', this.element()).each(function() {
-         var widget = $(this).CbWidget();
-         if (widget && widget != self) {
-            widget.destructor();
-         }
-      });
-
-      if (!delay) delay = 0;
-      this.element().fadeOut(delay, function() {
-         if (self.options.modal) {
-            self.layer.fadeOut(delay, function() {
-               $(this).remove();
-            });
-         }
-         $(this).remove();
-      });
+      this.ready(function() {self[method](params);});
+      jQuery(window).bind('resize.window' + this.id, function() {self[method](params);});
+      return this;
+   },
+   
+   autocenterX : function() {
+      return this.autoposition('centerX');
+   },
+   
+   autocenterY : function() {
+      return this.autoposition('centerY');
+   },
+   
+   autocenter : function() {
+      return this.autoposition('center');
    }
 });
 

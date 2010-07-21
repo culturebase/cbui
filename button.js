@@ -3,7 +3,7 @@
  * here. Maybe the click handler should be centralized.
  */
 jQuery.CbWidget.text_button = jQuery.CbWidget.text.extend({
-   // nothing special for now
+   
 });
 
 /**
@@ -49,17 +49,14 @@ jQuery.CbWidget.close_button = jQuery.CbWidget.img_button.extend({
 });
 
 jQuery.CbWidget.choose_list = jQuery.CbWidget.widget.extend({
-   setCallback : function(callback) {
-      this.callback = callback;
-   },
    
    constructor : function(element) {
       this.base(element);
-      this.callback = function(id) {};
+      this.event('select');
       var self = this;
       this.element().children().each(function() {
          $(this).click(function() {
-            self.callback($($(this).children()[0]).text());
+            self.trigger('select', {id : $($(this).children()[0]).text()});
          });
       });
    }

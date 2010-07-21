@@ -20,14 +20,12 @@
  * - autocomplete2/mod.autocomplete.js if you want to use the autocomplete widget
  * - pstrength.js if you want to use the password widget's strength check
  * 
- * TODO: split up in multiple files.
  */
 
 /**
  * The widget registry collects information about all available widget classes
  * and manages translation, instantiation and destruction of widgets.
  * 
- * TODO: move destruction from window.js to here
  */
 jQuery.CbWidgetRegistry = {
    /**
@@ -168,6 +166,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    constructor : function(element) {
       this.base();
+      this.id = base2.assignID(this);
       this.parent_element = element;
       var self = this;
       this.element().CbWidget(this);
@@ -178,6 +177,30 @@ jQuery.CbWidget.widget = base2.Base.extend({
        * association of positions -> labels
        */
       this.texts = {};
+      
+      /*
+       * "ready" is triggered when everything has been translated and set up.
+       * The widget is not necessarily shown at that point, but it is in the DOM.
+       */
+      this.event('ready');
+
+      this.event('show');
+      this.event('hide');
+      this.event('destroy');
+      
+      this.destroy(function() {
+         self.destructor();
+      });
+      
+      this.show(function() {
+         self.element().show();
+      });
+      
+      this.hide(function() {
+         self.element().hide();
+      });
+      
+      
    },
    
    /**
@@ -217,18 +240,83 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    changeLanguage : function(bricks) {},
    
-   /**
-    * hide the widget.
-    */
-   hide : function() {
-      this.element().hide();
+   event : function(name) {
+      this[name] = function(callback, staticParams) {
+         if (callback) {
+            this[name].params.push(staticParams || {});
+            this[name].callbacks.push(callback);
+         } else {
+            this.trigger(name);
+         }
+      };
+      this[name].callbacks = [];
+      this[name].params = [];
+      return this[name];
    },
    
-   /**
-    * show the widget.
-    */
-   show : function() {
-      this.element().show();
+   bind : function(name, callback, staticParams) {
+      this[name](callback, staticParams);
+      return this;
+   },
+   
+   unbind : function(name, callback) {
+      if (callback) {
+         for (var i in this[name].callbacks) {
+            if (this[name].callbacks[i] == callback) {
+               this[name].callbacks.splice(i, 1);
+            }
+         }
+      } else {
+         this[name].callbacks = [];
+      }
+      return this;
+   },
+   
+   trigger : function(name, extraParams) {
+      for (var i in this[name].callbacks) {
+         this[name].callbacks[i](jQuery.extend({}, this[name].params[i], extraParams || {}));
+      }
+      return this;
+   },
+   
+   width : function() {
+      return this.element().width();
+   },
+   
+   height : function() {
+      return this.element().height();
+   },
+   
+   resizeX : function(x) {
+      this.element().css('width', x + 'px');
+      return this;
+   },
+   
+   resizeY : function(y) {
+      this.element().css('height', y + 'px');
+      return this;
+   },
+   
+   resize : function(x, y) {
+      this.resizeX(x);
+      this.resizeY(y);
+      return this;
+   },
+   
+   moveToX : function(x) {
+      this.element().css('left', x + 'px');
+      return this;
+   },
+   
+   moveToY : function(y) {
+      this.element().css('top', y + 'px');
+      return this;
+   },
+   
+   moveTo : function(x, y) {
+      this.moveToX(x);
+      this.moveToY(y);
+      return this;
    },
    
    /**

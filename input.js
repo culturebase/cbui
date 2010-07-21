@@ -104,31 +104,6 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
    },
    
    /**
-    * focus handler. Sets the class '__CbUiFieldEdited' on the element.
-    */
-   focus : function() {
-      if (!this.editing) {
-         this.editing = true;
-         this.element().select();
-         this.element().removeClass('__CbUiFieldUnedited');
-         this.element().addClass('__CbUiFieldEdited');
-      }
-   },
-   
-   /**
-    * blur handler. Sets the class '__CbUiFieldUnedited' on the element if it's
-    * empty or contains the standard value.
-    */
-   blur : function() {
-      if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         this.editing = false;
-         this.value(this.bricks[this.texts.text]);
-         this.element().removeClass('__CbUiFieldEdited');
-         this.element().addClass('__CbUiFieldUnedited');
-      }
-   },
-   
-   /**
     * Create the text input widget. Assigns the class __CbUiFieldUnedited to
     * its element.  
     */
@@ -150,6 +125,35 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
       this.bricks[label] = label;
       this.element().addClass('__CbUiFieldUnedited');
       this.bindEvents();
+      this.event('focus');
+      this.event('blur');
+      
+      var self = this;
+      
+      /**
+       * focus handler. Sets the class '__CbUiFieldEdited' on the element.
+       */
+      this.focus(function() {
+         if (!self.editing) {
+            self.editing = true;
+            self.element().select();
+            self.element().removeClass('__CbUiFieldUnedited');
+            self.element().addClass('__CbUiFieldEdited');
+         }
+      });
+      
+      /**
+       * blur handler. Sets the class '__CbUiFieldUnedited' on the element if it's
+       * empty or contains the standard value.
+       */
+      this.blur(function() {
+         if (self.value() == '' || self.value() == self.bricks[self.texts.text]) {
+            self.editing = false;
+            self.value(self.bricks[self.texts.text]);
+            self.element().removeClass('__CbUiFieldEdited');
+            self.element().addClass('__CbUiFieldUnedited');
+         }
+      });
    }
 });
 
@@ -162,52 +166,6 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
  * TODO: destructor; revert to original state.
  */
 jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
-   
-   /**
-    * overriden focus handler.
-    * Change the type attribute of the password field. This is complicated because of
-    * cross browser issues.
-    */
-   focus : function() {
-      if (this.cycler.getShown().attr('type') != 'password') {
-         this.cycler.show();
-         /* you should be able to type a password now */
-
-         /* pass the focus and rebind the keypress as we have swapped the
-          * node */
-         this.cycler.getShown().focus();
-         /* The field should have focus so that you can type a password now. */
-      }
-      
-      if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         this.value('');
-      }
-      
-      if (this.strength_check) {
-         this.cycler.getShown().css('background-color', this.current_color);
-         if (this.hint_element !== undefined) this.hint_element.slideDown();
-      }
-      
-      this.base();
-   },
-
-   /**
-    * overriden blur handler.
-    * change the type back to 'text' if the content hasn't been edited.
-    */
-   blur : function() {
-      if (this.strength_check) {
-         this.current_color = this.cycler.getShown().css('background-color');
-         this.cycler.getShown().css('background-color', this.default_color);
-         if (this.hint_element !== undefined) this.hint_element.slideUp();
-      }
-      
-      if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         this.cycler.show();
-      }
-      
-      this.base();
-   },
    
    refreshElement : function() {
       this.base();
@@ -241,6 +199,49 @@ jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
             this.pivot.child.clone().attr('type', 'text').removeAttr('id'));
       this.cycler = new CbElementCycler(this.pivot.parent.children());
       this.base(this.pivot.parent);
+      var self = this;
+      
+      /**
+       * focus handler.
+       * Change the type attribute of the password field. This is complicated because of
+       * cross browser issues.
+       */
+      this.focus(function() {
+         if (self.cycler.getShown().attr('type') != 'password') {
+            self.cycler.show();
+            /* you should be able to type a password now */
+
+            /* pass the focus and rebind the keypress as we have swapped the
+             * node */
+            self.cycler.getShown().focus();
+            /* The field should have focus so that you can type a password now. */
+         }
+         
+         if (self.value() == '' || self.value() == self.bricks[self.texts.text]) {
+            self.value('');
+         }
+         
+         if (self.strength_check) {
+            self.cycler.getShown().css('background-color', self.current_color);
+            if (self.hint_element !== undefined) self.hint_element.slideDown();
+         }
+      });
+      
+      /**
+       * blur handler.
+       * change the type back to 'text' if the content hasn't been edited.
+       */
+      this.blur(function() {
+         if (self.strength_check) {
+            self.current_color = self.cycler.getShown().css('background-color');
+            self.cycler.getShown().css('background-color', self.default_color);
+            if (self.hint_element !== undefined) self.hint_element.slideUp();
+         }
+         
+         if (self.value() == '' || self.value() == self.bricks[self.texts.text]) {
+            self.cycler.show();
+         }
+      });
    },
    
    /**
@@ -306,7 +307,7 @@ jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
       this.pivot = new CbElementPivot(element);
       this.name_field = this.pivot.child;
       var id_field = $(document.createElement('input')).attr('type', 'hidden');
-      this.options.putIdInto = base2.assignID(id_field);
+      this.options.putIdInto = 'searchbox' + this.id;
       this.pivot.parent.prepend(id_field.attr('id', this.options.putIdInto));
       
       this.base(this.pivot.parent);
@@ -330,7 +331,7 @@ jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
       return this.name_field.val(val);
    },
    
-   id : function() {
+   valueId : function() {
       return $(this.options.putIdInto).val();
    },
    
