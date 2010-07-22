@@ -239,6 +239,22 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    
    autocenter : function() {
       return this.autoposition('center');
+   },
+
+   autoresize : function() {
+      // TODO figure out how to make this really automatic. Sadly <div>'s have
+      //      no resize event. Too bad dom-events are that badly supported by
+      //      modern browsers.
+      var self = this;
+      this.ready(function() {
+         var height = 0;
+         self.element().children().each(function() {
+            height += $(this).outerHeight(true);
+         });
+         self.element().height(height);
+         self.options.height = height;
+      });
+      return this;
    }
 });
 
