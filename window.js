@@ -54,6 +54,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       var element = loadOptions.element;
       if (element == undefined) {
          element = jQuery(document.createElement('div')).addClass("__CbUiFrame");
+         jQuery(document.createElement('div')).appendTo(element);
          this.insertElement = true;
       }
       
@@ -194,10 +195,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       
       this.element().hide(); // don't fire the event here
       if (this.template) {
+         var inner = jQuery(this.element().children()[0]);
          if (this.postParams) {
-            this.element().load(this.template, this.postParams, function() {self.postLoadFrame(options);});
+            inner.load(this.template, this.postParams, function() {self.postLoadFrame(options);});
          } else {
-            this.element().load(this.template, function() {self.postLoadFrame(options);});
+            inner.load(this.template, function() {self.postLoadFrame(options);});
          }
       } else {
          this.postLoadFrame(options);
@@ -240,21 +242,39 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    autocenter : function() {
       return this.autoposition('center');
    },
-
-   autoresize : function() {
-      // TODO figure out how to make this really automatic. Sadly <div>'s have
-      //      no resize event. Too bad dom-events are that badly supported by
-      //      modern browsers.
-      var self = this;
-      this.ready(function() {
-         var height = 0;
-         self.element().children().each(function() {
-            height += $(this).outerHeight(true);
-         });
-         self.element().height(height);
-         self.options.height = height;
-      });
+   
+   /**
+    * if no explicit height given:
+    * resize the window to fit its content in vertical direction.
+    */
+   resizeY : function(y) {
+      if (y) return this.base(y);
+      var height = jQuery(this.element().children()[0]).height();
+      this.element().height(height);
       return this;
+   },
+   
+   /**
+    * if no explicit width given:
+    * resize the window to fit its content in horizontal direction.
+    */
+   resizeX : function(x) {
+      if (x) return this.base(x);
+      var width = jQuery(this.element().children()[0]).width();
+      this.element().width(width);
+      return this;
+   },
+
+   autoresizeY : function() {
+      return this.autoposition('resizeY');
+   },
+   
+   autoresizeX : function() {
+      return this.autoposition('resizeX');
+   },
+   
+   autoresize : function() {
+      return this.autoposition('resize');
    }
 });
 
