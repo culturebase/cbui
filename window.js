@@ -248,7 +248,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     * resize the window to fit its content in vertical direction.
     */
    resizeY : function(y) {
-      if (y) return this.base(y);
+      if (y !== undefined) return this.base(y);
       var height = jQuery(this.element().children()[0]).height();
       this.element().height(height);
       return this;
@@ -259,7 +259,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     * resize the window to fit its content in horizontal direction.
     */
    resizeX : function(x) {
-      if (x) return this.base(x);
+      if (x !== undefined) return this.base(x);
       var width = jQuery(this.element().children()[0]).width();
       this.element().width(width);
       return this;
