@@ -121,6 +121,39 @@ jQuery.CbWidgetRegistry = {
    }
 };
 
+/**
+ * class interfaces aren't inherited in base2 so we have to create an external
+ * CbEvent function to add events to classes.
+ * 
+ */
+jQuery.CbEvent = function(target, name) {
+   jQuery.CbEvent.getHandleName = function(name) {
+      return "handle" + name.substring(0,1).toUpperCase() + name.substring(1);
+   };
+   
+   var event = {};
+   event[name] = function(callback, staticParams) {
+      if (callback) {
+         if (this[name].callbacks === undefined) {
+            this[name].callbacks = [];
+            this[name].params = [];
+         }
+         this[name].params.push(staticParams || {});
+         this[name].callbacks.push(callback);
+      } else {
+         this.trigger(name);
+      }
+   };
+   
+   var handleName = jQuery.CbEvent.getHandleName(name);
+   if (target.prototype[handleName] === undefined) {
+      event[handleName] = function() {return this;};
+   }
+   
+   target.implement(event);
+   return target[name];   
+};
+
 jQuery.CbWidget = function() {}; // maybe do something useful here; e.g. find elements belonging to certain widget types
 
 /**
@@ -177,16 +210,6 @@ jQuery.CbWidget.widget = base2.Base.extend({
        * association of positions -> labels
        */
       this.texts = {};
-      
-      /*
-       * "ready" is triggered when everything has been translated and set up.
-       * The widget is not necessarily shown at that point, but it is in the DOM.
-       */
-      this.event('ready');
-
-      this.event('show');
-      this.event('hide');
-      this.event('destroy');
    },
    
    handleShow : function() {
@@ -234,27 +257,6 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    changeLanguage : function(bricks) {},
    
-   event : function(name) {
-      this[name] = function(callback, staticParams) {
-         if (callback) {
-            this[name].params.push(staticParams || {});
-            this[name].callbacks.push(callback);
-         } else {
-            this.trigger(name);
-         }
-      };
-      var self = this;
-      var handleName = "handle" + name.substring(0,1).toUpperCase() + name.substring(1); 
-      if (this[handleName] === undefined) {
-         this[handleName] = function() {return self;};
-      }
-      this[name].callbacks = [];
-      this[name].params = [];
-      
-      this[name](function(p) {self[handleName](p);});
-      return this[name];
-   },
-   
    bind : function(name, callback, staticParams) {
       this[name](callback, staticParams);
       return this;
@@ -274,8 +276,11 @@ jQuery.CbWidget.widget = base2.Base.extend({
    },
    
    trigger : function(name, extraParams) {
+      this[jQuery.CbEvent.getHandleName(name)](extraParams || {});
+      
       for (var i in this[name].callbacks) {
-         this[name].callbacks[i](jQuery.extend({}, this[name].params[i], extraParams || {}));
+         var params = jQuery.extend({}, this[name].params[i], extraParams || {});
+         this[name].callbacks[i](params);
       }
       return this;
    },
@@ -329,6 +334,22 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    handleDestroy : function() {
       this.element().CbWidget(null);
+   }
+      
+}, {
+   
+      
+   init : function() {
+      /*
+       * "ready" is triggered when everything has been translated and set up.
+       * The widget is not necessarily shown at that point, but it is in the DOM.
+       */
+      jQuery.CbEvent(this, 'ready');
+   
+      jQuery.CbEvent(this, 'show');
+      jQuery.CbEvent(this, 'hide');
+      jQuery.CbEvent(this, 'destroy');
+      this.base();
    }
 });
 

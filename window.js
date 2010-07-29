@@ -61,23 +61,6 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       this.base(element);
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
-      
-      /**
-       * load is called after the template has been loaded, but before
-       * the widgets are initialized.
-       */
-      this.event('load');
-      
-      /**
-       * error is called when a widget cannot be validated.
-       */
-      this.event('error');
-      
-      /**
-       * called when all widgets have passed validation.
-       */
-      this.event('valid');
-      
    },
    
    /**
@@ -275,6 +258,25 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
    
    autoresize : function() {
       return this.autoposition('resize');
+   }
+}, {
+   init : function() {
+      /**
+       * load is called after the template has been loaded, but before
+       * the widgets are initialized.
+       */
+      jQuery.CbEvent(this, 'load');
+      
+      /**
+       * error is called when a widget cannot be validated.
+       */
+      jQuery.CbEvent(this, 'error');
+      
+      /**
+       * called when all widgets have passed validation.
+       */
+      jQuery.CbEvent(this, 'valid');
+      this.base();
    }
 });
 

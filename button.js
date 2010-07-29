@@ -52,7 +52,6 @@ jQuery.CbWidget.choose_list = jQuery.CbWidget.widget.extend({
    
    constructor : function(element) {
       this.base(element);
-      this.event('select');
       var self = this;
       this.element().children().each(function() {
          $(this).click(function() {
@@ -71,6 +70,11 @@ jQuery.CbWidget.choose_list = jQuery.CbWidget.widget.extend({
       node.append(description);
       if (element.children().length % 2) node.addClass("__CbUiListOddColor");
       element.append(node);
+   },
+   
+   init : function() {
+      jQuery.CbEvent(this, 'select');
+      this.base();
    }
 });
 

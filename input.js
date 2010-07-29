@@ -10,13 +10,10 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.base(element);
       
-      this.event('error');
-      this.event('valid');
       /**
        * validators for this widget.
        */
       this.validators = [];
-      var self  = this;
    },
    
    /**
@@ -67,6 +64,12 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
       this.base();
    }
    
+}, {
+   init : function() {
+      jQuery.CbEvent(this, 'error');
+      jQuery.CbEvent(this, 'valid');
+      this.base();
+   }
 });
 
 /**
@@ -127,9 +130,6 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
       this.texts = {text : label};
       this.bricks[label] = label;
       this.element().addClass('__CbUiFieldUnedited');
-      
-      this.event('focus');
-      this.event('blur');
       this.bindEvents();
    },
    
@@ -158,6 +158,12 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
          this.element().addClass('__CbUiFieldEdited');
       }
       return this;
+   }
+}, {
+   init : function() {
+      jQuery.CbEvent(this, 'focus');
+      jQuery.CbEvent(this, 'blur');
+      this.base();
    }
 });
 
