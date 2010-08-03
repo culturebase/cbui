@@ -34,6 +34,15 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       this.throwReady = function() {self.ready();};
    },
    
+   /**
+    * bind the "ready" event of the frame to all "show", "hide" and "ready"
+    * events of its inner widgets so that we have a chance to autoposition
+    * the frame when its widgets change. 
+    * 
+    * This doesn't work for adding or removing widgets as we have no way
+    * of finding out about that. You'll have to call "ready" manually when
+    * doing that.
+    */
    handleReady : function() {
       this.base();
       var self = this;
@@ -42,11 +51,15 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
          if (widget) {
             widget.unbind('show', self.throwReady);
             widget.unbind('hide', self.throwReady);
-            widget.unbind('destroy', self.throwReady);
             
+            if (widget != self) {
+               widget.unbind('ready', self.throwReady);
+               widget.ready(self.throwReady);
+            }
+   
             widget.show(self.throwReady);
             widget.hide(self.throwReady);
-            widget.destroy(self.throwReady);
+            
          }
       });
    }
@@ -223,11 +236,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    loadFrame : function(options) {
       
       var self = this;
-      this.element().css('width', options.width + 'px');
+      this.element().width(options.width);
       
       if (options.layerFrame) {
          this.element().addClass('__CbUiLayerFrame');
-         this.element().css('height', options.height + 'px');
+         this.element().height(options.height);
 
          if (jQuery.browser.msie && jQuery.browser.version < 7) {
             this.element().css('position', 'absolute');

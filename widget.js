@@ -268,11 +268,13 @@ jQuery.CbWidget.widget = base2.Base.extend({
       if (callback) {
          for (var i in this[name].callbacks) {
             if (this[name].callbacks[i] == callback) {
-               this[name].callbacks.splice(i, 1);
+               this[name].callbacks = this[name].callbacks.splice(i, 1);
+               this[name].params = this[name].params.splice(i, 1);
             }
          }
       } else {
          this[name].callbacks = [];
+         this[name].params = [];
       }
       return this;
    },
