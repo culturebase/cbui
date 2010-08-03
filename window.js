@@ -1,3 +1,57 @@
+jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
+   handleShow : function(options) {
+      options |= {delay : 0};
+      var self = this;
+      var base = this.base;
+      this.element().fadeIn(options.delay, function() {base.call(self, options);});
+      return this;
+   },
+   
+   handleHide : function(options) {
+      options |= {delay : 0};
+      var self = this;
+      var base = this.base; // base may change due to other functions being executed in between
+      this.element().fadeOut(options.delay, function() {base.call(self, options);});
+      return this;
+   },
+   
+   slideUp : function(delay) {
+      var self = this;
+      this.element().slideUp(delay, function() {self.hide();});
+      return this;
+   },
+   
+   slideDown : function(delay) {
+      var self = this;
+      this.element().slideDown(delay, function() {self.show();});
+      return this;
+   },
+   
+   
+   constructor : function(element) {
+      this.base(element);
+      var self = this;
+      this.throwReady = function() {self.ready();};
+   },
+   
+   handleReady : function() {
+      this.base();
+      var self = this;
+      jQuery('[class*="__CbUi"]', this.element()).each(function() {
+         var widget = jQuery(this).CbWidget();
+         if (widget) {
+            widget.unbind('show', self.throwReady);
+            widget.unbind('hide', self.throwReady);
+            widget.unbind('destroy', self.throwReady);
+            
+            widget.show(self.throwReady);
+            widget.hide(self.throwReady);
+            widget.destroy(self.throwReady);
+         }
+      });
+   }
+});
+
 /**
  * Base class for all kinds of "window-like" things. Windows are supposed to be
  * contained in a DOM element (the "frame") and may have various widgets whose 
@@ -16,7 +70,7 @@
  * 
  * TODO: refactor to get more convenient smaller classes
  */
-jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
+jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    
    defaultOptions : {
       'showShadow'    : true,
@@ -98,9 +152,12 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       if (options.modal) {
          self.layer.fadeOut(options.delay);
       }
-      this.element().fadeOut(options.delay, function() {
+      
+      this.hide(function() {
          self.destroy();
       });
+      
+      this.trigger('hide', options);
    },
    
    handleDestroy : function() {
@@ -150,8 +207,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
       }
       this.load();
       jQuery.CbWidgetRegistry.apply(this.element());
-      this.element().fadeIn(options.delay);
+      this.trigger('show', options);
       this.ready();
+      var self = this;
       
       this.element().keypress(function(key) {
          if (key.keyCode == 27) self.close(options.delay);
@@ -232,7 +290,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     */
    resizeY : function(y) {
       if (y !== undefined) return this.base(y);
-      var height = jQuery(this.element().children()[0]).height();
+      var height = (this.element().children()[0]).clientHeight;
       this.element().height(height);
       return this;
    },
@@ -243,7 +301,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.widget.extend({
     */
    resizeX : function(x) {
       if (x !== undefined) return this.base(x);
-      var width = jQuery(this.element().children()[0]).width();
+      var width = this.element().children()[0].clientWidth;
       this.element().width(width);
       return this;
    },

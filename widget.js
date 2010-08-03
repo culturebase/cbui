@@ -116,7 +116,7 @@ jQuery.CbWidgetRegistry = {
          });
       }
       
-      this.changeLanguage(this.language);
+      this.changeLanguage(this.language, context);
       
    }
 };
@@ -214,10 +214,12 @@ jQuery.CbWidget.widget = base2.Base.extend({
    
    handleShow : function() {
       this.element().show();
+      return this;
    },
    
    handleHide : function() {
       this.element().hide();
+      return this;
    },
    
    /**
@@ -294,12 +296,12 @@ jQuery.CbWidget.widget = base2.Base.extend({
    },
    
    resizeX : function(x) {
-      this.element().css('width', x + 'px');
+      this.element().width(x);
       return this;
    },
    
    resizeY : function(y) {
-      this.element().css('height', y + 'px');
+      this.element().height(y);
       return this;
    },
    
