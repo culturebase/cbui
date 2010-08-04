@@ -370,9 +370,12 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
          postParams : {
             'use_callback' : true,
             'no_close_icon' : true,
+            'dynamic_height' : true,
             'use_flags' : options.useFlags,
             'project' : jQuery.CbWidgetRegistry.project
          }
       }, options);
+      this.autocenter();
+      this.autoresize();
    }
 });
