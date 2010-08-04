@@ -31,7 +31,7 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.base(element);
       var self = this;
-      this.throwReady = function() {self.ready();};
+      this.throwChange = function() {self.change();};
    },
    
    /**
@@ -49,20 +49,25 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       jQuery('[class*="__CbUi"]', this.element()).each(function() {
          var widget = jQuery(this).CbWidget();
          if (widget) {
-            widget.unbind('show', self.throwReady);
-            widget.unbind('hide', self.throwReady);
-            
-            if (widget != self) {
-               widget.unbind('ready', self.throwReady);
-               widget.ready(self.throwReady);
-            }
-   
-            widget.show(self.throwReady);
-            widget.hide(self.throwReady);
-            
+            widget.unbind('show', self.throwChange);
+            widget.unbind('hide', self.throwChange);
+            widget.show(self.throwChange);
+            widget.hide(self.throwChange);
          }
       });
+      this.change(); // being ready is also a change, but it happens only once
+      return this;
    }
+}, {
+   init : function() {
+      /*
+       * "change" is triggered when the widget or some subwidget has changed its appearance
+       * In this case the layout may have to be recalculated. 
+       */
+      jQuery.CbEvent(this, 'change');
+      return this.base();
+   }
+   
 });
 
 /**
@@ -280,7 +285,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    
    autoposition : function(method, params) {
       var self = this;
-      this.ready(function() {self[method](params);});
+      this.change(function() {self[method](params);});
       jQuery(window).bind('resize.window' + this.id, function() {self[method](params);});
       return this;
    },

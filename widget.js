@@ -106,7 +106,10 @@ jQuery.CbWidgetRegistry = {
       /* create widgets */
       for (var name in jQuery.CbWidget) {
          jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
-            new (jQuery.CbWidget[name])(jQuery(this));
+            var el = jQuery(this);
+            if (el.CbWidget(undefined, false) === undefined) { // but don't overwrite existing ones
+               new (jQuery.CbWidget[name])(el);
+            }
          });
       }
       
@@ -134,12 +137,13 @@ jQuery.CbEvent = function(target, name) {
    var event = {};
    event[name] = function(callback, staticParams) {
       if (callback) {
-         if (this[name].callbacks === undefined) {
-            this[name].callbacks = [];
-            this[name].params = [];
+         if (this.handlers[name] === undefined) {
+            this.handlers[name] = [];
          }
-         this[name].params.push(staticParams || {});
-         this[name].callbacks.push(callback);
+         this.handlers[name].push({
+            'callback' : callback, 
+            'params': staticParams || {}
+         });
       } else {
          this.trigger(name);
       }
@@ -165,7 +169,8 @@ jQuery.CbWidget = function() {}; // maybe do something useful here; e.g. find el
  *    When querying for the widget CbWidget will recursively search the elements
  *    parent nodes.
  */
-jQuery.fn.CbWidget = function(widget) {
+jQuery.fn.CbWidget = function(widget, recursive) {
+   if (recursive === undefined) recursive = true;
    if (this.length == 0) return undefined;
    if (widget !== undefined) {
       if (widget !== null) {
@@ -177,7 +182,7 @@ jQuery.fn.CbWidget = function(widget) {
    
    if (!this.data("cb_widget")) {
       var parent = this.parent();
-      if (parent && parent != this) {
+      if (recursive && parent && parent != this) {
          return parent.CbWidget();
       } else {
          return undefined;
@@ -210,6 +215,11 @@ jQuery.CbWidget.widget = base2.Base.extend({
        * association of positions -> labels
        */
       this.texts = {};
+      
+      /**
+       * event handlers
+       */
+      this.handlers = {};
    },
    
    handleShow : function() {
@@ -266,15 +276,14 @@ jQuery.CbWidget.widget = base2.Base.extend({
    
    unbind : function(name, callback) {
       if (callback) {
-         for (var i in this[name].callbacks) {
-            if (this[name].callbacks[i] == callback) {
-               this[name].callbacks = this[name].callbacks.splice(i, 1);
-               this[name].params = this[name].params.splice(i, 1);
+         for (var i in this.handlers[name]) {
+            if (this.handlers[name][i].callback == callback) {
+               this.handlers[name] = this.handlers[name].splice(i, 1);
+               break;
             }
          }
       } else {
-         this[name].callbacks = [];
-         this[name].params = [];
+         this.handlers[name] = [];
       }
       return this;
    },
@@ -282,9 +291,9 @@ jQuery.CbWidget.widget = base2.Base.extend({
    trigger : function(name, extraParams) {
       this[jQuery.CbEvent.getHandleName(name)](extraParams || {});
       
-      for (var i in this[name].callbacks) {
-         var params = jQuery.extend({}, this[name].params[i], extraParams || {});
-         this[name].callbacks[i](params);
+      for (var i in this.handlers[name]) {
+         var params = jQuery.extend({}, this.handlers[name][i].params, extraParams || {});
+         this.handlers[name][i].callback(params);
       }
       return this;
    },
