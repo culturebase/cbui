@@ -1,4 +1,15 @@
+/**
+ * a frame where widgets can be grouped. It introduces a new event "change" which
+ * is triggered whenever a child widget is either shown or hidden and on "ready".
+ * Frames support fading in and out slowly via additional parameters for show()
+ * and hide(). They can also slide up and down in the same way.
+ */
 jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
+   /**
+    * show the frame, using an optional delay (in milliseconds)
+    * @param options optional parameters containing "delay"
+    * @return this
+    */
    handleShow : function(options) {
       options |= {delay : 0};
       var self = this;
@@ -7,6 +18,11 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       return this;
    },
    
+   /**
+    * hide the frame, using an optional delay (in milliseconds)
+    * @param options optional parameters containing "delay"
+    * @return this
+    */
    handleHide : function(options) {
       options |= {delay : 0};
       var self = this;
@@ -15,18 +31,27 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       return this;
    },
    
+   /**
+    * slide up the element, using the delay. Will trigger "hide"
+    * @param delay the time to be taken for sliding the widget up
+    * @return this
+    */
    slideUp : function(delay) {
       var self = this;
       this.element().slideUp(delay, function() {self.hide();});
       return this;
    },
    
+   /**
+    * slide down the element, using the delay. Will trigger "show"
+    * @param delay the time to be taken for sliding the widget down
+    * @return this
+    */
    slideDown : function(delay) {
       var self = this;
       this.element().slideDown(delay, function() {self.show();});
       return this;
    },
-   
    
    constructor : function(element) {
       this.base(element);
@@ -35,13 +60,13 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
    },
    
    /**
-    * bind the "ready" event of the frame to all "show", "hide" and "ready"
+    * bind the "change" event of the frame to all "show" and "hide"
     * events of its inner widgets so that we have a chance to autoposition
-    * the frame when its widgets change. 
+    * the frame (or do other interesting things) when its widgets change. 
     * 
     * This doesn't work for adding or removing widgets as we have no way
     * of finding out about that. You'll have to call "ready" manually when
-    * doing that.
+    * doing that in order to bind the new widgets' events.
     */
    handleReady : function() {
       this.base();
@@ -55,8 +80,7 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
             widget.hide(self.throwChange);
          }
       });
-      this.change(); // being ready is also a change, but it happens only once
-      return this;
+      return this.change(); // being ready is also a change, but it happens only once
    }
 }, {
    init : function() {
@@ -178,9 +202,12 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.trigger('hide', options);
    },
    
+   /**
+    * immediately destroy everything without any fading
+    */
    handleDestroy : function() {
       var self = this;
-      jQuery(window).unbind('resize.window' + this.id);
+      jQuery(window).unbind('resize.window' + this.base2ID);
       
       jQuery('[class*="__CbUi"]', this.element()).each(function() {
          var widget = jQuery(this).CbWidget();
@@ -213,6 +240,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       return valid;
    },
    
+   /**
+    * called after loading the frame. This method is considered private.
+    * @param options the options for loading the window. Will be passed on to
+    * show and close and will be used to determine if the shadow is to be shown.
+    */
    postLoadFrame : function(options) {
       if (this.insertElement) {
          this.element().appendTo('body');
@@ -230,7 +262,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       var self = this;
       
       this.element().keypress(function(key) {
-         if (key.keyCode == 27) self.close(options.delay);
+         if (key.keyCode == 27) self.close(options);
       });
    },
    
@@ -265,39 +297,71 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       }
    },
    
+   /**
+    * center the widget in horizontal direction.
+    * @return this
+    */
    centerX : function() {
       var width = jQuery.support.boxModel ? window.innerWidth : window.document.documentElement.clientWidth;
       this.moveToX(Math.max(Math.floor(width / 2 - this.width() / 2) - 10, 0));
       return this;
    },
    
+   /**
+    * center the widget in vertical direction.
+    * @return this
+    */
    centerY : function() {
       var height = jQuery.support.boxModel ? window.innerHeight : window.document.documentElement.clientHeight;
       this.moveToY(Math.max(Math.floor(height / 2 - this.height() / 2) - 30, 0));
       return this;
    },
    
+   /**
+    * center the widget in both directions.
+    * @return this
+    */
    center  : function() {
       this.centerX();
       this.centerY();
       return this;
    },
    
+   /**
+    * automatically position the window with the given method when
+    * a, "change" is triggered
+    * b, the browser window is resized
+    * @param method the method to be called to position the window
+    * @param params the parameters to be passed to the positioning method
+    * @return this 
+    */
    autoposition : function(method, params) {
       var self = this;
       this.change(function() {self[method](params);});
-      jQuery(window).bind('resize.window' + this.id, function() {self[method](params);});
+      jQuery(window).bind('resize.window' + this.base2ID, function() {self[method](params);});
       return this;
    },
    
+   /**
+    * automatically center in horizontal direction on change
+    * @return this
+    */
    autocenterX : function() {
       return this.autoposition('centerX');
    },
    
+   /**
+    * automatically center in vertical direction on change
+    * @return this
+    */
    autocenterY : function() {
       return this.autoposition('centerY');
    },
    
+   /**
+    * automatically center in both directions on change
+    * @return this
+    */
    autocenter : function() {
       return this.autoposition('center');
    },
@@ -324,14 +388,26 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       return this;
    },
 
+   /**
+    * automatically resize to fit in vertical direction on change
+    * @return this
+    */
    autoresizeY : function() {
       return this.autoposition('resizeY');
    },
    
+   /**
+    * automatically resize to fit in horizontal direction on change
+    * @return this
+    */
    autoresizeX : function() {
       return this.autoposition('resizeX');
    },
    
+   /**
+    * automatically resize to fit in both directions on change
+    * @return this
+    */
    autoresize : function() {
       return this.autoposition('resize');
    }
@@ -357,12 +433,20 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
 });
 
 
+/**
+ * callback needed for the language window to work. Just calls 
+ * jQuery.CbWidgetRegistry.changeLanguage and closes the window
+ * @param locale the language being chosen
+ */
 function language_window_callback(locale) {
    jQuery.CbWidgetRegistry.changeLanguage(locale);
    language_window_callback.window.close();
 }
 
-
+/**
+ * language choice window. This is loaded from /module/lib/framework/getLanguageWindow.php
+ * @deprecated will be replaced with a native equivalent 
+ */
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(options) {
       options = jQuery.extend({'useFlags' : false}, options);

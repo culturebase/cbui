@@ -17,7 +17,9 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
    },
    
    /**
-    * Query the current value of the field.
+    * Query or set the current value of the field.
+    * @param val the new value (optional)
+    * @return the value of the field
     */
    value : function(val) {
       return this.element().val(val);
@@ -25,6 +27,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
    
    /**
     * Run all validators on this widget.
+    * @return true if validation was successful, false otherwise
     */
    validate : function() {
       this.valid();
@@ -66,8 +69,12 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
    
 }, {
    init : function() {
+      /* triggered when the input has been found invalid */
       jQuery.CbEvent(this, 'error');
+      
+      /* triggered when the input has been found valid */
       jQuery.CbEvent(this, 'valid');
+
       this.base();
    }
 });
@@ -95,18 +102,28 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
       this.bricks[label] = bricks[label];
    },
    
-   bindEvents : function(elements) {
+   /**
+    * (re-)bind the events associated with this widget. Focus and blur events
+    * from the widget's elements are passed on to trigger the respective events
+    * on the widget itself.
+    */
+   bindEvents : function() {
       var self = this;
       this.element().focus(function() {
          self.focus();
       }).blur(function() {
          self.blur();
       });
+      return this;
    },
    
+   /**
+    * reread the element from the DOM and rebind the events.
+    */
    refreshElement : function() {
       this.base();
       this.bindEvents();
+      return this;
    },
    
    /**
@@ -115,11 +132,6 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
     */
    constructor : function(element) {
       this.base(element);
-      
-      /**
-       * tells if the field is being edited.
-       */
-      this.editing = false;
       
       /**
        * bricks to be used for translation and for comparing with standard value.
@@ -139,7 +151,6 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
     */
    handleBlur : function() {
       if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         this.editing = false;
          this.value(this.bricks[this.texts.text]);
          this.element().removeClass('__CbUiFieldEdited');
          this.element().addClass('__CbUiFieldUnedited');
@@ -151,12 +162,9 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
     * focus handler. Sets the class '__CbUiFieldEdited' on the element.
     */
    handleFocus : function() {
-      if (!this.editing) {
-         this.editing = true;
-         this.element().select();
-         this.element().removeClass('__CbUiFieldUnedited');
-         this.element().addClass('__CbUiFieldEdited');
-      }
+      this.element().select();
+      this.element().removeClass('__CbUiFieldUnedited');
+      this.element().addClass('__CbUiFieldEdited');
       return this;
    }
 }, {
@@ -172,9 +180,14 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
  * its type to "password" as soon as you type anything into it. It can optionally
  * use strength checking on the password field and open a hint element to explain
  * that.
+ * You need pstrength.js if you want to use the password widget's strength check.
  */
 jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
    
+   /**
+    * reread the element and the backup elements from the DOM and
+    * reattach the strength handler.
+    */
    refreshElement : function() {
       this.base();
       this.pivot.refreshElement();
@@ -185,7 +198,8 @@ jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
    /**
     * add a strength check. The background color will appear in various shades
     * of green and red depending on the strength of the password.
-    * @param hint_element an optional hint to be shown while editing the password.
+    * @param hint_element an optional hint widget to be shown while editing the
+    * password.
     */
    addStrengthCheck : function(hint_element) {
       this.strength_check = true;
@@ -255,7 +269,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
    },
    
    /**
-    * get the current value for the password
+    * get or set the current value for the password
     * @return the value of the currently active field
     */
    value : function(val) {
@@ -267,12 +281,19 @@ jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
       }
    },
    
+   /**
+    * destroy the widget and remove the backup elements.
+    * @return this
+    */
    handleDestroy : function() {
       this.cycler.destroy();
       this.pivot.destroy();
-      this.base();
+      return this.base();
    },
    
+   /**
+    * return all elements in the cycler.
+    */
    element : function() {
       return this.cycler.elements;
    }
@@ -283,6 +304,11 @@ jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
  * changeLanguage.
  */
 jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
+   
+   /**
+    * create the widget and collect the texts to be translated
+    * @param element the element the widget should attach itself to.
+    */
    constructor : function(element) {
       this.base(element);
       var self = this;
@@ -292,6 +318,10 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
       });
    },
 
+   /**
+    * translate all options.
+    * @param bricks the translations
+    */
    changeLanguage : function(bricks) {
       var self = this;
       this.element().children().each(function(index) {
@@ -307,6 +337,7 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
  * using the "options" member. All options are passed on to autocomplete.
  * Autocomplete is reinitialized when changing the language. As the text input
  * is managed by autocomplete, this is not a real text input widget.
+ * You'll need autocomplete2/mod.autocomplete.js if you want to use this widget.
  */
 jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
    
@@ -317,7 +348,7 @@ jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
       this.pivot = new CbElementPivot(element);
       this.name_field = this.pivot.child;
       var id_field = $(document.createElement('input')).attr('type', 'hidden');
-      this.options.putIdInto = 'searchbox' + this.id;
+      this.options.putIdInto = 'searchbox' + this.base2ID;
       this.pivot.parent.prepend(id_field.attr('id', this.options.putIdInto));
       
       this.base(this.pivot.parent);
@@ -341,6 +372,9 @@ jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
       return this.name_field.val(val);
    },
    
+   /**
+    * get the ID associated with the current value of the field
+    */
    valueId : function() {
       return $(this.options.putIdInto).val();
    },

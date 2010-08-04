@@ -17,8 +17,6 @@
  * - base2.js
  * - cb_ui/validate.js (if there are any widgets to be validated)
  * - some styles for '__CbUi*'
- * - autocomplete2/mod.autocomplete.js if you want to use the autocomplete widget
- * - pstrength.js if you want to use the password widget's strength check
  * 
  */
 
@@ -60,6 +58,11 @@ jQuery.CbWidgetRegistry = {
     */
    bricks : {},
    
+   /**
+    * change the language of all widgets in the given context
+    * @þaram language the new language (locale)
+    * @param context the context to be manipulated - for example a window
+    */
    changeLanguage : function(language, context) {
       var labels = [];
       this.language = language;
@@ -125,8 +128,40 @@ jQuery.CbWidgetRegistry = {
 };
 
 /**
- * class interfaces aren't inherited in base2 so we have to create an external
- * CbEvent function to add events to classes.
+ * Event Handling
+ * --------------
+ * 
+ * Events are declared by implementing an "init" method in the class interface
+ * of your widget and stating "jQuery.CbEvent(this, <name>)" there. There are 
+ * two ways of triggering the event:
+ * 
+ * 1. Call widget.<name>() without parameters. This is the shortcut for events
+ * you don't want to specify any special parameters for.
+ * 
+ * 2. Call widget.trigger(<name>, <parameters>) where <parameters> are a JS
+ * object. The parameters will be passed on to the event handlers then.
+ * 
+ * Event handlers can be attached to events in three ways.
+ * 
+ * 1. Override handle<Name>(). This method is the first to be called every time
+ * the event is triggered. You can use base2's inheritance mechanism here and
+ * call base() to invoke the handle<Name>() method of super classes.
+ * 
+ * 2. Call widget.<name>(<handler>, <params>). <handler> should be a function to be
+ * executed when the event is triggered. Like this you can attach multiple handlers
+ * to the same event in jquery-style. They will be invoked after handle<Name>(). 
+ * Any parameters will be passed on to all event handlers when they are invoked.
+ * You can extend and override them with trigger().
+ * 
+ * 3. Call widget.bind(<name>, <handler>, <params>). This is the same as 
+ * widget.<name>(<handler>, <params>).
+ * 
+ * You can unbind handlers from an event by calling widget.unbind(<event>, <handler>).
+ * If you omit the second parameter all handlers will be unbound from the specified
+ * event.
+ * 
+ * (Class interfaces aren't inherited in base2 so we have to create an external
+ * CbEvent function to add events to classes.)
  * 
  */
 jQuery.CbEvent = function(target, name) {
@@ -204,7 +239,6 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    constructor : function(element) {
       this.base();
-      this.id = base2.assignID(this);
       this.parent_element = element;
       var self = this;
       this.element().CbWidget(this);
@@ -222,11 +256,17 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.handlers = {};
    },
    
+   /**
+    * show the widget
+    */
    handleShow : function() {
       this.element().show();
       return this;
    },
    
+   /**
+    * hide the widget
+    */
    handleHide : function() {
       this.element().hide();
       return this;
@@ -269,11 +309,24 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    changeLanguage : function(bricks) {},
    
+   /**
+    * bind a handler to an event
+    * @param name name of the event
+    * @param callback the handler to be called when the event is triggered
+    * @param staticParams default parameters for the handler (optional)
+    * @return this
+    */
    bind : function(name, callback, staticParams) {
       this[name](callback, staticParams);
       return this;
    },
    
+   /**
+    * unbind a handler from an event
+    * @param name the name of the event
+    * @param callback the handler to be removed (if omitted all handlers are removed)
+    * @return this
+    */
    unbind : function(name, callback) {
       if (callback) {
          for (var i in this.handlers[name]) {
@@ -288,6 +341,12 @@ jQuery.CbWidget.widget = base2.Base.extend({
       return this;
    },
    
+   /**
+    * trigger an event
+    * @param name the event to be triggered
+    * @param extraParams additional parameters to be passed to the event
+    * @return this
+    */
    trigger : function(name, extraParams) {
       this[jQuery.CbEvent.getHandleName(name)](extraParams || {});
       
@@ -298,40 +357,80 @@ jQuery.CbWidget.widget = base2.Base.extend({
       return this;
    },
    
+   /**
+    * get the width of this widget
+    * @return the width
+    */
    width : function() {
       return this.element().width();
    },
    
+   /**
+    * get the height of this widget
+    * @return the height
+    */
    height : function() {
       return this.element().height();
    },
    
+   /**
+    * resize the widget in horizontal direction
+    * @param x the new width in pixels
+    * @return this
+    */
    resizeX : function(x) {
       this.element().width(x);
       return this;
    },
    
+   /**
+    * resize the widget in vertical direction
+    * @param y the new height in pixels
+    * @return this
+    */
    resizeY : function(y) {
       this.element().height(y);
       return this;
    },
    
+   /**
+    * resize the widget in both directions
+    * @param x the new width
+    * @param y the new height
+    * @return this
+    */
    resize : function(x, y) {
       this.resizeX(x);
       this.resizeY(y);
       return this;
    },
    
+   /**
+    * move the widget in horizontal direction
+    * @param x the new position in pixels
+    * @return this
+    */
    moveToX : function(x) {
       this.element().css('left', x + 'px');
       return this;
    },
    
+   /**
+    * move the widget in vertical direction
+    * @param y the new position in pixels
+    * @return this
+    */
    moveToY : function(y) {
       this.element().css('top', y + 'px');
       return this;
    },
    
+   /**
+    * move the widget in both directions
+    * @param x the new X position
+    * @param y the new Y position
+    * @return this
+    */
    moveTo : function(x, y) {
       this.moveToX(x);
       this.moveToY(y);
@@ -348,7 +447,6 @@ jQuery.CbWidget.widget = base2.Base.extend({
    handleDestroy : function() {
       this.element().CbWidget(null);
    }
-      
 }, {
    
       
