@@ -2,7 +2,7 @@
  * A text button. I'm sure we'll eventually need some kind of special behaviour
  * here. Maybe the click handler should be centralized.
  */
-jQuery.CbWidget.text_button = jQuery.CbWidget.text.extend({
+jQuery.CbWidget.textButton = jQuery.CbWidget.text.extend({
    
 });
 
@@ -10,7 +10,7 @@ jQuery.CbWidget.text_button = jQuery.CbWidget.text.extend({
  * A button intended for language selection. It always shows an isocode for the
  * current language. 
  */
-jQuery.CbWidget.lang_select = jQuery.CbWidget.text_button.extend({
+jQuery.CbWidget.langSelect = jQuery.CbWidget.textButton.extend({
 
    constructor : function(element) {
       this.base(element);
@@ -26,9 +26,9 @@ jQuery.CbWidget.lang_select = jQuery.CbWidget.text_button.extend({
    }
 });
 
-jQuery.CbWidget.img_button = jQuery.CbWidget.widget.extend({});
+jQuery.CbWidget.imgButton = jQuery.CbWidget.widget.extend({});
 
-jQuery.CbWidget.close_button = jQuery.CbWidget.img_button.extend({
+jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
    
    constructor : function(element) {
       this.base(element);
@@ -48,7 +48,7 @@ jQuery.CbWidget.close_button = jQuery.CbWidget.img_button.extend({
    }
 });
 
-jQuery.CbWidget.choose_list = jQuery.CbWidget.widget.extend({
+jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
    
    constructor : function(element) {
       this.base(element);

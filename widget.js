@@ -30,8 +30,7 @@ jQuery.CbWidgetRegistry = {
     * get a widget or validator name from a class name
     */
    translateToClass : function(name, prefix) {
-      return '.__Cb' + prefix + ('_' + name).replace( /_[a-z]/g ,
-            function(m){ return m.substring(1).toUpperCase(); });
+      return '.__Cb' + prefix + name.substring(0, 1).toUpperCase() + name.substring(1);
    },
    
    /* some properties you can change to modify the behaviour of the widget registry */
@@ -44,14 +43,14 @@ jQuery.CbWidgetRegistry = {
    /**
     * secondary project to be queried for ML bricks if they aren't found in 'project'
     */
-   base_project : 'cb-framework',
+   baseProject : 'cb-framework',
    
    /**
     * language to be used
     */
    language : 'en_EN',
    
-   brick_source : "/module/lib/framework/getMlBricks.php", 
+   brickSource : "/module/lib/framework/getMlBricks.php", 
    
    /**
     * The actual translated bricks. Be careful when modifying this.
@@ -79,12 +78,12 @@ jQuery.CbWidgetRegistry = {
       /* fetch bricks */
       jQuery.ajax({
          type : 'GET',
-         url : this.brick_source,
+         url : this.brickSource,
          async : false,
          dataType : 'json',
          data : {
             "project" : this.project, 
-            "base_project" : this.base_project, 
+            "base_project" : this.baseProject, 
             "language" : this.language,
             "labels[]" : labels
          },
@@ -240,11 +239,11 @@ jQuery.CbWidget.widget = base2.Base.extend({
    constructor : function(element) {
       this.base();
       base2.assignID(this);
-      this.parent_element = element;
+      this.parentElement = element;
       var self = this;
       this.element().CbWidget(this);
-      /* element() and parent_element may differ */
-      this.parent_element.CbWidget(this);
+      /* element() and parentElement may differ */
+      this.parentElement.CbWidget(this);
       
       /**
        * association of positions -> labels
@@ -279,7 +278,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
     * same every time you use it.
     */
    element : function() {
-      return this.parent_element;
+      return this.parentElement;
    },
    
    /**
@@ -288,7 +287,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
     * here. 
     */
    refreshElement : function() {
-      this.parent_element = $(this.parent_element);
+      this.parentElement = $(this.parentElement);
       this.element().CbWidget(this);
    },
    

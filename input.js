@@ -86,7 +86,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
  * this.bricks[this.texts.text]).
  * Focus handling is centralized for text input widgets.
  */
-jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
+jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
    /**
     * change the language. The description of the widget is usually shown in
     * the input field itself if it hasn't been edited yet. This is reflected
@@ -182,7 +182,7 @@ jQuery.CbWidget.input_text = jQuery.CbWidget.input.extend({
  * that.
  * You need pstrength.js if you want to use the password widget's strength check.
  */
-jQuery.CbWidget.password = jQuery.CbWidget.input_text.extend({
+jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
    
    /**
     * reread the element and the backup elements from the DOM and
@@ -339,7 +339,7 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
  * is managed by autocomplete, this is not a real text input widget.
  * You'll need autocomplete2/mod.autocomplete.js if you want to use this widget.
  */
-jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
+jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
    
    constructor : function(element) {
       this.options = {};

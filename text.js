@@ -22,7 +22,7 @@ jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
  * It expects a DOM element with children, each of which has an ML label as
  * text.
  */
-jQuery.CbWidget.multi_text = jQuery.CbWidget.widget.extend({
+jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
    
    constructor : function(element) {
       this.base(element);
