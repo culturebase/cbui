@@ -28,6 +28,10 @@ jQuery.CbWidget.langSelect = jQuery.CbWidget.textButton.extend({
 
 jQuery.CbWidget.imgButton = jQuery.CbWidget.widget.extend({});
 
+/**
+ * close button for windows. When clicked this button searches for the next
+ * parent element which defines the "close" method. It then calls this method.
+ */
 jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
    
    constructor : function(element) {
@@ -48,6 +52,15 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
    }
 });
 
+
+/**
+ * A choose list widget. presents a list of options with alternating colors.
+ * Each entry represents an id and a description text. Entries can be added
+ * with the static method addOption.
+ * The colors can be defined with the CSS classes __CbUiListOddColor and
+ * __CbUiListEvenColor. If one of the entries is clicked the "select" event is
+ * triggered, with {id : <id of chosen entry>} as parameter.
+ */
 jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
    
    constructor : function(element) {
@@ -68,7 +81,11 @@ jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
       var node = $(document.createElement('div'));
       node.append($(document.createElement('span')).text(id).hide());
       node.append(description);
-      if (element.children().length % 2) node.addClass("__CbUiListOddColor");
+      if (element.children().length % 2) {
+         node.addClass("__CbUiListEvenColor");
+      } else {
+         node.addClass("__CbUiListOddColor");
+      }
       element.append(node);
    },
    
