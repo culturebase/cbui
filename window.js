@@ -59,6 +59,13 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       this.throwChange = function() {self.change();};
    },
    
+   changeLanguage : function(bricks) {
+      this.base(bricks);
+      
+      // changing the language is a change as the sizes of texts may have changed
+      this.change();
+   },
+   
    /**
     * bind the "change" event of the frame to all "show" and "hide"
     * events of its inner widgets so that we have a chance to autoposition
