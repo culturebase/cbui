@@ -348,10 +348,11 @@ jQuery.CbWidget.search_box = jQuery.CbWidget.input_text.extend({
       this.pivot = new CbElementPivot(element);
       this.name_field = this.pivot.child;
       var id_field = $(document.createElement('input')).attr('type', 'hidden');
-      this.options.putIdInto = 'searchbox' + this.base2ID;
-      this.pivot.parent.prepend(id_field.attr('id', this.options.putIdInto));
       
       this.base(this.pivot.parent);
+      var id = 'searchbox' + this.base2ID;
+      this.options.putIdInto = '#'+ id;
+      this.pivot.parent.prepend(id_field.attr('id', id));
    },
    
    changeLanguage : function(bricks) {
