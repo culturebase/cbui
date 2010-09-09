@@ -280,11 +280,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    loadFrame : function(options) {
       
       var self = this;
-      this.element().width(options.width);
       
       if (options.layerFrame) {
          this.element().addClass('__CbUiLayerFrame');
          this.element().height(options.height);
+         this.element().width(options.width);
 
          if (jQuery.browser.msie && jQuery.browser.version < 7) {
             this.element().css('position', 'absolute');
