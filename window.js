@@ -147,7 +147,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     *    - 'modal': if set, put a semi-transparent layer over the whole document
     *       before adding the window - prevents any interaction with other elements
     *    - 'layerColor' and 'layerOpacity': properties of the modal layer
-    *    - 'overlayClose': if set, close the window when clicking on the modal layer
+    *    - 'overlayClose': if set, close the window when clicking on the modal layer or pressing escape
     *    - 'showShadow': create a shadow for the window if possible
     * obviously some combinations don't make sense. Results for those are undefined.
     */
@@ -268,9 +268,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.ready();
       var self = this;
       
-      this.element().keypress(function(key) {
-         if (key.keyCode == 27) self.close(options);
-      });
+      if (options.overlayClose) {
+         this.element().keypress(function(key) {
+            if (key.keyCode == 27) self.close(options);
+         });
+      }
    },
    
    /**
