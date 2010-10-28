@@ -102,6 +102,12 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
       this.bricks[label] = bricks[label];
    },
    
+   reset : function() {
+      this.value(this.bricks[this.texts.text]);
+      this.element().removeClass('__CbUiFieldEdited');
+      this.element().addClass('__CbUiFieldUnedited');
+   },
+   
    /**
     * (re-)bind the events associated with this widget. Focus and blur events
     * from the widget's elements are passed on to trigger the respective events
@@ -151,9 +157,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
     */
    handleBlur : function() {
       if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
-         this.value(this.bricks[this.texts.text]);
-         this.element().removeClass('__CbUiFieldEdited');
-         this.element().addClass('__CbUiFieldUnedited');
+         this.reset();
       }
       return this;
    },
