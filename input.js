@@ -389,6 +389,11 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
       this.pivot.destroy();
    },
    
+   handleHide : function() {
+      this.pivot.parent.find('.__AC_close').click();
+      this.base();
+   },
+
    element : function() {
       return this.pivot.child;
    }
