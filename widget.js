@@ -222,8 +222,7 @@ jQuery.fn.CbWidget = function(widget, recursive) {
          return undefined;
       }
    } else {
-      var widget = this.data("cb_widget");
-      return widget;
+      return this.data("cb_widget");
    }
 };
 
