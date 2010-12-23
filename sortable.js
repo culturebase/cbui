@@ -18,10 +18,6 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
    constructor : function(options) {
       this.base(options.element);
       this.options = options;
-   },
-   
-   handleReady : function() {
-      this.base();
       var self = this;
 
       this.element().find('.__CbUiSortableItem').each(function() {
@@ -30,14 +26,17 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
          self.bindDrag(item);
       });
 
-      this.element().sortable({
-         handle : '.__CbUiDragIcon'
-      });
-      
       this.element().find('.__CbUiAddIcon').click(function() {
          self.addItem();
          return false;
       });
+   },
+   
+   handleReady : function() {
+      this.base();
+      this.element().sortable({
+         handle : '.__CbUiDragIcon'
+      });      
    },
    
    /**
