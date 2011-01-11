@@ -32,7 +32,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    play : function() {
       var self = this;
       var embed = $(document.createElement('embed'))
-         .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.config + '/' + self.options.id)
+         .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.config + '/td' + self.options.id)
          .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
          .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
       this.element().empty().append(embed);
