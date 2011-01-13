@@ -378,10 +378,10 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
    },
    
    /**
-    * get the ID associated with the current value of the field
+    * get or set the ID associated with the current value of the field
     */
-   valueId : function() {
-      return $(this.options.putIdInto).val();
+   valueId : function(val) {
+      return jQuery(this.options.putIdInto).val(val);
    },
    
    handleDestroy : function() {
