@@ -74,7 +74,9 @@ jQuery.CbWidgetRegistry = {
          });
          labels = jQuery.unique(labels);
       }
-         
+
+      if (labels.length == 0) return; // no translation needed
+
       /* fetch bricks */
       jQuery.ajax({
          type : 'GET',
@@ -122,7 +124,6 @@ jQuery.CbWidgetRegistry = {
       }
       
       this.changeLanguage(this.language, context);
-      
    }
 };
 
@@ -451,8 +452,9 @@ jQuery.CbWidget.widget = base2.Base.extend({
       
    init : function() {
       /*
-       * "ready" is triggered when everything has been translated and set up.
-       * The widget is not necessarily shown at that point, but it is in the DOM.
+       * "ready" is triggered by the containing frame when everything has been
+       * translated and set up. The widget is not necessarily shown at that
+       * point, but it is in the DOM.
        */
       jQuery.CbEvent(this, 'ready');
    

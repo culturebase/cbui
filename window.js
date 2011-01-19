@@ -57,6 +57,15 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       this.base(element);
       var self = this;
       this.throwChange = function() {self.change();};
+      
+      /* Binding the change event when ready.
+       * This is not done by handleReady as you may wish to override the
+       * configuration for various widgets on a per-window base. Binding the
+       * change event, however is so universal that we make it mandatory for
+       * all frames. Of course you can unbind it from window.handleLoad if you
+       * know what you're doing.
+       */
+      this.ready(function() {self.bindChange();});
    },
    
    changeLanguage : function(bricks) {
@@ -65,18 +74,17 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       // changing the language is a change as the sizes of texts may have changed
       this.change();
    },
-   
+
    /**
     * bind the "change" event of the frame to all "show" and "hide"
     * events of its inner widgets so that we have a chance to autoposition
     * the frame (or do other interesting things) when its widgets change. 
     * 
     * This doesn't work for adding or removing widgets as we have no way
-    * of finding out about that. You'll have to call "ready" manually when
+    * of finding out about that. You'll have to call this method manually when
     * doing that in order to bind the new widgets' events.
     */
-   handleReady : function() {
-      this.base();
+   bindChange : function() {
       var self = this;
       jQuery('[class*="__CbUi"]', this.element()).each(function() {
          var widget = jQuery(this).CbWidget();
@@ -135,12 +143,12 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    
    /**
     * create a window.
-    * @param loadOptions options for loading the content:
+    * @param loadOptions Options for loading the template:
     *    - element the frame for the window. Can be omitted, then a new one is
     *      created and appended to <body>.
     *    - template a URL to load the structure from
     *    - postParams POST parameters to be passed when loading the template
-    * @param options options you might want to refer to later. The base window uses:
+    * @param options Options you might want to refer to later. The base window uses:
     *    - 'width' and 'height': to determine its initial dimensions.
     *    - 'layerFrame': if set, have the window floating on top of existing content,
     *       otherwise just append it to <body>.
@@ -149,9 +157,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     *    - 'layerColor' and 'layerOpacity': properties of the modal layer
     *    - 'overlayClose': if set, close the window when clicking on the modal layer or pressing escape
     *    - 'showShadow': create a shadow for the window if possible
-    * obviously some combinations don't make sense. Results for those are undefined.
+    * Obviously some combinations don't make sense. Results for those are undefined.
     */
-   constructor : function(loadOptions, options) {
+   constructor : function(loadOptions, options, widgetOptions) {
       this.options = jQuery.extend({}, this.defaultOptions, options);
           
       var element = loadOptions.element;
@@ -165,6 +173,22 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
    },
+   
+   /**
+    * Configure this window and all its child widgets according to the given
+    * options. The default behaviour is to pass on the options to the children
+    * and let them handle the details. Of course you can implement your own
+    * configuration scheme in derived classes.
+    */
+   configure : function(options) {
+      this.base(options);
+      var self = this;
+      jQuery('[class*="__CbUi"]', this.element()).each(function() {
+         var widget = jQuery(this).CbWidget();
+         if (widget && widget != self) widget.configure(options);
+      });
+   },
+   
    
    /**
     * Open the window.
@@ -248,6 +272,23 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    },
    
    /**
+    * Passes the ready event and the configuration options on to all
+    * child widgets. It's recommended to use this for final configuration
+    * as it happens after the widgets have been instantiated and translated,
+    * but before the window is shown.
+    * @param options The options to be used for configuration. Those are
+    * the ones passed to the constructor and open().
+    */
+   handleReady : function(options) {
+      var self = this;
+      jQuery('[class*="__CbUi"]', this.element()).each(function() {
+         var widget = jQuery(this).CbWidget();
+         if (widget && widget != self) widget.trigger('ready', options);
+      });
+      return this.base();
+   },
+
+   /**
     * called after loading the frame. This method is considered private.
     * @param options the options for loading the window. Will be passed on to
     * show and close and will be used to determine if the shadow is to be shown.
@@ -265,7 +306,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.load();
       jQuery.CbWidgetRegistry.apply(this.element());
       this.trigger('show', options);
-      this.ready();
+      this.trigger('ready', options);
       var self = this;
       
       if (options.overlayClose) {
