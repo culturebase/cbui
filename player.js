@@ -17,7 +17,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       this.element().click(function() {self.play();});
    },
 
-   configure : function(options) {
+   handleReady : function(options) {
       this.options = jQuery.extend({}, this.defaultOptions, options);
       var self = this;
       this.element().append(
