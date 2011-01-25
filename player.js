@@ -48,7 +48,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
 
    callMenu: function(type) {
       var self = this;
-      self.player.play().load(function() {
+      self.play().load(function() {
          document.getElementById('__CbUiPlayerEmbed').callMenu(type);
       });
    }
