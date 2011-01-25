@@ -76,7 +76,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       var self = this;
       $.each(options.controls, function(type,text){
          self.controls[text] = type;
-         this.element().append($(document.createElement('a')).attr('href', '#').text(text));
+         self.element().append($(document.createElement('a')).attr('href', '#').text(text));
       });
       this.player = options.widgets.player;      
       this.element().click(function() {
