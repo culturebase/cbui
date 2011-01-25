@@ -31,7 +31,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             jQuery(document.createElement('img'))
             .attr('src', image)
             .attr('width', self.options.width).attr('height', self.options.height)
-            .click(function() {self.play();})
+            .click(function() {
+               self.play();
+               self.sendEvent('PLAY');
+            })
       );
    },
    
@@ -44,6 +47,20 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
       this.element().empty().append(this.embed);
       return this;
+   },
+
+   sendEvent: function(event) {
+      var self = this;
+      if (!self.embed) self.play();
+      try {
+         document.getElementById(self.embed.attr('id')).sendEvent(event);
+         return;
+      } catch(e) {
+         // resume
+      }
+      setTimeout(function () {
+         self.sendEvent(event);
+      }, 100);
    },
 
    callMenu: function(type) {
