@@ -68,7 +68,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
    },
    
    handleReady : function(options) {
-      if(options.versions) {    
+      if(options.versions != '') {
          for(var i in options.versions) {
             var version = options.versions[i];
             this.versions[version.id] = version;
