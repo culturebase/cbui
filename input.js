@@ -363,9 +363,14 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
       this.base(bricks);
       this.options.language = jQuery.CbWidgetRegistry.language;
       this.name_field.unbind();
-      this.name_field.autoComplete(this.options);
    },
-   
+
+   handleReady : function(options) {
+      jQuery.extend(this.options, options);
+      this.name_field.autoComplete(this.options);
+      return this.base(options);
+   },
+
    refreshElement : function() {
       this.name_field.unbind();
       this.base();
