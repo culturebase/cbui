@@ -18,7 +18,7 @@ jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
       }
    },
 
-   val : function(text) {
+   value : function(text) {
       this.element().html(text);
    }
 });
