@@ -159,7 +159,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     *    - 'showShadow': create a shadow for the window if possible
     * Obviously some combinations don't make sense. Results for those are undefined.
     */
-   constructor : function(loadOptions, options, widgetOptions) {
+   constructor : function(loadOptions, options) {
       this.options = jQuery.extend({}, this.defaultOptions, options);
           
       var element = loadOptions.element;
@@ -173,22 +173,6 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
    },
-   
-   /**
-    * Configure this window and all its child widgets according to the given
-    * options. The default behaviour is to pass on the options to the children
-    * and let them handle the details. Of course you can implement your own
-    * configuration scheme in derived classes.
-    */
-   configure : function(options) {
-      this.base(options);
-      var self = this;
-      jQuery('[class*="__CbUi"]', this.element()).each(function() {
-         var widget = jQuery(this).CbWidget();
-         if (widget && widget != self) widget.configure(options);
-      });
-   },
-   
    
    /**
     * Open the window.

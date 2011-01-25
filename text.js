@@ -5,13 +5,21 @@
 jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
    
    changeLanguage : function(bricks) {
-      this.element().html(bricks[this.texts.text]);
+      if (this.texts.text) {
+         this.element().html(bricks[this.texts.text]);
+      }
    },
    
    constructor : function(element) {
       this.base(element);
       var label = this.element().text();
-      this.texts = {text : label};
+      if (label != '') {
+         this.texts = {text : label};
+      }
+   },
+
+   val : function(text) {
+      this.element().html(text);
    }
 });
 
