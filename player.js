@@ -48,9 +48,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
 
    callMenu: function(type) {
       var self = this;
-      if (!this.embed) self.play();
+      if (!self.embed) self.play();
       try {
-         document.getElementById($(this).attr('id')).callMenu(type);
+         document.getElementById(self.embed.attr('id')).callMenu(type);
+         return;
       } catch(e) {
          // resume
       }
