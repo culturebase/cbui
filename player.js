@@ -65,3 +65,22 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
       });
    }
 });
+
+jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
+   constructor : function(element) {
+      this.controls = {};
+      return this.base(element);
+   },
+
+   handleReady : function(options) {
+      $.each(options.controls, function(type,text){
+         this.controls[text] = type;
+         this.element().append($(document.createElement('a')).attr('href', '#').text(text));
+      });
+      this.player = options.widgets.player;
+      var self = this;
+      this.element().click(function() {
+         self.player.callMenu(this.controls[self.text()]);
+      });
+   }
+});
