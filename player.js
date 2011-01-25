@@ -80,7 +80,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       });
       this.player = options.widgets.player;      
       this.element().click(function() {
-         self.player.callMenu(self.controls[self.text()]);
+         self.player.callMenu(self.controls[this.text()]);
       });
    }
 });
