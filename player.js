@@ -68,16 +68,20 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
    },
    
    handleReady : function(options) {
-      for(var i in options.versions) {
-         var version = options.versions[i];
-         this.versions[version.id] = version;
-         this.element().append($(document.createElement('option')).val(version.id).text(version.name));
+      if(options.versions) {    
+         for(var i in options.versions) {
+            var version = options.versions[i];
+            this.versions[version.id] = version;
+            this.element().append($(document.createElement('option')).val(version.id).text(version.name));
+         }
+         this.player = options.widgets.player;
+         var self = this;
+         this.element().change(function() {
+            self.player.load(self.value(), self.versions[self.value()].image);
+         });
+      } else {
+         this.element().hide();
       }
-      this.player = options.widgets.player;
-      var self = this;
-      this.element().change(function() {
-         self.player.load(self.value(), self.versions[self.value()].image);
-      });
    }
 });
 
