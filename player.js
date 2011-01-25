@@ -43,6 +43,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
       this.element().empty().append(embed);
       return this;
+   },
+
+   callMenu: function(type) {
+      this.element().callMenu(type);
    }
 });
 
@@ -77,9 +81,10 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
          self.controls[text] = type;
-         self.element().append($(document.createElement('a')).attr('href', '#').text(text)).click(function() {
-            self.player.element().callMenu(self.controls[$(this).text()]);
-         });
+         self.element().append($(document.createElement('a')).attr('href', '#').text(text).click(function() {
+               self.player.callMenu(self.controls[$(this).text()]);
+            })
+         );
       });
    }
 });
