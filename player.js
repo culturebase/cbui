@@ -38,6 +38,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    play : function() {
       var self = this;
       this.embed = $(document.createElement('embed'))
+         .attr('id', self.options.id)
          .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/td' + self.options.id + '/' + self.options.config)
          .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
          .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
@@ -48,9 +49,14 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    callMenu: function(type) {
       var self = this;
       if (!this.embed) self.play();
-      this.embed.load(function() {
+      try {
          document.getElementById($(this).attr('id')).callMenu(type);
-      });
+      } catch(e) {
+         // resume
+      }
+      setTimeout(function () {
+         self.callMenu(type);
+      }, 100);
    }
 });
 
