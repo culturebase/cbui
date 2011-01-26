@@ -347,7 +347,9 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
    
    constructor : function(element) {
       this.options = {};
-      this.options.language = jQuery.CbWidgetRegistry.language;
+      if (jQuery.CbWidgetRegistry.language) {
+         this.options.language = jQuery.CbWidgetRegistry.language;
+      }
       
       this.pivot = new CbElementPivot(element);
       this.name_field = this.pivot.child;

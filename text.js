@@ -50,9 +50,13 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
    
    handleShow : function(params) {
       this.base();
-      for (pos in this.texts) {
-         if (this.texts[pos] == params.label) {
-            this.cycler.show(pos);
+      if (typeof(params.label) == 'number') {
+         this.cycler.show(params.label);
+      } else {
+         for (pos in this.texts) {
+            if (this.texts[pos] == params.label) {
+               this.cycler.show(pos);
+            }
          }
       }
    },

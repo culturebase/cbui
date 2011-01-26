@@ -65,6 +65,7 @@ jQuery.CbWidgetRegistry = {
    changeLanguage : function(language, context) {
       var labels = [];
       this.language = language;
+      if (!this.language) return; // translation disabled
       var self = this;
       
       /* collect labels */
