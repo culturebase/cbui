@@ -53,7 +53,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       var self = this;
       if (!self.embed) self.play();
       try {
-         document.getElementById(self.embed.attr('id')).sendEvent(event);
+         self.getFlashMovieObject(self.embed.attr('id')).sendEvent(event);
          return;
       } catch(e) {
          // resume
@@ -67,7 +67,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       var self = this;
       if (!self.embed) self.play();
       try {
-         document.getElementById(self.embed.attr('id')).callMenu(type);
+         self.getFlashMovieObject(self.embed.attr('id')).callMenu(type);
          return;
       } catch(e) {
          // resume
@@ -75,6 +75,15 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       setTimeout(function () {
          self.callMenu(type);
       }, 100);
+   },
+
+   getFlashMovieObject: function (_movieName)	{
+      if (window.document[_movieName]) {
+         return window.document[_movieName];
+      } else if (navigator.appName.indexOf("Microsoft Internet") == -1 && document.embeds && document.embeds[_movieName])  {
+         return document.embeds[_movieName];
+      }
+      return document.getElementById(_movieName);
    }
 });
 
