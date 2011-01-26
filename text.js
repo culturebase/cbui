@@ -56,11 +56,15 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
          for (pos in this.texts) {
             if (this.texts[pos] == params.label) {
                this.cycler.show(pos);
+               break;
             }
          }
       }
    },
-      
+
+   numTexts : function() {
+      return this.cycler.elements.length;
+   },
    
    /**
     * show the text belonging to the given label, provided it is available.
