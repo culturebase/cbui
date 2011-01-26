@@ -32,8 +32,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             .attr('src', image)
             .attr('width', self.options.width).attr('height', self.options.height)
             .click(function() {
-               self.play();
-               self.sendEvent('PLAY');
+               self.run();
             })
       );
    },
@@ -47,6 +46,13 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
       this.element().empty().append(this.embed);
       return this;
+   },
+
+   run: function(id) {
+      this.options.id = id;
+      var self = this;
+      if (!self.embed) self.play();
+      self.sendEvent('PLAY');
    },
 
    sendEvent: function(event) {
@@ -103,7 +109,8 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          this.player = options.widgets.player;
          var self = this;
          this.element().change(function() {
-            self.player.load(self.value(), self.versions[self.value()].image);
+            //self.player.load(self.value(), self.versions[self.value()].image);
+            self.player.run(self.value());
          });
       } else {
          this.element().hide();
