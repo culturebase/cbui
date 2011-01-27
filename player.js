@@ -103,11 +103,13 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          this.player = options.widgets.player;
          var self = this;
          this.element().change(function() {
-            //self.player.load(self.value(), self.versions[self.value()].image);
-            self.options.id = self.value();
-            self.player.play();
-            if(options.versions_autoplay == 1)
+            if(options.versions_autoplay == 1) {
+               self.player.options.id = self.value();
+               self.player.play();
                self.sendEvent('PLAY');
+            }
+            else
+               self.player.load(self.value(), self.versions[self.value()].image);
          });
       } else {
          this.element().hide();
