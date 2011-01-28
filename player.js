@@ -1,6 +1,7 @@
 jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    defaultOptions : {
       image : '',
+      play_icon : '',
       player_root : '/player40/',
       config : '_default',
       allow_fullscreen : true,
@@ -19,15 +20,16 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
 
    handleReady : function(options) {
       this.options = jQuery.extend({}, this.defaultOptions, options);
-      this.load(options.id, options.image);
+      this.load(options.id, options.image, options.play_icon);
       return this;
    },
    
-   load : function(id, image) {
+   load : function(id, image, play_icon) {
       this.options.id = id;
       this.options.image = image;
+      this.options.play_icon = play_icon;
       var self = this;
-      this.element().empty().append(
+      this.element().css({position:'relative'}).empty().append(
             jQuery(document.createElement('img'))
             .attr('src', image)
             .attr('width', self.options.width).attr('height', self.options.height)
@@ -36,6 +38,14 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
                self.sendEvent('PLAY');
             })
       );
+      if(this.options.play_icon)
+         this.element().append(
+            jQuery(document.createElement('img'))
+            .attr('src', play_icon)
+            .css({
+               position:'absolute', top: '50%'
+            })
+         );
    },
    
    play : function(id) {
