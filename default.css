@@ -53,9 +53,9 @@
 
 .__CbUiTextButton {
    border: 1px solid #000000;
-   border-radius: 2px 2px 2px 2px;
    -moz-border-radius: 2px 2px 2px 2px;
    -webkit-border-radius: 2px 2px 2px 2px;
+   border-radius: 2px 2px 2px 2px;
    background-color: #00AD43;
    color: #FFFFFF;
    font-weight: bold;
@@ -91,9 +91,9 @@
    border: 2px solid #B40000;
    position: absolute;
    padding: 35px 20px;
-   border-radius: 8px;
    -moz-border-radius: 8px;
    -webkit-border-radius: 8px;
+   border-radius: 8px;
 }
 
 .__CbUiLoader {
