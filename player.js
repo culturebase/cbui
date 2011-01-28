@@ -40,7 +40,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
                self.sendEvent('PLAY');
             })
       );
-      if(this.options.play_icon)
+      if(this.options.play_icon != '')
          this.element().append(
             jQuery(document.createElement('img'))
             .attr('src', play_icon)
