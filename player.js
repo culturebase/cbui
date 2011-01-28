@@ -45,7 +45,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             jQuery(document.createElement('img'))
             .attr('src', play_icon)
             .css({
-               position:'absolute', 
+               position:'absolute',
+               width: self.options.play_icon_width,
+               height: self.options.play_icon_height,
                top: ((self.options.height/2)-(self.options.play_icon_height/2)),
                left: ((self.options.width/2)-(self.options.play_icon_width/2))
             }).click(function() {
