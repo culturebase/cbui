@@ -2,6 +2,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    defaultOptions : {
       image : '',
       play_icon : '',
+      play_icon_width : 42,
+      play_icon_height : 42,
       player_root : '/player40/',
       config : '_default',
       allow_fullscreen : true,
@@ -43,7 +45,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             jQuery(document.createElement('img'))
             .attr('src', play_icon)
             .css({
-               position:'absolute', top: '50%'
+               position:'absolute', 
+               top: ((self.options.height/2)-self.options.play_icon_width),
+               left: ((self.options.width/2)-self.options.play_icon_height)
             })
          );
    },
