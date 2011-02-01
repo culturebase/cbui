@@ -37,7 +37,6 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             .attr('width', self.options.width).attr('height', self.options.height)
             .click(function() {
                self.play();
-               self.sendEvent('PLAY');
             })
       );
       if(this.options.play_icon) {
@@ -52,7 +51,6 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
                left: ((self.options.width/2)-(self.options.play_icon_width/2))
             }).click(function() {
                self.play();
-               self.sendEvent('PLAY');
             })
          );
       }
@@ -68,6 +66,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
          .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
       this.element().empty().append(this.embed);
+      self.sendEvent('PLAY');
       return this;
    },
 
@@ -127,7 +126,6 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          this.element().change(function() {
             if(options.versions_autoplay == 1) {               
                self.player.play(self.value());
-               self.player.sendEvent('PLAY');
             }
             else
                self.player.load(self.value(), self.versions[self.value()].image);
