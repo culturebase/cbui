@@ -36,13 +36,15 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          play_icon_width : 42,
          play_icon_height : 42,
          player_root : '/player40/',
+         player_host : 'http://dev1.heimat.de',
          config : '_default',
          allow_fullscreen : true,
          allow_script_access : 'always',
-         embed_source : 'flash/player.swf',
+         embed_source : 'flash/player.swf',         
          width : 550, // width and height are necessary to make it play nice with IE
          height : 350,
-         id : 0
+         id : 0,
+         buy_button_url: ''
       },
 
       constructor : function(element) {
@@ -99,9 +101,59 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          this.element().empty().append(this.embed);
          sendEvent.call(this, 'PLAY'); // It is important to use .call(this, ...), since sendEvent() does not belong to the scope of this instance.
          return this;
+      },
+
+      // CbEvent handler for playerControls Widget
+
+      handleBuy: function() {
+         window.open(this.options.buy_button_url, 'cbshop',
+            'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
+         );
+      },
+
+      handleContact: function() {
+         sendEvent.call(this, 'CONTACT');
+      },
+
+      handleEmbed: function() {
+         sendEvent.call(this, 'EMBED');
+      },
+
+      handleInfo: function() {
+         sendEvent.call(this, 'INFO');
+      },
+
+      handleMail: function() {
+         sendEvent.call(this, 'MAIL');
+      },
+
+      handleMenu: function() {
+         sendEvent.call(this, 'MENU');
+      },
+
+      handlePopup: function() {
+         var url = this.options.player_host+this.options.player_root+this.options.config+'_popup';
+         window.open(url, 'cbplayer',
+            'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
+         );
+      },
+      
+      handleZoom: function() {
+         // TODO
       }
    };
-}()));
+}()), {
+   init : function() {
+      jQuery.CbEvent(this, 'contact');
+      jQuery.CbEvent(this, 'embed');
+      jQuery.CbEvent(this, 'info');
+      jQuery.CbEvent(this, 'mail');
+      jQuery.CbEvent(this, 'menu');
+      jQuery.CbEvent(this, 'popup');
+      jQuery.CbEvent(this, 'zoom');
+      this.base();
+   }
+});
 
 jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
    constructor : function(element) {
@@ -141,9 +193,9 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       var self = this;
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
-         self.controls[text] = type;
+         self.controls[text] = type.toUpperCase();
          self.element().append($(document.createElement('a')).attr('href', '#').text(text).click(function() {
-               self.player.callMenu(self.controls[$(this).text()]);
+               self.player.trigger(type);
             })
          );
       });
