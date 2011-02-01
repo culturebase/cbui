@@ -136,6 +136,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          window.open(url, 'cbplayer',
             'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
          );
+         return false;
       },
       
       handleZoom: function() {
