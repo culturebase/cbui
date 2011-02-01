@@ -134,7 +134,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       handlePopup: function() {
          var url = this.options.player_host+this.options.player_root+'/td'+this.options.id+'/'+this.options.config+'_popup';
          window.open(url, 'cbplayer',
-            'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
+            'width=800,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
          );
          return false;
       },
