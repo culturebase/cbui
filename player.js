@@ -21,7 +21,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var t;
          if (!self.embed_element) self.play();
          try {            
-            document.getElementById(self.embed_element.attr('id')).callMenu(self, type);
+            document.getElementById(self.embed_element.attr('id')).callMenu(type);
             clearTimeout(t);
             return;
          } catch(e) {
