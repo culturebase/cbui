@@ -195,7 +195,8 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
          self.controls[text] = type.toUpperCase();
-         self.element().append($(document.createElement('a')).attr('href', '#').text(text).click(function() {
+         self.element().append($(document.createElement('a')).
+               attr('href', '#').attr('class', type).text(text).click(function() {
                self.player.trigger(type);
             })
          );
