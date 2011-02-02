@@ -3,9 +3,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    var sendEvent = function(event) {
          var self = this;
          var t;
-         if (!self.embed_element) self.play();
+         if (!self.embed) self.play();
          try {            
-            document.getElementById(self.embed_element.attr('id')).sendEvent(event);
+            document.getElementById(self.embed.attr('id')).sendEvent(event);
             clearTimeout(t);
             return;
          } catch(e) {
@@ -19,9 +19,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    var callMenu = function(type) {
          var self = this;
          var t;
-         if (!self.embed_element) self.play();
+         if (!self.embed) self.play();
          try {            
-            document.getElementById(self.embed_element.attr('id')).callMenu(type);
+            document.getElementById(self.embed.attr('id')).callMenu(type);
             clearTimeout(t);
             return;
          } catch(e) {
@@ -97,45 +97,45 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var self = this;
          if(id)
             this.options.id = id;
-         this.embed_element = $(document.createElement('embed'))
+         this.embed = $(document.createElement('embed'))
             .attr('id', self.options.id)
             .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/td' + self.options.id + '/' + self.options.config)
             .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
-         this.element().empty().append(this.embed_element);
+         this.element().empty().append(this.embed);
          sendEvent.call(this, 'PLAY'); // It is important to use .call(this, ...), since sendEvent() does not belong to the scope of this instance.
          return this;
       },
 
       // CbEvent handler for playerControls Widget
 
-      handleBuy: function() {
+      handleBuyControl: function() {
          window.open(this.options.buy_url, 'cbshop',
             'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
          );
       },
 
-      handleContact: function() {
+      handleContactControl: function() {
          callMenu.call(this, 'CONTACT');
       },
 
-      handleEmbed: function() {
+      handleEmbedControl: function() {
          callMenu.call(this, 'EMBED');
       },
 
-      handleInfo: function() {
+      handleInfoControl: function() {
          callMenu.call(this, 'INFO');
       },
 
-      handleMail: function() {
+      handleMailControl: function() {
          callMenu.call(this, 'MAIL');
       },
 
-      handleMenu: function() {
+      handleMenuControl: function() {
          callMenu.call(this, 'MENU');
       },
 
-      handlePopup: function() {
+      handlePopupControl: function() {
          var url = this.options.player_host+this.options.player_root+'td'+this.options.id+'/'+this.options.config+'_popup';
          window.open(url, 'cbplayer',
             'width=800,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
@@ -143,19 +143,19 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          return false;
       },
       
-      handleZoom: function() {
+      handleZoomControl: function() {
          // TODO
       }
    };
 }()), {
    init : function() {
-      jQuery.CbEvent(this, 'contact');
-      jQuery.CbEvent(this, 'embed');
-      jQuery.CbEvent(this, 'info');
-      jQuery.CbEvent(this, 'mail');
-      jQuery.CbEvent(this, 'menu');
-      jQuery.CbEvent(this, 'popup');
-      jQuery.CbEvent(this, 'zoom');
+      jQuery.CbEvent(this, 'contactControl');
+      jQuery.CbEvent(this, 'embedControl');
+      jQuery.CbEvent(this, 'infoControl');
+      jQuery.CbEvent(this, 'mailControl');
+      jQuery.CbEvent(this, 'menuControl');
+      jQuery.CbEvent(this, 'popupControl');
+      jQuery.CbEvent(this, 'zoomControl');
       this.base();
    }
 });
@@ -202,7 +202,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
             a.addClass('inactive');
          else
             a.click(function() {
-               self.player.trigger(type);
+               self.player.trigger(type+'Control');
             });
          self.element().append(a);
       });
