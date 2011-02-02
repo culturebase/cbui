@@ -2,7 +2,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    // "private members"
    var sendEvent = function(event) {
          var self = this;
-         if (!self.embed) self.play();
+         self.play();
          try {            
             document.getElementById(self.embed.attr('id')).sendEvent(event);
             return;
@@ -16,7 +16,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
    var callMenu = function(type) {
          var self = this;
-         if (!self.embed) self.play();
+         self.play();
          try {            
             document.getElementById(self.embed.attr('id')).callMenu(self, type);
             return;
