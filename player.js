@@ -1,9 +1,9 @@
 jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    // "private members"
    var sendEvent = function(event) {
-         var self = this;
-         if (!self.embed) self.play();
+         var self = this;         
          try {
+            if (!self.embed) self.play();
             document.getElementById(self.embed.attr('id')).sendEvent(event);
             return;
          } catch(e) {
@@ -15,9 +15,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       },
 
       callMenu = function(type) {
-         var self = this;
-         if (!self.embed) self.play();
+         var self = this;         
          try {
+            if (!self.embed) self.play();
             document.getElementById(self.embed.attr('id')).callMenu(self, type);
             return;
          } catch(e) {
