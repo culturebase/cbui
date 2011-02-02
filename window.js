@@ -172,6 +172,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.base(element);
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
+      return this;
    },
    
    /**
@@ -196,6 +197,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       } else {
          this.loadFrame(options);
       }
+      return this;
    },
 
    /**
@@ -214,7 +216,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
          self.destroy();
       });
       
-      this.trigger('hide', options);
+      return this.trigger('hide', options);
    },
    
    /**
@@ -235,7 +237,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       
       if (this.insertElement) this.element().remove();
 
-      this.base();
+      return this.base();
    },
    
    /**
@@ -298,6 +300,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
             if (key.keyCode == 27) self.close(options);
          });
       }
+      return this;
    },
    
    /**
@@ -329,6 +332,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       } else {
          this.postLoadFrame(options);
       }
+      return this;
    },
    
    /**
