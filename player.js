@@ -2,28 +2,32 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    // "private members"
    var sendEvent = function(event) {
          var self = this;
+         var t;
          self.play();
          try {            
             document.getElementById(self.embed.attr('id')).sendEvent(event);
+            clearTimeout(t);
             return;
          } catch(e) {
             // continue
          }
-         setTimeout(function () {
+         var t = setTimeout(function () {
             sendEvent.call(self, event);
          }, 100);
       };
 
    var callMenu = function(type) {
          var self = this;
+         var t;
          self.play();
          try {            
             document.getElementById(self.embed.attr('id')).callMenu(self, type);
+            clearTimeout(t);
             return;
          } catch(e) {
             // resume
          }
-         setTimeout(function () {
+         var t = setTimeout(function () {
             callMenu.call(self, type);
          }, 100);
       };
