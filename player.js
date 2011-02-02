@@ -112,23 +112,23 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       },
 
       handleContact: function() {
-         sendEvent.call(this, 'CONTACT');
+         callMenu.call(this, 'CONTACT');
       },
 
       handleEmbed: function() {
-         sendEvent.call(this, 'EMBED');
+         callMenu.call(this, 'EMBED');
       },
 
       handleInfo: function() {
-         sendEvent.call(this, 'INFO');
+         callMenu.call(this, 'INFO');
       },
 
       handleMail: function() {
-         sendEvent.call(this, 'MAIL');
+         callMenu.call(this, 'MAIL');
       },
 
       handleMenu: function() {
-         sendEvent.call(this, 'MENU');
+         callMenu.call(this, 'MENU');
       },
 
       handlePopup: function() {
