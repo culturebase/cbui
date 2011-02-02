@@ -4,7 +4,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var self = this;
          if (!self.embed_element) self.play();
          try {            
-            document.getElementById(self.embed.attr('id')).sendEvent(event);
+            document.getElementById(self.embed_element.attr('id')).sendEvent(event);
             return;
          } catch(e) {
             // continue
@@ -18,7 +18,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var self = this;
          if (!self.embed_element) self.play();
          try {            
-            document.getElementById(self.embed.attr('id')).callMenu(self, type);
+            document.getElementById(self.embed_element.attr('id')).callMenu(self, type);
             return;
          } catch(e) {
             // resume
