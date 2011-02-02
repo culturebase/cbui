@@ -193,13 +193,14 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       var self = this;
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
-         var a = $(document.createElement('a')).attr('href', 'javascript://').addClass(type);
+         var a = $(document.createElement('a')).attr('href', 'javascript://').text(text).addClass(type);
          if(type == 'buy' && self.player.options.buy_url == '')
             a.addClass('inactive');
-         self.element().append(a.text(text).click(function() {
+         else
+            a.click(function() {
                self.player.trigger(type);
-            })
-         );
+            });
+         self.element().append(a);
       });
    }
 });
