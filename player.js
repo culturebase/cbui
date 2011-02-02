@@ -2,32 +2,28 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    // "private members"
    var sendEvent = function(event) {
          var self = this;
-         var t;
-         self.play();
+         if (!self.embed_element) self.play();
          try {            
             document.getElementById(self.embed.attr('id')).sendEvent(event);
-            clearTimeout(t);
             return;
          } catch(e) {
             // continue
          }
-         var t = setTimeout(function () {
+         setTimeout(function () {
             sendEvent.call(self, event);
          }, 100);
       };
 
    var callMenu = function(type) {
          var self = this;
-         var t;
-         self.play();
+         if (!self.embed_element) self.play();
          try {            
             document.getElementById(self.embed.attr('id')).callMenu(self, type);
-            clearTimeout(t);
             return;
          } catch(e) {
             // resume
          }
-         var t = setTimeout(function () {
+         setTimeout(function () {
             callMenu.call(self, type);
          }, 100);
       };
@@ -97,12 +93,12 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var self = this;
          if(id)
             this.options.id = id;
-         this.embed = $(document.createElement('embed'))
+         this.embed_element = $(document.createElement('embed'))
             .attr('id', self.options.id)
             .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/td' + self.options.id + '/' + self.options.config)
             .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
-         this.element().empty().append(this.embed);
+         this.element().empty().append(this.embed_element);
          sendEvent.call(this, 'PLAY'); // It is important to use .call(this, ...), since sendEvent() does not belong to the scope of this instance.
          return this;
       },
