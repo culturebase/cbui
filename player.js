@@ -44,7 +44,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          width : 550, // width and height are necessary to make it play nice with IE
          height : 350,
          id : 0,
-         buy_button_url: ''
+         buy_url: ''
       },
 
       constructor : function(element) {
@@ -106,7 +106,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       // CbEvent handler for playerControls Widget
 
       handleBuy: function() {
-         window.open(this.options.buy_button_url, 'cbshop',
+         window.open(this.options.buy_url, 'cbshop',
             'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
          );
       },
@@ -194,7 +194,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
          var a = $(document.createElement('a')).attr('href', 'javascript://').addClass(type);
-         if(type == 'buy' && self.player.buy_button_url == '')
+         if(type == 'buy' && self.player.buy_url == '')
             a.addClass('inactive');
          self.element().append(a.text(text).click(function() {
                self.player.trigger(type);
