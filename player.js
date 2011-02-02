@@ -194,7 +194,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
          var a = $(document.createElement('a')).attr('href', 'javascript://').addClass(type);
-         if(type == 'buy' && self.player.buy_url == '')
+         if(type == 'buy' && self.player.options.buy_url == '')
             a.addClass('inactive');
          self.element().append(a.text(text).click(function() {
                self.player.trigger(type);
