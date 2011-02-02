@@ -186,7 +186,6 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
 
 jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
-      this.controls = {};
       return this.base(element);
    },
 
@@ -194,9 +193,10 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       var self = this;
       this.player = options.widgets.player;
       $.each(options.controls, function(type,text){
-         self.controls[text] = type.toUpperCase();
-         self.element().append($(document.createElement('a')).
-               attr('href', '#').attr('class', type).text(text).click(function() {
+         var a = $(document.createElement('a')).attr('href', 'javascript://').addClass(type);
+         if(type == 'buy' && self.player.buy_button_url == '')
+            a.addClass('inactive');
+         self.element().append(a.text(text).click(function() {
                self.player.trigger(type);
             })
          );
