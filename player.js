@@ -40,7 +40,6 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          play_icon_width : 42,
          play_icon_height : 42,
          player_root : '/player40/',
-         player_host : 'http://dev1.heimat.de',
          config : '_default',
          allow_fullscreen : true,
          allow_script_access : 'always',
@@ -136,7 +135,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       },
 
       handlePopupControl: function() {
-         var url = this.options.player_host+this.options.player_root+'td'+this.options.id+'/'+this.options.config+'_popup';
+         var url = this.options.player_root+'td'+this.options.id+'/'+this.options.config+'_popup';
          window.open(url, 'cbplayer',
             'width=800,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
          );
