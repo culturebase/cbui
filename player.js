@@ -227,6 +227,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          var img = $(document.createElement('img')).attr('src', src);
          slideshow.find('.slider').append(img);
       });
-      self.element().append(slideshow);
+      self.element().append(slideshow).hide();
    }
 });
