@@ -14,9 +14,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          t = setTimeout(function () {
             sendEvent.call(self, event);
          }, 100);
-      };
-
-   var callMenu = function(type) {
+      },
+      
+      callMenu = function(type) {
          var self = this;
          var t;
          if (!self.embed) self.play();
