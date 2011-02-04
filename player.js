@@ -207,3 +207,26 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       });
    }
 });
+
+jQuery.CbWidget.playerSlideshow = jQuery.CbWidget.widget.extend({
+   constructor : function(element) {
+      return this.base(element);
+   },
+
+   handleReady : function(options) {
+      var self = this;
+      this.player = options.widgets.player;
+      var slideshow = $('<div class="slideshow">\
+                           <div class="left-button"></div>\
+                           <div class="right-button"></div>\
+                           <div class="slider-wrap">\
+                              <div class="slider"></div>\
+                           </div>\
+                        </div>');
+      $.each(options.slides, function(src){
+         var img = $(document.createElement('img')).attr('src', src);
+         slideshow.find('.slider').append(img);
+      });
+      self.element().empty().append(slideshow);
+   }
+});
