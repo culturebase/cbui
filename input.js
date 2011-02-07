@@ -281,7 +281,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
     * @return the value of the currently active field
     */
    value : function(val) {
-      if (val !== undefined) {
+      if (typeof(val) != 'undefined') {
          this.cycler.elements.val(val);
          return val;
       } else {
@@ -385,14 +385,22 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
    },
    
    value : function(val) {
-      return this.name_field.val(val);
+      if (typeof(val) == 'undefined') {
+         return this.name_field.val();
+      } else {
+         return this.name_field.val(val);
+      }
    },
    
    /**
     * get or set the ID associated with the current value of the field
     */
    valueId : function(val) {
-      return jQuery(this.options.putIdInto).val(val);
+      if (typeof(val) == 'undefined') {
+         return jQuery(this.options.putIdInto).val();
+      } else {
+         return jQuery(this.options.putIdInto).val(val);
+      }
    },
    
    handleDestroy : function() {
