@@ -22,7 +22,11 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     * @return the value of the field
     */
    value : function(val) {
-      return this.element().val(val);
+      if (typeof(val) == 'undefined') {
+         return this.element().val();
+      } else {
+         return this.element().val(val);
+      }
    },
    
    /**

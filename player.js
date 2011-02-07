@@ -170,8 +170,8 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
       if(options.versions != '' && options.versions.length > 1) {
          for(var i in options.versions) {
             var version = options.versions[i];
-            this.versions[version.id] = version;
-            this.element().append($(document.createElement('option')).val(version.id).text(version.name));
+            self.versions[version.id] = version;
+            self.element().append($(document.createElement('option')).val(version.id).text(version.name));
          }
          self.player = options.widgets.player;
          self.element().change(function() {
