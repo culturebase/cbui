@@ -68,16 +68,17 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          this.options.play_icon = play_icon;
          this.options.active = active;
          var self = this;
-         this.element().css({position:'relative'}).empty().append(
-               jQuery(document.createElement('img'))
+         var el = jQuery(document.createElement('img'))
                .attr('src', image)
-               .attr('width', self.options.width).attr('height', self.options.height)
-               .click(function() {
-                  self.play();
-               })
-         );
+               .attr('width', self.options.width).attr('height', self.options.height);
+         if (active) {
+            el.click(function() {
+               self.play();
+            });
+         }
+         this.element().css({position:'relative'}).empty().append(el);
          if(this.options.play_icon) {
-            var el = jQuery(document.createElement('img'))
+            el = jQuery(document.createElement('img'))
                .attr('src', play_icon)
                .css({
                   position:'absolute',
