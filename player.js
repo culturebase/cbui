@@ -62,10 +62,11 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          return this;
       },
 
-      load : function(id, image, play_icon) {
+      load : function(id, image, play_icon, active) {
          this.options.id = id;
          this.options.image = image;
          this.options.play_icon = play_icon;
+         this.options.active = active;
          var self = this;
          this.element().css({position:'relative'}).empty().append(
                jQuery(document.createElement('img'))
@@ -76,8 +77,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
                })
          );
          if(this.options.play_icon) {
-            this.element().append(
-               jQuery(document.createElement('img'))
+            var el = jQuery(document.createElement('img'))
                .attr('src', play_icon)
                .css({
                   position:'absolute',
@@ -85,10 +85,13 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
                   height: self.options.play_icon_height,
                   top: ((self.options.height/2)-(self.options.play_icon_height/2)),
                   left: ((self.options.width/2)-(self.options.play_icon_width/2))
-               }).click(function() {
+               });
+            if (this.options.active) {
+               el.click(function() {
                   self.play();
-               })
-            );
+               });
+            }
+            this.element().append(el);
          }
       },
 
@@ -177,10 +180,11 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          }
          self.player = options.widgets.player;
          self.element().change(function() {
-            if(options.versions_autoplay == 1) {               
+            var version = self.versions[self.value()];
+            if(options.versions_autoplay == 1 && version.active) {               
                self.player.play(self.value());
             } else {
-               self.player.load(self.value(), self.versions[self.value()].image);
+               self.player.load(self.value(), version.image, version.active ? options.play_icon : options.na_icon , version.active);
             }
          });
       } else {
