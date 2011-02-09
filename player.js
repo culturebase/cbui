@@ -68,17 +68,17 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          this.options.play_icon = play_icon;
          this.options.active = active;
          var self = this;
-         var el = jQuery(document.createElement('img'))
+         this.element().css({position:'relative'}).empty().append(
+               jQuery(document.createElement('img'))
                .attr('src', image)
-               .attr('width', self.options.width).attr('height', self.options.height);
-         if (active) {
-            el.click(function() {
-               self.play();
-            });
-         }
-         this.element().css({position:'relative'}).empty().append(el);
+               .attr('width', self.options.width).attr('height', self.options.height)
+               .click(function() {
+                  if (active) self.play();
+               })
+         );
          if(this.options.play_icon) {
-            el = jQuery(document.createElement('img'))
+            this.element().append(
+               jQuery(document.createElement('img'))
                .attr('src', play_icon)
                .css({
                   position:'absolute',
@@ -86,13 +86,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
                   height: self.options.play_icon_height,
                   top: ((self.options.height/2)-(self.options.play_icon_height/2)),
                   left: ((self.options.width/2)-(self.options.play_icon_width/2))
-               });
-            if (this.options.active) {
-               el.click(function() {
-                  self.play();
-               });
-            }
-            this.element().append(el);
+               }).click(function() {
+                  if (active) self.play();
+               })
+            );
          }
       },
 
@@ -185,7 +182,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
             if(options.versions_autoplay == 1 && version.active) {               
                self.player.play(self.value());
             } else {
-               self.player.load(self.value(), version.image, version.active ? options.play_icon : options.na_icon , version.active);
+               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon) , version.active);
             }
          });
       } else {
