@@ -222,9 +222,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
    handleReady : function(options) {
       var self = this;
-      self.element().append('slides');
-      /*
-      this.player = options.widgets.player;
       var slideshow = $('<div class="slideshow"></div>\
                            <div class="left-button"></div>\
                            <div class="right-button"></div>\
@@ -232,11 +229,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                               <div class="slider"></div>\
                            </div>\
                         </div>');
-      $.each(options.slides, function(src){
+      $.each(options.slides, function(i, src){
          var img = $(document.createElement('img')).attr('src', src);
          slideshow.find('.slider').append(img);
       });
       self.element().append(slideshow);
-      */
    }
 });
