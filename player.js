@@ -244,6 +244,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                self.player.play();
             });
          }
+         else {
+            img.click(function() {
+               self.player.load(null, img.attr('src'));
+            });
+         }
          slideshow.find('.slider').append(img);
       });
       self.element().append(slideshow);
