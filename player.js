@@ -229,6 +229,21 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                          </div>');
       $.each(options.slides, function(i, src){
          var img = $(document.createElement('img')).attr('src', src);
+         // first image of slide is video trigger
+         if(i == 0) {            
+            var icon = jQuery(document.createElement('img')).attr('src', options.play_icon);
+            icon.css({
+                  position:'absolute',
+                  top: ((img.height()/2)-(icon.height()/2)),
+                  left: ((img.width()/2)-(icon.width()/2))
+               }).click(function() {
+                  self.player.play();
+               });
+            icon.insertBefore(img);
+            img.addClass('video-trigger').click(function() {
+               self.player.play();
+            });
+         }
          slideshow.find('.slider').append(img);
       });
       self.element().append(slideshow);
