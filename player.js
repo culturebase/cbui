@@ -59,7 +59,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
       handleReady : function(options) {
          this.options = jQuery.extend({}, this.defaultOptions, options);
-         this.load(options.id, options.image, (options.active ? options.play_icon : options.na_icon), options.active);
+         this.load(this.options.id, this.options.image, 
+               (this.options.active ? this.options.play_icon : this.options.na_icon),
+               this.options.active);
          return this;
       },
 
