@@ -37,8 +37,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       defaultOptions : {
          image : '',
          play_icon : '',
-         play_icon_width : 42,
-         play_icon_height : 42,
+         play_icon_width : 100,
+         play_icon_height : 100,
          player_root : '/player40/',
          config : '_default',
          allow_fullscreen : true,
@@ -223,12 +223,17 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
    handleReady : function(options) {
       var self = this;
       this.player = options.widgets.player;
-      var slideshow = $('<div class="slideshow"></div>');
+      var slideshow = $('<div class="slideshow"></div>\
+                           <div class="left-button"></div>\
+                           <div class="right-button"></div>\
+                           <div class="slider-wrap">\
+                              <div class="slider"></div>\
+                           </div>\
+                        </div>');
       $.each(options.slides, function(src){
          var img = $(document.createElement('img')).attr('src', src);
          slideshow.find('.slider').append(img);
       });
-
       self.element().append(slideshow);
    }
 });
