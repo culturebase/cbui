@@ -47,7 +47,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          width : 550, // width and height are necessary to make it play nice with IE
          height : 350,
          id : 0,
-         buy_url: ''
+         buy_url: '',
+         active : true
       },
 
       constructor : function(element) {
@@ -58,7 +59,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
       handleReady : function(options) {
          this.options = jQuery.extend({}, this.defaultOptions, options);
-         this.load(options.id, options.image, options.play_icon);
+         this.load(options.id, options.image, (options.active ? options.play_icon : options.na_icon), options.active);
          return this;
       },
 
