@@ -232,6 +232,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                          <div class="slider-wrap">\
                            <div class="slider"></div>\
                          </div>');
+      var slider = slideshow.find('.slider');
       if(options.slides.length >= 1) {
          $.each(options.slides, function(i, src){
             var img = $(document.createElement('img')).attr('src', src);
@@ -247,7 +248,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                .click(function() {
                   self.player.play();
                })
-               .insertBefore(img);
+               .appendTo(slider);
                
                img.addClass('video-trigger').click(function() {
                   self.player.play();
@@ -258,7 +259,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   self.player.load(self.player.options.id, img.attr('src'), false);
                });
             }
-            slideshow.find('.slider').append(img);
+            img.appendTo(slider);
          });
          self.element().append(slideshow);
       }
