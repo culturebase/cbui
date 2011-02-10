@@ -226,6 +226,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
    handleReady : function(options) {
       var self = this;
+      this.player = options.widgets.player;
       var slideshow = $('<div class="left-button"></div>\
                          <div class="right-button"></div>\
                          <div class="slider-wrap">\
