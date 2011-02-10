@@ -48,7 +48,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          height : 350,
          id : 0,
          buy_url: '',
-         active : true
+         active : true,
+         id_type : 'td'
       },
 
       constructor : function(element) {
@@ -98,11 +99,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
       play : function(id) {
          var self = this;
-         if(id)
-            this.options.id = id;
+         if(id) this.options.id = id;
          this.embed = $(document.createElement('embed'))
             .attr('id', self.options.id)
-            .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/td' + self.options.id + '/' + self.options.config)
+            .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config)
             .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
          this.element().empty().append(this.embed);
