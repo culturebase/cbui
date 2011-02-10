@@ -240,9 +240,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             if(i == 0) {
                var icon = $(document.createElement('img')).attr('src', options.play_icon);
                icon.css({
+                  display: 'block',
                   position:'absolute',
-                  top: ((img.height()/2)-(icon.height()/2)),
-                  left: ((img.width()/2)-(icon.width()/2))
+                  top: ((img.attr('height')/2)-(icon.attr('height')/2)),
+                  left: ((img.attr('width')/2)-(icon.attr('width')/2)),
+                  'z-index': 2
                })
                .addClass('video-trigger-icon')
                .click(function() {
