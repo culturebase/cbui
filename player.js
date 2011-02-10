@@ -95,7 +95,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
                   top: ((self.options.height/2)-(self.options.play_icon_height/2)),
                   left: ((self.options.width/2)-(self.options.play_icon_width/2))
                }).click(function() {
-                  if (self.options.) self.play();
+                  if (self.options.active) self.play();
                })
             );
          }
