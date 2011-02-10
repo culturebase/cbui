@@ -255,7 +255,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             }
             else {
                img.click(function() {
-                  self.player.load(self.options.id, img.attr('src'), false);
+                  self.player.load(self.player.options.id, img.attr('src'), false);
                });
             }
             slideshow.find('.slider').append(img);
