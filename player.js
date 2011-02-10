@@ -237,22 +237,25 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             var img = $(document.createElement('img')).attr('src', src);
             // first image of slide is video trigger
             if(i == 0) {
-               var icon = jQuery(document.createElement('img')).attr('src', options.play_icon);
+               var icon = $(document.createElement('img')).attr('src', options.play_icon);
                icon.css({
-                     position:'absolute',
-                     top: ((img.height()/2)-(icon.height()/2)),
-                     left: ((img.width()/2)-(icon.width()/2))
-                  }).click(function() {
-                     self.player.play();
-                  });
-               icon.insertBefore(img);
+                  position:'absolute',
+                  top: ((img.height()/2)-(icon.height()/2)),
+                  left: ((img.width()/2)-(icon.width()/2))
+               })
+               .addClass('video-trigger-icon')
+               .click(function() {
+                  self.player.play();
+               })
+               .insertBefore(img);
+               
                img.addClass('video-trigger').click(function() {
                   self.player.play();
                });
             }
             else {
                img.click(function() {
-                  self.player.load(null, img.attr('src'));
+                  self.player.load(self.options.id, img.attr('src'), false);
                });
             }
             slideshow.find('.slider').append(img);
