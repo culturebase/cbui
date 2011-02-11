@@ -315,8 +315,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          $.each(options.slides, function(i, src){
             var img = $(document.createElement('img')).attr('src', src);
             img.css({
-               width: img.attr('width'),
-               height: img.attr('height')
+               width: img.attr('width')+'px',
+               height: img.attr('height')+'px'
             });
             // first image of slide is video trigger
             if(i == 0) {
@@ -324,8 +324,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                icon.css({
                   display: 'block',
                   position:'absolute',
-                  top: ((img.attr('height')/2)-(icon.attr('height')/2)),
-                  left: ((img.attr('width')/2)-(icon.attr('width')/2)),
+                  top: ((img.attr('height')/2)-(icon.attr('height')/2))+'px',
+                  left: ((img.attr('width')/2)-(icon.attr('width')/2))+'px',
                   'z-index': 2
                })
                .addClass('video-trigger-icon')
