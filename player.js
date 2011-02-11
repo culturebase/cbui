@@ -314,6 +314,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       if(options.slides.length >= 1) {
          $.each(options.slides, function(i, src){
             var img = $(document.createElement('img')).attr('src', src);
+            img.css({
+               width: img.attr('width'),
+               height: img.attr('height')
+            });
             // first image of slide is video trigger
             if(i == 0) {
                var icon = $(document.createElement('img')).attr('src', options.play_icon);
@@ -341,6 +345,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             }
             img.appendTo(slider);
          });
+
          slideshow.filmPicSlideshow();
          
          slideshow.find('.left-button, .right-button').hover(function() {
