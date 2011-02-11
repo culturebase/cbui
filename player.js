@@ -236,7 +236,7 @@ $.fn.filmPicSlideshow = function (options) {
       // prepare
       var sliderWidth = 0;
       $(this).find('.slider').children().each(function () {
-         sliderWidth += $(this).outerWidth(true);
+         sliderWidth += $(this).outerWidth();
       })
       $(this).find('.slider').width(sliderWidth);
 
