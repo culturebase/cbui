@@ -314,10 +314,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       if(options.slides.length >= 1) {
          $.each(options.slides, function(i, src){
             var img = $(document.createElement('img')).attr('src', src);
-            img.css({
-               width: img.attr('width')+'px',
-               height: img.attr('height')+'px'
-            });
             // first image of slide is video trigger
             if(i == 0) {
                var icon = $(document.createElement('img')).attr('src', options.play_icon);
@@ -346,17 +342,17 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.appendTo(slider);
          });
 
-         slideshow.filmPicSlideshow();
-         
-         slideshow.find('.left-button, .right-button').hover(function() {
-            $(this).stop().animate({opacity: 0.8}, 200);
-         }, function() {
-            $(this).stop().animate({opacity: 0}, 500);
-         }).animate({opacity: 0.8}, 2000, function() {
-            $(this).animate({opacity: 0}, 2000);
+         slideshow.load(function(){
+            $(this).filmPicSlideshow();
+            $(this).find('.left-button, .right-button').hover(function() {
+               $(this).stop().animate({opacity: 0.8}, 200);
+            }, function() {
+               $(this).stop().animate({opacity: 0}, 500);
+            }).animate({opacity: 0.8}, 2000, function() {
+               $(this).animate({opacity: 0}, 2000);
+            });
+            self.element().append($(this));
          });
-         
-         self.element().append(slideshow);
       }
       else
          self.element().hide();
