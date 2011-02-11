@@ -342,17 +342,17 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.appendTo(slider);
          });
 
-         slideshow.load(function(){
-            $(this).filmPicSlideshow();
-            $(this).find('.left-button, .right-button').hover(function() {
-               $(this).stop().animate({opacity: 0.8}, 200);
-            }, function() {
-               $(this).stop().animate({opacity: 0}, 500);
-            }).animate({opacity: 0.8}, 2000, function() {
-               $(this).animate({opacity: 0}, 2000);
-            });
-            self.element().append($(this));
+         slideshow.filmPicSlideshow();
+         
+         slideshow.find('.left-button, .right-button').hover(function() {
+            $(this).stop().animate({opacity: 0.8}, 200);
+         }, function() {
+            $(this).stop().animate({opacity: 0}, 500);
+         }).animate({opacity: 0.8}, 2000, function() {
+            $(this).animate({opacity: 0}, 2000);
          });
+         
+         self.element().append(slideshow);
       }
       else
          self.element().hide();
