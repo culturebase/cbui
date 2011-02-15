@@ -333,14 +333,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   .appendTo(slider);
 
                img.load(function(){
-                  icon.load(function(){
-                     icon.css({
+                  icon.css({
                         display: 'block',
                         position:'absolute',
                         top: ((img.attr('height')/2)-(icon.height()/2)),
                         left: ((img.attr('width')/2)-(icon.width()/2)),
                         'z-index': 2
-                     });
                   });
                });
 
