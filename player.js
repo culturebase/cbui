@@ -239,9 +239,8 @@ $.fn.filmPicSlideshow = function (options) {
       $(this).find('.slider').children().each(function () {
          sliderWidth += $(this).outerWidth(true);
       })
-      $(this).find('.slider').width(sliderWidth);
       $(this).find('.slider img:last').css('margin-right', 0);
-
+      $(this).find('.slider').width(sliderWidth);
 
       if (sliderWidth <= sliderWrap) {
          $(this).find('.left-button, .right-button').remove();
@@ -325,7 +324,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       var slidePicBase = 'http://data.heimat.de/transform.php?width='+self.player.options.width+'&height='+self.player.options.height+'&do=cropOut&file=';
       if(options.slides.length >= 1) {
          $.each(options.slides, function(i, image){
-            var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original);
+            var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('data-orig-src', image.original);
             // first image of slide is video trigger
             if(i == 0) {
                var iconSrc = options.slides_video_trigger_icon?options.slides_video_trigger_icon:options.play_icon;
@@ -353,7 +352,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             }
             else {
                img.click(function() {
-                  self.player.load(self.player.options.id, slidePicBase+img.attr('orig-src'), false);
+                  self.player.load(self.player.options.id, slidePicBase+img.attr('data-orig-src'), false);
                });
             }
             img.appendTo(slider);
