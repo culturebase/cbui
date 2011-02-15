@@ -313,7 +313,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       var slider = slideshow.find('.slider');
       if(options.slides.length >= 1) {
          $.each(options.slides, function(i, image){
-            var img = $(document.createElement('img')).attr('src', image.thumb).attr('orig-src', image.original);
+            var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original);
             // first image of slide is video trigger
             if(i == 0) {
                var icon = $(document.createElement('img')).attr('src', options.play_icon);
