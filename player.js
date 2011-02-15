@@ -236,10 +236,10 @@ $.fn.filmPicSlideshow = function (options) {
 
       // prepare
       var sliderWidth = 0;
+      $(this).find('.slider img:last').css('margin-right', 0);
       $(this).find('.slider').children().each(function () {
          sliderWidth += $(this).outerWidth(true);
-      })
-      $(this).find('.slider img:last').css('margin-right', 0);
+      });
       $(this).find('.slider').width(sliderWidth);
 
       if (sliderWidth <= sliderWrap) {
