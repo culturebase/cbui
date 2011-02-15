@@ -324,7 +324,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   top: ((img.attr('height')/2)-(iconHeight/2)),
                   left: ((img.attr('width')/2)-(iconWidth/2)),
                   'z-index': 2
-               })               
+               })
+               .addClass('video-trigger-icon')
                .click(function() {
                   self.player.play();
                })
