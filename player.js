@@ -219,6 +219,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
    }
 });
 
+// slideshow plugin
 $.fn.filmPicSlideshow = function (options) {
    options = $.extend({
       acceleration:    0.5, // how fast the slider gains speed (more means faster)
@@ -239,6 +240,8 @@ $.fn.filmPicSlideshow = function (options) {
          sliderWidth += $(this).width();
       })
       $(this).find('.slider').width(sliderWidth);
+      $(this).find('.slider img:last').css('margin-right', 0);
+
 
       if (sliderWidth <= sliderWrap) {
          $(this).find('.left-button, .right-button').remove();
@@ -325,8 +328,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original);
             // first image of slide is video trigger
             if(i == 0) {
+               var iconSrc = options.slides_video_trigger_icon?options.slides_video_trigger_icon:options.play_icon;
                var icon = $(document.createElement('img'))
-                  .attr('src', options.play_icon)
+                  .attr('src', iconSrc)
                   .addClass('video-trigger-icon')
                   .click(function() {
                      self.player.play();
