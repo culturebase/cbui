@@ -237,8 +237,9 @@ $.fn.filmPicSlideshow = function (options) {
       // prepare
       var sliderWidth = 0;
       $(this).find('.slider img:last').css('margin-right', 0);
-      $(this).find('.slider:not(.video-trigger-icon)').children().each(function () {
-         sliderWidth += $(this).outerWidth(true);
+      $(this).find('.slider').children().each(function () {
+         if(!$(this).hasClass('video-trigger-icon'))
+            sliderWidth += $(this).outerWidth(true);
       });
       $(this).find('.slider').width(sliderWidth);
 
