@@ -292,6 +292,14 @@ $.fn.filmPicSlideshow = function (options) {
          move(0);
          return false;
       });
+
+      $(this).find('.left-button, .right-button').hover(function() {
+            $(this).stop().animate({opacity: 0.8}, 200);
+         }, function() {
+            $(this).stop().animate({opacity: 0}, 500);
+         }).animate({opacity: 0.8}, 2000, function() {
+            $(this).animate({opacity: 0}, 2000);
+         });
    });
 };
 
@@ -314,44 +322,41 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       if(options.slides.length >= 1) {
          var iconHeight = iconWidth = 42;
          $.each(options.slides, function(i, image){
-            var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original);
-            // first image of slide is video trigger
-            if(i == 0) {
-               var icon = $(document.createElement('img')).attr('src', options.play_icon);
-               icon.css({
-                  display: 'block',
-                  position:'absolute',
-                  top: Math.floor((img.attr('height')/2)-(iconHeight/2)),
-                  left: Math.floor((img.attr('width')/2)-(iconWidth/2)),
-                  'z-index': 2
-               })
-               .addClass('video-trigger-icon')
-               .click(function() {
-                  self.player.play();
-               })
-               .appendTo(slider);
-               
-               img.addClass('video-trigger').click(function() {
-                  self.player.play();
-               });
-            }
-            else {
-               img.click(function() {
-                  self.player.load(self.player.options.id, img.attr('orig-src'), false);
-               });
-            }
-            img.appendTo(slider);
+            $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original)
+            .load(function(){
+               var img = $(this);
+               // first image of slide is video trigger
+               if(i == 0) {
+                  $(document.createElement('img')).attr('src', options.play_icon).load(function(){
+                     var icon = $(this);
+                     icon.addClass('video-trigger-icon')
+                     .click(function() {
+                        self.player.play();
+                     })
+                     .css({
+                        display: 'block',
+                        position:'absolute',
+                        top: ((img.attr('height')/2)-(iconHeight/2)),
+                        left: ((img.attr('width')/2)-(iconWidth/2)),
+                        'z-index': 2
+                     })
+                     .appendTo(slider);
+                  });
+
+                  img.addClass('video-trigger').click(function() {
+                     self.player.play();
+                  });
+               }
+               else {
+                  img.click(function() {
+                     self.player.load(self.player.options.id, img.attr('orig-src'), false);
+                  });
+               }
+               img.appendTo(slider);
+            });
          });
 
          slideshow.filmPicSlideshow();
-         
-         slideshow.find('.left-button, .right-button').hover(function() {
-            $(this).stop().animate({opacity: 0.8}, 200);
-         }, function() {
-            $(this).stop().animate({opacity: 0}, 500);
-         }).animate({opacity: 0.8}, 2000, function() {
-            $(this).animate({opacity: 0}, 2000);
-         });
          
          self.element().append(slideshow);
       }
