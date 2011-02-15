@@ -322,42 +322,41 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       if(options.slides.length >= 1) {
          var iconHeight = iconWidth = 42;
          $.each(options.slides, function(i, image){
-            $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original)
-            .load(function(){
-               var img = $(this);
-               // first image of slide is video trigger
-               if(i == 0) {
-                  $(document.createElement('img')).attr('src', options.play_icon).load(function(){
-                     var icon = $(this);
-                     icon.addClass('video-trigger-icon')
-                     .click(function() {
-                        self.player.play();
-                     })
-                     .css({
-                        display: 'block',
-                        position:'absolute',
-                        top: ((img.attr('height')/2)-(iconHeight/2)),
-                        left: ((img.attr('width')/2)-(iconWidth/2)),
-                        'z-index': 2
-                     })
-                     .appendTo(slider);
-                  });
-
-                  img.addClass('video-trigger').click(function() {
+            var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('orig-src', image.original);
+            // first image of slide is video trigger
+            if(i == 0) {
+               var icon = $(document.createElement('img'))
+                  .attr('src', options.play_icon)
+                  .addClass('video-trigger-icon')
+                  .click(function() {
                      self.player.play();
-                  });
-               }
-               else {
-                  img.click(function() {
-                     self.player.load(self.player.options.id, img.attr('orig-src'), false);
-                  });
-               }
-               img.appendTo(slider);
-            });
-         });
+                  })
+                  .appendTo(slider);
 
-         slideshow.filmPicSlideshow();
-         
+               icon.load(function(){
+                  $(this).css({
+                     display: 'block',
+                     position:'absolute',
+                     top: ((img.attr('height')/2)-(iconHeight/2)),
+                     left: ((img.attr('width')/2)-(iconWidth/2)),
+                     'z-index': 2
+                  });
+               });
+
+               img.addClass('video-trigger').click(function() {
+                  self.player.play();
+               });
+            }
+            else {
+               img.click(function() {
+                  self.player.load(self.player.options.id, img.attr('orig-src'), false);
+               });
+            }
+            img.appendTo(slider);
+         });
+         slider.find('img:last').load(function(){
+            slideshow.filmPicSlideshow();
+         });
          self.element().append(slideshow);
       }
       else
