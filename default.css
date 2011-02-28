@@ -26,7 +26,14 @@
    border: 1px solid #000000;
    height: 16px;
    font-size: 14px;
-   display: block;
+   /* display: block; -- 'block' is a very bad choice as default input style and
+                         breaks a lot of things! */
+}
+
+.__CbUiInputText[disabled],.__CbUiPassword[disabled],.__CbUiSelect[disabled] {
+   color: #FFFFFF;
+   background-color: #C2C3C7;
+   cursor: default;
 }
 
 .__CbUiChooseList div {

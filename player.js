@@ -4,7 +4,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var self = this;
          var t;
          if (!self.embed) self.play();
-         try {            
+         try {
             document.getElementById(self.embed.attr('id')).sendEvent(event);
             clearTimeout(t);
             return;
@@ -15,12 +15,12 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
             sendEvent.call(self, event);
          }, 100);
       },
-      
+
       callMenu = function(type) {
          var self = this;
          var t;
          if (!self.embed) self.play();
-         try {            
+         try {
             document.getElementById(self.embed.attr('id')).callMenu(type);
             clearTimeout(t);
             return;
@@ -31,7 +31,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
             callMenu.call(self, type);
          }, 100);
       };
-   
+
    // "public members"
    return {
       defaultOptions : {
@@ -43,7 +43,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          config : '_default',
          allow_fullscreen : true,
          allow_script_access : 'always',
-         embed_source : 'flash/player.swf',         
+         embed_source : 'flash/player.swf',
          width : 550, // width and height are necessary to make it play nice with IE
          height : 350,
          id : 0,
@@ -60,7 +60,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
       handleReady : function(options) {
          this.options = jQuery.extend({}, this.defaultOptions, options);
-         this.load(this.options.id, this.options.image, 
+         this.load(this.options.id, this.options.image,
                (this.options.active ? this.options.play_icon : this.options.na_icon),
                this.options.active);
          return this;
@@ -73,7 +73,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          this.options.active = active;
          this.reset();
       },
-      
+
       reset : function() {
          var self = this;
          this.element().css({position:'relative'}).empty().append(
@@ -104,6 +104,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       play : function(id) {
          var self = this;
          if(id) this.options.id = id;
+
+         // Check wether to use Flash or the <video> tag.
+
          this.embed = $(document.createElement('embed'))
             .attr('id', self.options.id)
             .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config)
@@ -147,7 +150,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          window.open(url, 'cbplayer', this.options.popup_windowfeatures).focus();
          return false;
       },
-      
+
       handleZoomControl: function() {
          // TODO
       }
@@ -170,7 +173,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
       this.versions = {};
       return this.base(element);
    },
-   
+
    handleReady : function(options) {
       var self = this;
       if(options.versions != '' && (options.versions.length > 1 || options.versions_always)) {
@@ -184,7 +187,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          self.player = options.widgets.player;
          self.element().change(function() {
             var version = self.versions[self.value()];
-            if(options.versions_autoplay == 1 && version.active) {               
+            if(options.versions_autoplay == 1 && version.active) {
                self.player.play(self.value());
             } else {
                self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon) , version.active);
