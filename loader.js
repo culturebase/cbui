@@ -23,4 +23,10 @@ jQuery.CbWidget.loader = jQuery.CbWidget.widget.extend({
 
       return this.base();
    }
+}, {
+   init: function() {
+      jQuery.CbEvent(this, 'show');
+      jQuery.CbEvent(this, 'hide');
+      return this.base();
+   }
 });
