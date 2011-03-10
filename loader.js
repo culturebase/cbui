@@ -13,7 +13,7 @@ jQuery.CbWidget.loader = jQuery.CbWidget.widget.extend({
       this.element().appendTo('body').stop()
          .fadeTo(this.options.fadingDuration, this.options.opacity);
 
-      return this.base();
+      return this;
    },
 
    handleHide: function () {
@@ -21,12 +21,6 @@ jQuery.CbWidget.loader = jQuery.CbWidget.widget.extend({
          $(this).detach();
       });
 
-      return this.base();
-   }
-}, {
-   init: function() {
-      jQuery.CbEvent(this, 'show');
-      jQuery.CbEvent(this, 'hide');
-      return this.base();
+      return this;
    }
 });
