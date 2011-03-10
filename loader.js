@@ -5,19 +5,19 @@ jQuery.CbWidget.loader = jQuery.CbWidget.widget.extend({
          fadeingDuration: 250
       }, options || {});
 
-      this.element = $(document.createElement('div')).addClass('__CbUiLayer')
-         .addClass('__CbUiLoader');
+      this.parentElement = $(document.createElement('div'))
+         .addClass('__CbUiLayer').addClass('__CbUiLoader');
    },
 
    handleShow: function () {
-      this.element.appendTo('body').stop()
+      this.element().appendTo('body').stop()
          .fadeTo(this.options.fadingDuration, this.options.opacity);
 
       return this.base();
    },
 
    handleHide: function () {
-      this.element.stop().fadeOut(this.options.fadingDuration, function () {
+      this.element().stop().fadeOut(this.options.fadingDuration, function () {
          $(this).detach();
       });
 
