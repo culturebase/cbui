@@ -5,7 +5,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var t;
          if (!self.embed) self.play();
          try {
-            document.getElementById(self.embed.attr('id')).sendEvent(event);
+            self.embed.get(0).sendEvent(event);
             clearTimeout(t);
             return;
          } catch(e) {
@@ -21,7 +21,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var t;
          if (!self.embed) self.play();
          try {
-            document.getElementById(self.embed.attr('id')).callMenu(type);
+            self.embed.get(0).callMenu(type);
             clearTimeout(t);
             return;
          } catch(e) {
@@ -30,7 +30,25 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          t = setTimeout(function () {
             callMenu.call(self, type);
          }, 100);
-      };
+      },
+
+      /**
+       * Generates a unique ID for id-attributes to avoid conflicts between
+       * multiple players (playing the same video) on the same page. This is not
+       * uncommon when layers are used on a website.
+       *
+       * @param <number> base (optional) "seed" used for ID generation
+       * @return ID
+       */
+      generateUniqueId = (function () {
+         var ids = {};
+
+         return function (base) {
+            base = base || 0;
+            ids[base] = (ids[base] || 0) + 1;
+            return 'cb-player-'+base+'-'+ids[base];
+         };
+      }());
 
    // "public members"
    return {
@@ -105,10 +123,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          var self = this;
          if(id) this.options.id = id;
 
-         // Check wether to use Flash or the <video> tag.
+         // TODO: Check wether to use Flash or the <video> tag.
 
          this.embed = $(document.createElement('embed'))
-            .attr('id', self.options.id)
+            .attr('id', generateUniqueId(self.options.id))
             .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config)
             .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
