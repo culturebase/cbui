@@ -343,7 +343,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                          </div>');
       var slider = slideshow.find('.slider');
       var slidePicBase = 'http://data.heimat.de/transform.php?width='+self.player.options.width+'&height='+self.player.options.height+'&do=cropOut&file=';
-      if(options.slides.length >= 1) {
+      if (options.slides && options.slides.length >= 1) {
          $.each(options.slides, function(i, image){
             var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('data-orig-src', image.original);
             // first image of slide is video trigger
@@ -382,8 +382,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             slideshow.filmPicSlideshow();
          });
          self.element().append(slideshow);
-      }
-      else
+      } else {
          self.element().hide();
+      }
    }
 });
