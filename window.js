@@ -185,14 +185,20 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       if (options.modal) {
          var layer = jQuery(document.createElement('div')).addClass('__CbUiLayer');
          layer.appendTo('body').fadeTo(options.delay, options.layerOpacity, function() {
-            self.layer = $(layer);
-            self.layer.css({'background-color': self.options.layerColor});
-            if (options.overlayClose) {
-               self.layer.click(function() {
-                  self.close(true);
-               });
+            try {
+               self.layer = $(layer);
+               self.layer.css({'background-color': self.options.layerColor});
+               if (options.overlayClose) {
+                  self.layer.click(function() {
+                     self.close(true);
+                  });
+               }
+               self.loadFrame(options);
+            } catch (err) {
+               /* ignore to avoid fading loop created by jquery not being able
+                * to finish its work after calling the callback.
+                */
             }
-            self.loadFrame(options);
          });
       } else {
          this.loadFrame(options);
