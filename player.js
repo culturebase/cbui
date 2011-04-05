@@ -310,6 +310,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.appendTo(slider);
          });
 
+         console.log(slider.find('img').map(function (i, img) { // create callback functions for all images
+            return function (callback) {
+               img.load(callback);
+            };
+         }).get());
+
          // wait for all images to be loaded
          (function (callbacks) {
             var callbackCount = callbacks.length,
@@ -421,12 +427,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                img.load(callback);
             };
          }).get()));
-
-         console.log(slider.find('img').map(function (i, img) { // create callback functions for all images
-            return function (callback) {
-               img.load(callback);
-            };
-         }).get());
          
          self.element().append(slideshow);
       } else {
