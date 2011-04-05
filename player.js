@@ -332,7 +332,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   options.maximumVelocity = options.pixelsPerSecond / 60;
 
                   // prepare
-                  slider.find('img').eq(0).css('margin-right', '0px');
+                  slider.find('img').last().css('margin-right', '0px');
                   
                   slider.children().each(function () {
                      if (!$(this).hasClass('video-trigger-icon')) {
