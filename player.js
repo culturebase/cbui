@@ -310,123 +310,111 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.appendTo(slider);
          });
 
-         console.log(slider.find('img').map(function (i, img) { // create callback functions for all images
-            return function (callback) {
-               img.load(callback);
-            };
-         }).get());
-
          // wait for all images to be loaded
-         (function (callbacks) {
-            var callbackCount = callbacks.length,
-               internalCallback = function () {
-                  callbackCount--;
+         (function () {
+            var images = slider.find('img');
+               callbackCount = images.length;
 
-                  if (callbackCount === 0) {
-                     (function (options) {
-                        options = $.extend({
-                           acceleration:    0.5, // how fast the slider gains speed (more means faster)
-                           friction:        0.5, // how fast the slider looses speed (more means faster)
-                           pixelsPerSecond: 500
-                        }, options || {});
+            images.load(function () {
+               callbackCount--;
 
-                        $(this).each(function () {
-                           // movement
-                           var animationInterval = null,
-                              currentVelocity = 0,
-                              sliderWrap = $(this).find('.slider-wrap'),
-                              sliderWidth = 0,
-                              slider = sliderWrap.find('.slider'),
-                              leftButton = sliderWrap.find('.left-button'),
-                              rightButton = sliderWrap.find('.right-button'),
-                              buttons = $().add(leftButton).add(rightButton);
+               if (callbackCount === 0) {
+                  (function (options) {
+                     options = $.extend({
+                        acceleration:    0.5, // how fast the slider gains speed (more means faster)
+                        friction:        0.5, // how fast the slider looses speed (more means faster)
+                        pixelsPerSecond: 500
+                     }, options || {});
 
-                           options.maximumVelocity = options.pixelsPerSecond / 60;
+                     $(this).each(function () {
+                        // movement
+                        var animationInterval = null,
+                           currentVelocity = 0,
+                           sliderWrap = $(this).find('.slider-wrap'),
+                           sliderWidth = 0,
+                           slider = sliderWrap.find('.slider'),
+                           leftButton = sliderWrap.find('.left-button'),
+                           rightButton = sliderWrap.find('.right-button'),
+                           buttons = $().add(leftButton).add(rightButton);
 
-                           // prepare
-                           slider.find('img').last().css('margin-right', '0px');
+                        options.maximumVelocity = options.pixelsPerSecond / 60;
 
-                           slider.children().each(function () {
-                              if (!$(this).hasClass('video-trigger-icon')) {
-                                 sliderWidth += $(this).outerWidth(true);
-                              }
-                           });
+                        // prepare
+                        slider.find('img').last().css('margin-right', '0px');
 
-                           slider.width(sliderWidth);
+                        slider.children().each(function () {
+                           if (!$(this).hasClass('video-trigger-icon')) {
+                              sliderWidth += $(this).outerWidth(true);
+                           }
+                        });
 
-                           if (sliderWidth <= sliderWrap.width()) {
-                              buttons.hide();
+                        slider.width(sliderWidth);
+
+                        if (sliderWidth <= sliderWrap.width()) {
+                           buttons.hide();
+                        }
+
+                        var move = function (direction) {
+                           if (animationInterval !== null) {
+                              clearInterval(animationInterval);
                            }
 
-                           var move = function (direction) {
-                              if (animationInterval !== null) {
+                           animationInterval = setInterval(function () {
+                              if (direction < 0) { // left
+                                 currentVelocity -= options.acceleration;
+                                 if (currentVelocity < -options.maximumVelocity) {
+                                    currentVelocity = -options.maximumVelocity;
+                                 }
+                              } else if (direction > 0) { // right
+                                 currentVelocity += options.acceleration;
+                                 if (currentVelocity > options.maximumVelocity) {
+                                    currentVelocity = options.maximumVelocity;
+                                 }
+                              } else if (currentVelocity < 0) { // stop
+                                 currentVelocity += options.friction;
+                                 if (currentVelocity > 0) {
+                                    currentVelocity = 0;
+                                 }
+                              } else if (currentVelocity > 0) { // stop
+                                 currentVelocity -= options.friction;
+                                 if (currentVelocity < 0) {
+                                    currentVelocity = 0;
+                                 }
+                              } else {
                                  clearInterval(animationInterval);
                               }
 
-                              animationInterval = setInterval(function () {
-                                 if (direction < 0) { // left
-                                    currentVelocity -= options.acceleration;
-                                    if (currentVelocity < -options.maximumVelocity) {
-                                       currentVelocity = -options.maximumVelocity;
-                                    }
-                                 } else if (direction > 0) { // right
-                                    currentVelocity += options.acceleration;
-                                    if (currentVelocity > options.maximumVelocity) {
-                                       currentVelocity = options.maximumVelocity;
-                                    }
-                                 } else if (currentVelocity < 0) { // stop
-                                    currentVelocity += options.friction;
-                                    if (currentVelocity > 0) {
-                                       currentVelocity = 0;
-                                    }
-                                 } else if (currentVelocity > 0) { // stop
-                                    currentVelocity -= options.friction;
-                                    if (currentVelocity < 0) {
-                                       currentVelocity = 0;
-                                    }
-                                 } else {
-                                    clearInterval(animationInterval);
-                                 }
+                              // everything calculcated? okay, lets get ready to rumble.
+                              sliderWrap[0].scrollLeft += Math.round(currentVelocity);
+                           }, 16); // ~ 60 FPS
+                        };
 
-                                 // everything calculcated? okay, lets get ready to rumble.
-                                 sliderWrap[0].scrollLeft += Math.round(currentVelocity);
-                              }, 16); // ~ 60 FPS
-                           };
-
-                           // bindings
-                           leftButton.mousedown(function () {
-                              move(-1);
-                              return false;
-                           });
-
-                           rightButton.mousedown(function () {
-                              move(1);
-                              return false;
-                           });
-
-                           buttons.bind('mouseup mouseleave', function () {
-                              move(0);
-                              return false;
-                           }).mouseenter(function() {
-                              $(this).stop().animate({opacity: 0.8}, 200);
-                           }).mouseleave(function() {
-                              $(this).stop().animate({opacity: 0}, 500);
-                           }).animate({opacity: 0.8}, 2000, function() {
-                              $(this).animate({opacity: 0}, 2000);
-                           });
+                        // bindings
+                        leftButton.mousedown(function () {
+                           move(-1);
+                           return false;
                         });
-                     }).call(slideshow);
-                  }
-               };
 
-            $.each(callbacks, function (i, callback) {
-               callback(internalCallback);
+                        rightButton.mousedown(function () {
+                           move(1);
+                           return false;
+                        });
+
+                        buttons.bind('mouseup mouseleave', function () {
+                           move(0);
+                           return false;
+                        }).mouseenter(function() {
+                           $(this).stop().animate({opacity: 0.8}, 200);
+                        }).mouseleave(function() {
+                           $(this).stop().animate({opacity: 0}, 500);
+                        }).animate({opacity: 0.8}, 2000, function() {
+                           $(this).animate({opacity: 0}, 2000);
+                        });
+                     });
+                  }).call(slideshow);
+               }
             });
-         }(slider.find('img').map(function (i, img) { // create callback functions for all images
-            return function (callback) {
-               img.load(callback);
-            };
-         }).get()));
+         }());
          
          self.element().append(slideshow);
       } else {
