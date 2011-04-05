@@ -341,7 +341,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   });
                   
                   slider.width(sliderWidth);
-                  
+
+                  console.log(sliderWidth, sliderWrap.width(), sliderWidth <= sliderWrap.width());
                   if (sliderWidth <= sliderWrap.width()) {
                      buttons.remove();
                   }
