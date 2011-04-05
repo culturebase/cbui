@@ -239,115 +239,30 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
    }
 });
 
-// slideshow plugin
-$.fn.filmPicSlideshow = function (options) {
-   options = $.extend({
-      acceleration:    0.5, // how fast the slider gains speed (more means faster)
-      friction:        0.5, // how fast the slider looses speed (more means faster)
-      pixelsPerSecond: 500
-   }, options || {});
-
-   $(this).each(function () {
-      // movement
-      var animationInterval = null;
-      var currentVelocity = 0;
-      var sliderWrap = $(this).find('.slider-wrap');
-      options.maximumVelocity = options.pixelsPerSecond / 60;
-
-      // prepare
-      var sliderWidth = 0;
-      $(this).find('.slider img:last').css('margin-right', 0);
-      $(this).find('.slider').children().each(function () {
-         if(!$(this).hasClass('video-trigger-icon'))
-            sliderWidth += $(this).outerWidth(true);
-      });
-      $(this).find('.slider').width(sliderWidth);
-
-      if (sliderWidth <= sliderWrap) {
-         $(this).find('.left-button, .right-button').remove();
-      }
-
-      var move = function (direction) {
-         if (animationInterval !== null) {
-            clearInterval(animationInterval);
-         }
-
-         animationInterval = setInterval(function () {
-            if (direction < 0) { // left
-               currentVelocity -= options.acceleration;
-               if (currentVelocity < -options.maximumVelocity) {
-                  currentVelocity = -options.maximumVelocity;
-               }
-            } else if (direction > 0) { // right
-               currentVelocity += options.acceleration;
-               if (currentVelocity > options.maximumVelocity) {
-                  currentVelocity = options.maximumVelocity;
-               }
-            } else if (currentVelocity < 0) { // stop
-               currentVelocity += options.friction;
-               if (currentVelocity > 0) {
-                  currentVelocity = 0;
-               }
-            } else if (currentVelocity > 0) { // stop
-               currentVelocity -= options.friction;
-               if (currentVelocity < 0) {
-                  currentVelocity = 0;
-               }
-            } else {
-               clearInterval(animationInterval);
-            }
-
-            // everything calculcated? okay, lets get ready to rumble.
-            sliderWrap[0].scrollLeft += parseInt(currentVelocity);
-         }, 16);
-      };
-
-      // bindings
-      $(this).find('.left-button').mousedown(function () {
-         move(-1);
-         return false;
-      });
-      $(this).find('.right-button').mousedown(function () {
-         move(1);
-         return false;
-      });
-      $(this).find('.left-button, .right-button').bind('mouseup mouseleave', function () {
-         move(0);
-         return false;
-      });
-
-      $(this).find('.left-button, .right-button').hover(function() {
-            $(this).stop().animate({opacity: 0.8}, 200);
-         }, function() {
-            $(this).stop().animate({opacity: 0}, 500);
-         }).animate({opacity: 0.8}, 2000, function() {
-            $(this).animate({opacity: 0}, 2000);
-         });
-   });
-};
-
 jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       return this.base(element);
    },
 
    handleReady : function(options) {
-      var self = this;
+      var self = this,
+         slideshow = $('<div class="slideshow">'
+                         +'<div class="left-button"></div>'
+                         +'<div class="right-button"></div>'
+                         +'<div class="slider-wrap">'
+                            +'<div class="slider"></div>'
+                         +'</div>'
+                      +'</div>'),
+         slider = slideshow.find('.slider');
+
       this.player = options.widgets.player;
-      var slideshow = $('<div class="slideshow">\n\
-                           <div class="left-button"></div>\
-                           <div class="right-button"></div>\
-                           <div class="slider-wrap">\
-                            <div class="slider"></div>\
-                           </div>\
-                         </div>');
-      var slider = slideshow.find('.slider');
-      var slidePicBase = 'http://data.heimat.de/transform.php?width='+self.player.options.width+'&height='+self.player.options.height+'&do=cropOut&file=';
+      
       if (options.slides && options.slides.length >= 1) {
-         $.each(options.slides, function(i, image){
+         $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('data-orig-src', image.original);
+
             // first image of slide is video trigger
-            if(i == 0) {
+            if (i == 0) {
                var iconSrc = options.slides_video_trigger_icon ? options.slides_video_trigger_icon : (options.play_icon ? options.play_icon : null),
                   icon = null;
 
@@ -364,10 +279,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                if (icon !== null) {
                   img.load(function(){
                      icon.css({
-                           display: 'block',
-                           position:'absolute',
-                           top: ((img.attr('height')/2)-(icon.height()/2)),
-                           left: ((img.attr('width')/2)-(icon.width()/2)),
+                           display:   'block',
+                           position:  'absolute',
+                           top:       ((img.attr('height')/2)-(icon.height()/2)),
+                           left:      ((img.attr('width')/2)-(icon.width()/2)),
                            'z-index': 2
                      });
                   });
@@ -376,17 +291,117 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                img.addClass('video-trigger').click(function() {
                   self.player.play();
                });
-            }
-            else {
+            } else {
                img.click(function() {
-                  self.player.load(self.player.options.id, slidePicBase+img.attr('data-orig-src'), false);
+                  self.player.load(self.player.options.id,
+                     'http://data.heimat.de/transform.php'
+                        +'?width='+self.player.options.width
+                        +'&height='+self.player.options.height
+                        +'&do=cropOut'
+                        +'&file='+encodeURIComponent(img.attr('data-orig-src')),
+                     false);
                });
             }
+
             img.appendTo(slider);
          });
-         slider.find('img:last').load(function(){
-            slideshow.filmPicSlideshow();
+         
+         slider.find('img').load(function() { // wait for all images to be loaded
+            (function (options) {
+               options = $.extend({
+                  acceleration:    0.5, // how fast the slider gains speed (more means faster)
+                  friction:        0.5, // how fast the slider looses speed (more means faster)
+                  pixelsPerSecond: 500
+               }, options || {});
+
+               $(this).each(function () {
+                  // movement
+                  var animationInterval = null,
+                     currentVelocity = 0,
+                     sliderWrap = $(this).find('.slider-wrap'),
+                     sliderWidth = 0,
+                     slider = sliderWrap.find('.slider'),
+                     leftButton = sliderWrap.find('.left-button'),
+                     rightButton = sliderWrap.find('.right-button'),
+                     buttons = $().add(leftButton).add(rightButton);
+                  
+                  options.maximumVelocity = options.pixelsPerSecond / 60;
+
+                  // prepare
+                  slider.find('img').eq(0).css('margin-right', '0px');
+                  
+                  slider.children().each(function () {
+                     if (!$(this).hasClass('video-trigger-icon')) {
+                        sliderWidth += $(this).outerWidth(true);
+                     }
+                  });
+                  
+                  slider.width(sliderWidth);
+                  
+                  if (sliderWidth <= sliderWrap.width()) {
+                     buttons.remove();
+                  }
+
+                  var move = function (direction) {
+                     if (animationInterval !== null) {
+                        clearInterval(animationInterval);
+                     }
+
+                     animationInterval = setInterval(function () {
+                        if (direction < 0) { // left
+                           currentVelocity -= options.acceleration;
+                           if (currentVelocity < -options.maximumVelocity) {
+                              currentVelocity = -options.maximumVelocity;
+                           }
+                        } else if (direction > 0) { // right
+                           currentVelocity += options.acceleration;
+                           if (currentVelocity > options.maximumVelocity) {
+                              currentVelocity = options.maximumVelocity;
+                           }
+                        } else if (currentVelocity < 0) { // stop
+                           currentVelocity += options.friction;
+                           if (currentVelocity > 0) {
+                              currentVelocity = 0;
+                           }
+                        } else if (currentVelocity > 0) { // stop
+                           currentVelocity -= options.friction;
+                           if (currentVelocity < 0) {
+                              currentVelocity = 0;
+                           }
+                        } else {
+                           clearInterval(animationInterval);
+                        }
+
+                        // everything calculcated? okay, lets get ready to rumble.
+                        sliderWrap[0].scrollLeft += Math.round(currentVelocity);
+                     }, 16); // ~ 60 FPS
+                  };
+
+                  // bindings
+                  leftButton.mousedown(function () {
+                     move(-1);
+                     return false;
+                  });
+                  
+                  rightButton.mousedown(function () {
+                     move(1);
+                     return false;
+                  });
+
+                  buttons.bind('mouseup mouseleave', function () {
+                     move(0);
+                     return false;
+                  }).mouseenter(function() {
+                     $(this).stop().animate({opacity: 0.8}, 200);
+                  }).mouseleave(function() {
+                     $(this).stop().animate({opacity: 0}, 500);
+                  }).animate({opacity: 0.8}, 2000, function() {
+                     $(this).animate({opacity: 0}, 2000);
+                  });
+               });
+            }).call(slideshow);
          });
+         
          self.element().append(slideshow);
       } else {
          self.element().hide();
