@@ -333,9 +333,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                            sliderWrap = $(this).find('.slider-wrap'),
                            sliderWidth = 0,
                            slider = sliderWrap.find('.slider'),
-                           leftButton = sliderWrap.find('.left-button'),
-                           rightButton = sliderWrap.find('.right-button'),
-                           buttons = $().add(leftButton).add(rightButton);
+                           leftButton = $(this).find('.left-button'),
+                           rightButton = $(this).find('.right-button');
 
                         options.maximumVelocity = options.pixelsPerSecond / 60;
 
@@ -351,7 +350,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         slider.width(sliderWidth);
 
                         if (sliderWidth <= sliderWrap.width()) {
-                           buttons.hide();
+                           leftButton.add(rightButton).hide();
                         }
 
                         var move = function (direction) {
@@ -400,7 +399,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                            return false;
                         });
 
-                        buttons.bind('mouseup mouseleave', function () {
+                        leftButton.add(rightButton).bind('mouseup mouseleave', function () {
                            move(0);
                            return false;
                         }).mouseenter(function() {
