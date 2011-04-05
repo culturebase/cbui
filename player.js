@@ -259,11 +259,17 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       
       if (options.slides && options.slides.length >= 1) {
          $.each(options.slides, function(i, image) {
-            var img = $(document.createElement('img')).attr('src', image.thumbnail).attr('data-orig-src', image.original);
+            var img = $(document.createElement('img'))
+               .attr('src', image.thumbnail)
+               .attr('data-orig-src', image.original);
 
             // first image of slide is video trigger
             if (i == 0) {
-               var iconSrc = options.slides_video_trigger_icon ? options.slides_video_trigger_icon : (options.play_icon ? options.play_icon : null),
+               var
+                  // select the best available icon source
+                  iconSrc = $.map([options.slides_video_trigger_icon, options.play_icon], function (i, val) {
+                     return !!val;
+                  })[0] || null,
                   icon = null;
 
                if (iconSrc !== null) {
@@ -274,15 +280,13 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         self.player.play();
                      })
                      .appendTo(slider);
-               }
-               
-               if (icon !== null) {
+
                   img.load(function(){
                      icon.css({
                            display:   'block',
                            position:  'absolute',
-                           top:       ((img.attr('height')/2)-(icon.height()/2)),
-                           left:      ((img.attr('width')/2)-(icon.width()/2)),
+                           top:       ((img.attr('height') / 2) - (icon.height() / 2))+'px',
+                           left:      ((img.attr('width') / 2) - (icon.width() / 2))+'px',
                            'z-index': 2
                      });
                   });
