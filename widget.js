@@ -173,9 +173,7 @@ jQuery.CbEvent = function(target, name) {
    var event = {};
    event[name] = function(callback, staticParams) {
       if (callback) {
-         if (this.handlers[name] === undefined) {
-            this.handlers[name] = [];
-         }
+         if (typeof(this.handlers[name]) == 'undefined') this.handlers[name] = [];
          this.handlers[name].push({
             'callback' : callback, 
             'params': staticParams || {}
@@ -186,7 +184,7 @@ jQuery.CbEvent = function(target, name) {
    };
    
    var handleName = jQuery.CbEvent.getHandleName(name);
-   if (target.prototype[handleName] === undefined) {
+   if (typeof(target.prototype[handleName]) == 'undefined') {
       event[handleName] = function() {return this;};
    }
    
@@ -298,9 +296,9 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    getLabels : function() {
       var labels = [];
-      for (var pos in this.texts) {
-         labels.push(this.texts[pos]);
-      }
+      jQuery.each(this.texts, function(i, text) {
+         labels.push(text);
+      });
       return labels;
    },
    
@@ -329,13 +327,16 @@ jQuery.CbWidget.widget = base2.Base.extend({
     * @return this
     */
    unbind : function(name, callback) {
-      if (callback) {
-         for (var i in this.handlers[name]) {
-            if (this.handlers[name][i].callback == callback) {
-               this.handlers[name] = this.handlers[name].splice(i, 1);
-               break;
+      if (callback && typeof(this.handlers[name]) != 'undefined') {
+         var self = this;
+         jQuery.each(self.handlers[name], function (i, handler) {
+            if (handler.callback == callback) {
+               self.handlers[name] = self.handlers[name].splice(i, 1);
+               return false;
+            } else {
+               return true;
             }
-         }
+         });
       } else {
          this.handlers[name] = [];
       }
@@ -351,9 +352,12 @@ jQuery.CbWidget.widget = base2.Base.extend({
    trigger : function(name, extraParams) {
       this[jQuery.CbEvent.getHandleName(name)](extraParams || {});
       
-      for (var i in this.handlers[name]) {
-         var params = jQuery.extend({}, this.handlers[name][i].params, extraParams || {});
-         this.handlers[name][i].callback(params);
+      if (typeof(this.handlers[name]) != 'undefined') {
+         jQuery.each(this.handlers[name], function(i, handler) {
+            var params = jQuery.extend({}, handler.params, extraParams || {});
+            handler.callback(params);
+            return true;
+         });
       }
       return this;
    },
