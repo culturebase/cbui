@@ -267,8 +267,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             if (i == 0) {
                var
                   // select the best available icon source
-                  iconSrc = $.map([options.slides_video_trigger_icon, options.play_icon], function (i, val) {
-                     return val || false;
+                  iconSrc = $.map([options.slides_video_trigger_icon, options.play_icon], function (val, i) {
+                     return val || null;
                   })[0] || null,
                   icon = null;
 
