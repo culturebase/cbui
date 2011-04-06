@@ -261,7 +261,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img'))
                .attr('src', image.thumbnail)
-               .attr('data-orig-src', image.original);
+               .data('orig-src', image.original);
 
             // first image of slide is video trigger
             if (i == 0) {
@@ -302,7 +302,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         +'?width='+self.player.options.width
                         +'&height='+self.player.options.height
                         +'&do=cropOut'
-                        +'&file='+encodeURIComponent(img.attr('data-orig-src')),
+                        +'&file='+encodeURIComponent(img.data('orig-src')),
                      false);
                });
             }
