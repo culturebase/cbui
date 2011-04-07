@@ -11,10 +11,20 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
     * @return this
     */
    handleShow : function(options) {
-      options |= {delay : 0};
-      var self = this;
-      var base = this.base;
-      this.element().fadeIn(options.delay, function() {base.call(self, options);});
+      var self = this,
+         base = this.base;
+
+      options = options || {delay : 0};
+      
+      this.element().fadeIn(options.delay, function() {
+         // jQuery tends to stop at an unprecise value (like 0.98423421 instead
+         // of 1.0), which can cause problems with certain contents of this
+         // element.
+         self.element().css('opacity', 1.0);
+         
+         base.call(self, options);
+      });
+
       return this;
    },
    
@@ -24,10 +34,20 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
     * @return this
     */
    handleHide : function(options) {
-      options |= {delay : 0};
-      var self = this;
-      var base = this.base; // base may change due to other functions being executed in between
-      this.element().fadeOut(options.delay, function() {base.call(self, options);});
+      var self = this,
+         base = this.base; // base may change due to other functions being executed in between
+
+      options = options || {delay : 0};
+
+      this.element().fadeOut(options.delay, function() {
+         // jQuery tends to stop at an unprecise value (like 0.98423421 instead
+         // of 1.0), which can cause problems with certain contents of this
+         // element.
+         self.element().css('opacity', 0.0);
+         
+         base.call(self, options);
+      });
+      
       return this;
    },
    
@@ -186,13 +206,21 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
          var layer = jQuery(document.createElement('div')).addClass('__CbUiLayer');
          layer.appendTo('body').fadeTo(options.delay, options.layerOpacity, function() {
             try {
-               self.layer = $(layer);
-               self.layer.css({'background-color': self.options.layerColor});
+               self.layer = $(layer).css({
+                  'background-color': self.options.layerColor,
+
+                  // jQuery tends to stop at an unprecise value (like 0.98423421
+                  // instead of 1.0), which can cause problems with certain
+                  // contents of this element.
+                  'opacity': options.layerOpacity
+               });
+
                if (options.overlayClose) {
                   self.layer.click(function() {
                      self.close(true);
                   });
                }
+
                self.loadFrame(options);
             } catch (err) {
                /* ignore to avoid fading loop created by jquery not being able
