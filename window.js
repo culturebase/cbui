@@ -318,6 +318,17 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
          this.element().appendTo('body');
       }
       
+      if (options.layerFrame) {
+         // Style changes are more reliable when applied after an element has
+         // been appended to the DOM.
+         this.element().height(options.height);
+         this.element().width(options.width);
+
+         if (jQuery.browser.msie && jQuery.browser.version < 7) {
+            this.element().css('position', 'absolute');
+         }
+      }
+      
       this.refreshElement();
       
       if (options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
@@ -347,12 +358,6 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       
       if (options.layerFrame) {
          this.element().addClass('__CbUiLayerFrame');
-         this.element().height(options.height);
-         this.element().width(options.width);
-
-         if (jQuery.browser.msie && jQuery.browser.version < 7) {
-            this.element().css('position', 'absolute');
-         }
       }
       
       this.element().hide(); // don't fire the event here
