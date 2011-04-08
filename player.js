@@ -312,7 +312,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
          // wait for all images to be loaded
          (function () {
-            var images = slider.find('img');
+            var images = slider.find('img').not('.video-trigger-icon');
                callbackCount = images.length;
 
             images.load(function () {
