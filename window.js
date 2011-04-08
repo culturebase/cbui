@@ -379,8 +379,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     * @return this
     */
    centerX : function() {
-      var width = jQuery.support.boxModel ? window.innerWidth : window.document.documentElement.clientWidth;
-      this.moveToX(Math.max(Math.floor(width / 2 - this.width() / 2) - 10, 0));
+      this.moveToX(Math.max(Math.floor(jQuery(window).width() / 2 - this.width() / 2) - 10, 0));
       return this;
    },
    
@@ -389,8 +388,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     * @return this
     */
    centerY : function() {
-      var height = jQuery.support.boxModel ? window.innerHeight : window.document.documentElement.clientHeight;
-      this.moveToY(Math.max(Math.floor(height / 2 - this.height() / 2) - 30, 0));
+      this.moveToY(Math.max(Math.floor(jQuery(window).height() / 2 - this.height() / 2) - 30, 0));
       return this;
    },
    
