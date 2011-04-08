@@ -317,11 +317,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
             images.load(function () {
                callbackCount--;
-
-               console.log('image loaded:', callbackCount, callbackCount === 1);
-
+               
                // This gets invoked when the last .load() event has fired.
-               if (callbackCount === 1) {
+               if (callbackCount === 0) {
                   (function (options) {
                      options = $.extend({
                         acceleration:    0.5, // how fast the slider gains speed (more means faster)
