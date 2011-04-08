@@ -318,6 +318,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             images.load(function () {
                callbackCount--;
 
+               console.log('image loaded:', callbackCount);
+
                if (callbackCount === 0) {
                   (function (options) {
                      options = $.extend({
