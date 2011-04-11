@@ -373,11 +373,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
-         $.each(options.slides, function(i, image) {
-            var img = $(document.createElement('img')).appendTo(slider);
+         callbackCount = options.slides.length;
+         console.log('inc:', callbackCount);
 
-            callbackCount++;
-            console.log('inc:', callbackCount);
+         $.each(options.slides, function(i, image) {
+            var img = $(document.createElement('img'));
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -387,11 +387,15 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                })[0] || null;
 
                if (iconSrc !== null) {
+                  triggerImg = img;
+
                   callbackCount++;
                   console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
                      .appendTo(slider)
+                     .load(loadCallback)
+                     .attr('src', iconSrc)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
@@ -401,8 +405,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                img.addClass('video-trigger').click(function() {
                   self.player.play();
                });
-
-               triggerImg = img;
             } else {
                img.click(function() {
                   self.player.load(self.player.options.id,
@@ -415,13 +417,14 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             }
             
-            images.push($.extend({
-               element: img
-            }, image));
+            img.appendTo(slider)
+               .load(loadCallback)
+               .attr('src', image.thumbnail)
+               .data('orig-src', image.original);
          });
 
          if (iconSrc !== null && icon !== null) {
-            icon.load(loadCallback).attr('src', iconSrc);
+            icon;
          }
          
          $.each(images, function (i, img) {
