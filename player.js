@@ -390,13 +390,13 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
+                     .appendTo(slider)
                      .load(loadCallback)
                      .attr('src', iconSrc)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
-                     })
-                     .appendTo(slider);
+                     });
                }
 
                img.addClass('video-trigger').click(function() {
@@ -416,10 +416,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             }
 
-            img.load(loadCallback)
+            img.appendTo(slider)
+               .load(loadCallback)
                .attr('src', image.thumbnail)
-               .data('orig-src', image.original)
-               .appendTo(slider);
+               .data('orig-src', image.original);
          });
          
          self.element().append(slideshow);
