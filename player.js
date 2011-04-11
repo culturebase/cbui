@@ -373,11 +373,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
-         callbackCount = options.slides.length;
-         console.log('inc:', callbackCount);
-
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img')).appendTo(slider);
+
+            callbackCount++;
+            console.log('inc:', callbackCount);
             
             // first image of slide is video trigger
             if (i == 0) {
