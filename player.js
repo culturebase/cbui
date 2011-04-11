@@ -293,9 +293,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      options.maximumVelocity = options.pixelsPerSecond / 60;
 
                      // prepare
-                     slider.find('img').not('.video-trigger-icon').each(function () {
+                     slider.find('img').not('.video-trigger-icon').last().css('margin-right', '0px').end().each(function () {
                         sliderWidth += $(this).outerWidth(true);
-                     }).last().css('margin-right', '0px');
+                     });
 
                      slider.width(sliderWidth);
 
