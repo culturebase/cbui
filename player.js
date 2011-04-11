@@ -289,7 +289,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         sliderWrap = $(this).find('.slider-wrap'),
                         slider = sliderWrap.find('.slider'),
                         images = slider.find('img').not('.video-trigger-icon'),
-                        imgWidth = 0,
                         leftButton = $(this).find('.left-button'),
                         rightButton = $(this).find('.right-button');
 
@@ -297,13 +296,17 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                      // prepare
                      images.last().css('margin-right', '0px');
-                     imgWidth = images.eq(0).outerWidth(true);
-                     console.log(images.eq(0).attr('src'));
-                     console.log(images.last().attr('src'));
-                     slider.width(imgWidth * images.length - (imgWidth - images.eq(0).outerWidth(false)));
 
-                     console.log(imgWidth, ' ', images.length, ' ', slider.width(), ' ', sliderWrap.width());
+                     if (!self.sliderWidth) {
+                        self.sliderWidth = 0;
 
+                        images.each(function () {
+                           self.sliderWidth += $(this).outerWidth(true);
+                        });
+                     }
+                     
+                     slider.width(self.sliderWidth);
+                     
                      if (slider.width() <= sliderWrap.width()) {
                         leftButton.hide();
                         rightButton.hide();
