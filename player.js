@@ -371,12 +371,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
+         callbackCount = options.slides.length;
+         console.log('inc:', callbackCount);
+
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img')),
                iconSrc;
-            
-            callbackCount++;
-            console.log('inc', callbackCount);
 
             img.load(loadCallback)
                .attr('src', image.thumbnail)
@@ -391,7 +391,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                if (iconSrc !== null) {
                   callbackCount++;
-                  console.log('inc (icon)', callbackCount);
+                  console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
                      .load(loadCallback)
