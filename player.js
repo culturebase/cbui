@@ -295,10 +295,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      options.maximumVelocity = options.pixelsPerSecond / 60;
 
                      // prepare
-                     images.last().css('margin-right', '0px');
-
                      setTimeout(function () {
                         var w = 0;
+
+                        images.last().css('margin-right', '0px');
 
                         images.each(function () {
                            w += $(this).outerWidth(true);
