@@ -422,16 +422,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                .attr('src', image.thumbnail)
                .data('orig-src', image.original);
          });
-
-         if (iconSrc !== null && icon !== null) {
-            icon;
-         }
-         
-         $.each(images, function (i, img) {
-            img.load(loadCallback)
-               .attr('src', image.thumbnail)
-               .data('orig-src', image.original);
-         });
          
          self.element().append(slideshow);
       } else {
