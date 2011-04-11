@@ -393,9 +393,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
+                     .attr('src', iconSrc)
                      .appendTo(slider)
                      .load(loadCallback)
-                     .attr('src', iconSrc)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
@@ -417,10 +417,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             }
             
-            img.appendTo(slider)
-               .load(loadCallback)
-               .attr('src', image.thumbnail)
-               .data('orig-src', image.original);
+            img.attr('src', image.thumbnail)
+               .data('orig-src', image.original)
+               .appendTo(slider)
+               .load(loadCallback);
          });
          
          self.element().append(slideshow);
