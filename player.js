@@ -377,11 +377,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          console.log('inc:', callbackCount);
 
          $.each(options.slides, function(i, image) {
-            var img = $(document.createElement('img'))
-               .load(loadCallback)
-               .attr('src', image.thumbnail)
-               .data('orig-src', image.original)
-               .appendTo(slider);
+            var img;
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -405,7 +401,15 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         self.player.play();
                      });
                }
+            }
+            
+            img = $(document.createElement('img'))
+               .load(loadCallback)
+               .attr('src', image.thumbnail)
+               .data('orig-src', image.original)
+               .appendTo(slider);
 
+            if (i == 0) {
                img.addClass('video-trigger').click(function() {
                   self.player.play();
                });
