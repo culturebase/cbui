@@ -293,18 +293,15 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      options.maximumVelocity = options.pixelsPerSecond / 60;
 
                      // prepare
-                     slider.find('img').last().css('margin-right', '0px');
-
-                     slider.children().each(function () {
-                        if (!$(this).hasClass('video-trigger-icon')) {
-                           sliderWidth += $(this).outerWidth(true);
-                        }
-                     });
+                     slider.find('img').not('.video-trigger-icon').each(function () {
+                        sliderWidth += $(this).outerWidth(true);
+                     }).last().css('margin-right', '0px');
 
                      slider.width(sliderWidth);
 
-                     if (sliderWidth <= sliderWrap.width()) {
-                        leftButton.add(rightButton).hide();
+                     if (slider.width() <= sliderWrap.width()) {
+                        leftButton.hide();
+                        rightButton.hide();
                      }
 
                      var move = function (direction) {
@@ -353,7 +350,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         return false;
                      });
 
-                     leftButton.add(rightButton).bind('mouseup mouseleave', function () {
+                     $().add(leftButton).add(rightButton).bind('mouseup mouseleave', function () {
                         move(0);
                         return false;
                      }).mouseenter(function() {
