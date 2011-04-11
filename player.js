@@ -314,8 +314,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      icon.css({
                         display:   'block',
                         position:  'absolute',
-                        top:       Math.round(img.height() / 2 - icon.height() / 2)+'px',
-                        left:      Math.round(img.width() / 2 - icon.width() / 2)+'px',
+                        top:       Math.round(images.get(0).height() / 2 - icon.height() / 2)+'px',
+                        left:      Math.round(images.get(0).width() / 2 - icon.width() / 2)+'px',
                         'z-index': 2
                      });
                   }
