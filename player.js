@@ -387,8 +387,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                })[0] || null;
 
                if (iconSrc !== null) {
-                  triggerImg = img;
-
                   callbackCount++;
                   console.log('inc(icon):', callbackCount);
 
@@ -410,6 +408,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                .appendTo(slider);
 
             if (i == 0) {
+               if (iconSrc !== null) {
+                  triggerImg = img;
+               }
+
                img.addClass('video-trigger').click(function() {
                   self.player.play();
                });
