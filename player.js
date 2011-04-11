@@ -288,6 +288,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         sliderWidth = 0,
                         slider = sliderWrap.find('.slider'),
                         images = slider.find('img').not('.video-trigger-icon'),
+                        imgWidth = 0,
                         leftButton = $(this).find('.left-button'),
                         rightButton = $(this).find('.right-button');
 
@@ -295,12 +296,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                      // prepare
                      images.last().css('margin-right', '0px');
-
-                     images.each(function () {
-                        sliderWidth += $(this).outerWidth(true);
-                     });
-
-                     slider.width(sliderWidth);
+                     imgWidth = images.eq(0).outerWidth(true);
+                     slider.width(imgWidth * images.length - (imgWidth - images.eq(0).outerWidth(false)));
 
                      console.log(sliderWidth, ' ', slider.width(), ' ', sliderWrap.width());
 
