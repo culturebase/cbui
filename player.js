@@ -285,7 +285,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      var animationInterval = null,
                         currentVelocity = 0,
                         sliderWrap = $(this).find('.slider-wrap'),
-                        sliderWidth = 0,
                         slider = sliderWrap.find('.slider'),
                         images = slider.find('img').not('.video-trigger-icon'),
                         imgWidth = 0,
@@ -299,7 +298,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      imgWidth = images.eq(0).outerWidth(true);
                      slider.width(imgWidth * images.length - (imgWidth - images.eq(0).outerWidth(false)));
 
-                     console.log(sliderWidth, ' ', slider.width(), ' ', sliderWrap.width());
+                     console.log(imgWidth, ' ', images.length, ' ', slider.width(), ' ', sliderWrap.width());
 
                      if (slider.width() <= sliderWrap.width()) {
                         leftButton.hide();
