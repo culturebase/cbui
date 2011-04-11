@@ -295,7 +295,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      options.maximumVelocity = options.pixelsPerSecond / 60;
 
                      // prepare (ugly hack for IE race condition)
-                     setTimeout(function () {
+                     setInterval(function () {
                         var w = 0;
 
                         images.last().css('margin-right', '0px');
