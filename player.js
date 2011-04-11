@@ -254,7 +254,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                          +'</div>'
                       +'</div>'),
          slider = slideshow.find('.slider'),
-         icon = null;
+         icon = null,
+         triggerImg = null;
 
       this.player = options.widgets.player;
       
@@ -285,6 +286,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                img.addClass('video-trigger').click(function() {
                   self.player.play();
                });
+
+               triggerImg = img;
             } else {
                img.click(function() {
                   self.player.load(self.player.options.id,
@@ -310,12 +313,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                
                // This gets invoked when the last .load() event has fired.
                if (callbackCount === 0) {
-                  if (icon !== null) {
+                  if (icon !== null && triggerImg !== null) {
                      icon.css({
                         display:   'block',
                         position:  'absolute',
-                        top:       Math.round(images.get(0).height() / 2 - icon.height() / 2)+'px',
-                        left:      Math.round(images.get(0).width() / 2 - icon.width() / 2)+'px',
+                        top:       Math.round(triggerImg.height() / 2 - icon.height() / 2)+'px',
+                        left:      Math.round(triggerImg.width() / 2 - icon.width() / 2)+'px',
                         'z-index': 2
                      });
                   }
