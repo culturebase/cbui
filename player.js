@@ -391,6 +391,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
+                     .src("baum")
                      .appendTo(slider)
                      .load(loadCallback)
                      .addClass('video-trigger-icon')
@@ -402,6 +403,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             }
             
             img = $(document.createElement('img'))
+               .src("baum")
                .data('orig-src', image.original)
                .appendTo(slider)
                .load(loadCallback);
