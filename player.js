@@ -255,7 +255,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                       +'</div>'),
          slider = slideshow.find('.slider'),
          callbackCount = 0,
+         images = [],
          icon = null,
+         iconSrc = null,
          triggerImg = null,
          loadCallback = function () {
             callbackCount--;
@@ -375,8 +377,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          console.log('inc:', callbackCount);
 
          $.each(options.slides, function(i, image) {
-            var img = $(document.createElement('img')),
-               iconSrc;
+            var img = $(document.createElement('img')).appendTo(slider);
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -391,8 +392,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                   icon = $(document.createElement('img'))
                      .appendTo(slider)
-                     .load(loadCallback)
-                     .attr('src', iconSrc)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
@@ -415,9 +414,18 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      false);
                });
             }
+            
+            images.push($.extend({
+               element: img
+            }, image));
+         });
 
-            img.appendTo(slider)
-               .load(loadCallback)
+         if (iconSrc !== null && icon !== null) {
+            icon.load(loadCallback).attr('src', iconSrc);
+         }
+         
+         $.each(images, function (i, img) {
+            img.load(loadCallback)
                .attr('src', image.thumbnail)
                .data('orig-src', image.original);
          });
