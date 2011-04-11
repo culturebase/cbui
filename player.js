@@ -294,7 +294,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                      options.maximumVelocity = options.pixelsPerSecond / 60;
 
-                     // prepare
+                     // prepare (ugly hack for IE race condition)
                      setTimeout(function () {
                         var w = 0;
 
@@ -305,12 +305,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         });
 
                         slider.width(w);
+
+                        if (slider.width() <= sliderWrap.width()) {
+                           leftButton.hide();
+                           rightButton.hide();
+                        }
                      }, 250);
-                     
-                     if (slider.width() <= sliderWrap.width()) {
-                        leftButton.hide();
-                        rightButton.hide();
-                     }
 
                      var move = function (direction) {
                         if (animationInterval !== null) {
