@@ -259,7 +259,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          triggerImg = null,
          loadCallback = function () {
             callbackCount--;
-            console.log('dec', callbackCount);
+            console.log('dec:', callbackCount);
 
             // This gets invoked when the last .load() event has fired.
             if (callbackCount === 0) {
@@ -376,11 +376,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img')),
                iconSrc;
-
-            img.load(loadCallback)
-               .attr('src', image.thumbnail)
-               .data('orig-src', image.original);
-
+            
             // first image of slide is video trigger
             if (i == 0) {
                // select the best available icon source
@@ -419,7 +415,10 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             }
 
-            img.appendTo(slider);
+            img.load(loadCallback)
+               .attr('src', image.thumbnail)
+               .data('orig-src', image.original)
+               .appendTo(slider);
          });
          
          self.element().append(slideshow);
