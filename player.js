@@ -260,6 +260,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          loadCallback = function () {
             callbackCount--;
 
+            console.log(callbackCount);
+
             // This gets invoked when the last .load() event has fired.
             if (callbackCount === 0) {
                if (icon !== null && triggerImg !== null) {
