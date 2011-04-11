@@ -270,6 +270,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   iconSrc = $.map([options.slides_video_trigger_icon, options.play_icon], function (val) {
                      return val || null;
                   })[0] || null,
+
+                  // this will hold the icon element
                   icon = null;
 
                if (iconSrc !== null) {
@@ -283,11 +285,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                   img.load(function(){
                      icon.css({
-                           display:   'block',
-                           position:  'absolute',
-                           top:       Math.round(img.height() / 2 - icon.height() / 2)+'px',
-                           left:      Math.round(img.width() / 2 - icon.width() / 2)+'px',
-                           'z-index': 2
+                        display:   'block',
+                        position:  'absolute',
+                        top:       Math.round(img.height() / 2 - icon.height() / 2)+'px',
+                        left:      Math.round(img.width() / 2 - icon.width() / 2)+'px',
+                        'z-index': 2
                      });
                   });
                }
@@ -385,7 +387,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                               }
 
                               // everything calculcated? okay, lets get ready to rumble.
-                              sliderWrap[0].scrollLeft += Math.round(currentVelocity);
+                              sliderWrap.scrollLeft(Math.round(sliderWrap.scrollLeft() + currentVelocity));
                            }, 16); // ~ 60 FPS
                         };
 
