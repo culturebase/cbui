@@ -259,8 +259,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          triggerImg = null,
          loadCallback = function () {
             callbackCount--;
-
-            console.log(callbackCount);
+            console.log('dec', callbackCount);
 
             // This gets invoked when the last .load() event has fired.
             if (callbackCount === 0) {
@@ -377,6 +376,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                iconSrc;
             
             callbackCount++;
+            console.log('inc', callbackCount);
 
             img.load(loadCallback)
                .attr('src', image.thumbnail)
@@ -391,6 +391,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                if (iconSrc !== null) {
                   callbackCount++;
+                  console.log('inc (icon)', callbackCount);
 
                   icon = $(document.createElement('img'))
                      .load(loadCallback)
