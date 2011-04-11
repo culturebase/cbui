@@ -391,21 +391,21 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
-                     .load(loadCallback)
-                     .attr('src', iconSrc)
                      .appendTo(slider)
+                     .load(loadCallback)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
                      });
+                  icon.attr('src', iconSrc)
                }
             }
             
             img = $(document.createElement('img'))
-               .load(loadCallback)
-               .attr('src', image.thumbnail)
                .data('orig-src', image.original)
-               .appendTo(slider);
+               .appendTo(slider)
+               .load(loadCallback);
+            img.attr('src', image.thumbnail)
 
             if (i == 0) {
                if (iconSrc !== null) {
