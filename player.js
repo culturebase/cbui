@@ -288,30 +288,26 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         currentVelocity = 0,
                         sliderWrap = $(this).find('.slider-wrap'),
                         slider = sliderWrap.find('.slider'),
+                        sliderWidth = 0,
                         images = slider.find('img').not('.video-trigger-icon'),
                         leftButton = $(this).find('.left-button'),
-                        rightButton = $(this).find('.right-button'),
-                        marginRight = images.css('margin-right');
+                        rightButton = $(this).find('.right-button');
 
                      options.maximumVelocity = options.pixelsPerSecond / 60;
 
-                     // prepare (ugly hack for IE race condition)
-                     setInterval(function () {
-                        var w = 0;
+                     // prepare
+                     images.last().css('margin-right', '0px');
 
-                        images.css('margin-right', marginRight).last().css('margin-right', '0px');
+                     images.each(function () {
+                        sliderWidth += $(this).outerWidth(true);
+                     });
 
-                        images.each(function () {
-                           w += $(this).outerWidth(true);
-                        });
+                     slider.width(w);
 
-                        slider.width(w);
-
-                        if (slider.width() <= sliderWrap.width()) {
-                           leftButton.hide();
-                           rightButton.hide();
-                        }
-                     }, 250);
+                     if (slider.width() <= sliderWrap.width()) {
+                        leftButton.hide();
+                        rightButton.hide();
+                     }
 
                      var move = function (direction) {
                         if (animationInterval !== null) {
