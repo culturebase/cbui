@@ -379,8 +379,13 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          console.log('inc:', callbackCount);
 
          $.each(options.slides, function(i, image) {
-            var img,
+            var img = $(document.createElement('img'))
+                  .attr('src', image.thumbnail)
+                  .data('orig-src', image.original)
+                  .appendTo(slider),
                imgObj;
+
+            console.log('append:', i);
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -390,9 +395,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                })[0] || null;
 
                if (iconSrc !== null) {
-                  callbackCount++;
-                  console.log('inc(icon):', callbackCount);
-
                   icon = $(document.createElement('img'))
                      .attr('src', iconSrc)
                      .addClass('video-trigger-icon')
@@ -400,8 +402,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         self.player.play();
                      })
                      .appendTo(slider);
-
+                  
                   console.log('append(icon):', i);
+                  
+                  callbackCount++;
+                  console.log('inc(icon):', callbackCount);
 
                   imgObj = new Image();
                   imgObj.onload = loadCallback;
@@ -409,13 +414,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   imgObjs.push(imgObj);
                }
             }
-            
-            img = $(document.createElement('img'))
-               .attr('src', image.thumbnail)
-               .data('orig-src', image.original)
-               .appendTo(slider);
-
-            console.log('append:', i);
 
             imgObj = new Image();
             imgObj.onload = loadCallback;
