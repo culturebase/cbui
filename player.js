@@ -256,18 +256,13 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                       +'</div>'),
          slider = slideshow.find('.slider'),
          icon = null,
-         iconSrc = null,
-         triggerImg = null;
+         iconSrc = null;
 
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
-         console.log(1);
-
          $.each(options.slides, function(i, image) {
-            var img = $(document.createElement('img'))
-                  .attr('src', image.thumbnail)
-                  .appendTo(slider);
+            var img = $(document.createElement('img'));
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -285,9 +280,15 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      })
                      .appendTo(slider);
                   
-                  triggerImg = img;
-
-                  img.addClass('video-trigger').click(function() {
+                  img.load(function () {
+                     icon.css({
+                        display:   'block',
+                        position:  'absolute',
+                        top:       Math.round(img.height() / 2 - icon.height() / 2)+'px',
+                        left:      Math.round(img.width() / 2 - icon.width() / 2)+'px',
+                        'z-index': 2
+                     });
+                  }).addClass('video-trigger').click(function() {
                      self.player.play();
                   });
                }
@@ -302,9 +303,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      false);
                });
             }
+
+            img.attr('src', image.thumbnail).appendTo(slider);
          });
-         
-         console.log(2);
          
          if (icon !== null && triggerImg !== null) {
             icon.css({
@@ -315,8 +316,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                'z-index': 2
             });
          }
-
-         console.log(3);
 
          (function (options) {
             options = $.extend({
@@ -412,11 +411,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             });
          }).call(slideshow);
          
-         console.log(4);
-         
          self.element().append(slideshow);
-
-         console.log(5);
       } else {
          self.element().hide();
       }
