@@ -261,6 +261,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
+         console.log('foo');
+
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img'))
                   .attr('src', image.thumbnail)
