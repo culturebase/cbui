@@ -256,121 +256,9 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          slider = slideshow.find('.slider'),
          callbackCount = 0,
          images = [],
-         imgObjs = [],
          icon = null,
          iconSrc = null,
-         triggerImg = null,
-         loadCallback = function () {
-            callbackCount--;
-            console.log('dec:', callbackCount);
-
-            // This gets invoked when the last .load() event has fired.
-            if (callbackCount === 0) {
-               if (icon !== null && triggerImg !== null) {
-                  icon.css({
-                     display:   'block',
-                     position:  'absolute',
-                     top:       Math.round(triggerImg.height() / 2 - icon.height() / 2)+'px',
-                     left:      Math.round(triggerImg.width() / 2 - icon.width() / 2)+'px',
-                     'z-index': 2
-                  });
-               }
-
-               (function (options) {
-                  options = $.extend({
-                     acceleration:    0.5, // how fast the slider gains speed (more means faster)
-                     friction:        0.5, // how fast the slider looses speed (more means faster)
-                     pixelsPerSecond: 500
-                  }, options || {});
-
-                  $(this).each(function () {
-                     // movement
-                     var animationInterval = null,
-                        currentVelocity = 0,
-                        sliderWrap = $(this).find('.slider-wrap'),
-                        slider = sliderWrap.find('.slider'),
-                        sliderWidth = 0,
-                        images = slider.find('img').not('.video-trigger-icon'),
-                        leftButton = $(this).find('.left-button'),
-                        rightButton = $(this).find('.right-button');
-
-                     options.maximumVelocity = options.pixelsPerSecond / 60;
-
-                     // prepare
-                     images.last().css('margin-right', '0px');
-
-                     images.each(function (i, e) {
-                        sliderWidth += $(e).outerWidth(true);
-                        console.log('sliderWidth:', i, ',', sliderWidth);
-                     });
-
-                     slider.width(sliderWidth);
-
-                     if (slider.width() <= sliderWrap.width()) {
-                        leftButton.hide();
-                        rightButton.hide();
-                     }
-
-                     var move = function (direction) {
-                        if (animationInterval !== null) {
-                           clearInterval(animationInterval);
-                        }
-
-                        animationInterval = setInterval(function () {
-                           if (direction < 0) { // left
-                              currentVelocity -= options.acceleration;
-                              if (currentVelocity < -options.maximumVelocity) {
-                                 currentVelocity = -options.maximumVelocity;
-                              }
-                           } else if (direction > 0) { // right
-                              currentVelocity += options.acceleration;
-                              if (currentVelocity > options.maximumVelocity) {
-                                 currentVelocity = options.maximumVelocity;
-                              }
-                           } else if (currentVelocity < 0) { // stop
-                              currentVelocity += options.friction;
-                              if (currentVelocity > 0) {
-                                 currentVelocity = 0;
-                              }
-                           } else if (currentVelocity > 0) { // stop
-                              currentVelocity -= options.friction;
-                              if (currentVelocity < 0) {
-                                 currentVelocity = 0;
-                              }
-                           } else {
-                              clearInterval(animationInterval);
-                           }
-
-                           // everything calculcated? okay, lets get ready to rumble.
-                           sliderWrap.scrollLeft(Math.round(sliderWrap.scrollLeft() + currentVelocity));
-                        }, 16); // ~ 60 FPS
-                     };
-
-                     // bindings
-                     leftButton.mousedown(function () {
-                        move(-1);
-                        return false;
-                     });
-
-                     rightButton.mousedown(function () {
-                        move(1);
-                        return false;
-                     });
-
-                     $().add(leftButton).add(rightButton).bind('mouseup mouseleave', function () {
-                        move(0);
-                        return false;
-                     }).mouseenter(function() {
-                        $(this).stop().animate({opacity: 0.8}, 200);
-                     }).mouseleave(function() {
-                        $(this).stop().animate({opacity: 0}, 500);
-                     }).animate({opacity: 0.8}, 2000, function() {
-                        $(this).animate({opacity: 0}, 2000);
-                     });
-                  });
-               }).call(slideshow);
-            }
-         };
+         triggerImg = null;
 
       this.player = options.widgets.player;
       
@@ -382,10 +270,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             var img = $(document.createElement('img'))
                   .attr('src', image.thumbnail)
                   .data('orig-src', image.original)
-                  .appendTo(slider),
-               imgObj;
-
-            console.log('append:', i);
+                  .appendTo(slider);
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -403,31 +288,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      })
                      .appendTo(slider);
                   
-                  console.log('append(icon):', i);
-                  
-                  callbackCount++;
-                  console.log('inc(icon):', callbackCount);
-
-                  imgObj = new Image();
-                  imgObj.onload = loadCallback;
-                  imgObj.src = iconSrc;
-                  imgObjs.push(imgObj);
-               }
-            }
-
-            imgObj = new Image();
-            imgObj.onload = loadCallback;
-            imgObj.src = image.thumbnail;
-            imgObjs.push(imgObj);
-
-            if (i == 0) {
-               if (iconSrc !== null) {
                   triggerImg = img;
-               }
 
-               img.addClass('video-trigger').click(function() {
-                  self.player.play();
-               });
+                  img.addClass('video-trigger').click(function() {
+                     self.player.play();
+                  });
+               }
             } else {
                img.click(function() {
                   self.player.load(self.player.options.id,
@@ -440,6 +306,105 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             }
          });
+         
+         if (icon !== null && triggerImg !== null) {
+            icon.css({
+               display:   'block',
+               position:  'absolute',
+               top:       Math.round(triggerImg.height() / 2 - icon.height() / 2)+'px',
+               left:      Math.round(triggerImg.width() / 2 - icon.width() / 2)+'px',
+               'z-index': 2
+            });
+         }
+
+         (function (options) {
+            options = $.extend({
+               acceleration:    0.5, // how fast the slider gains speed (more means faster)
+               friction:        0.5, // how fast the slider looses speed (more means faster)
+               pixelsPerSecond: 500
+            }, options || {});
+
+            $(this).each(function () {
+               // movement
+               var animationInterval = null,
+                  currentVelocity = 0,
+                  sliderWrap = $(this).find('.slider-wrap'),
+                  slider = sliderWrap.find('.slider'),
+                  images = slider.find('img').not('.video-trigger-icon'),
+                  leftButton = $(this).find('.left-button'),
+                  rightButton = $(this).find('.right-button');
+
+               options.maximumVelocity = options.pixelsPerSecond / 60;
+
+               // prepare
+               images.width(options.slidesWidth).height(options.slidesHeight)
+                  .not(':last').css('padding-right', options.slidesSeparator+'px');
+
+               slider.width(options.slidesWidth * options.slides.length + options.slidesSeparator * (options.slides.length - 1));
+
+               if (slider.width() <= sliderWrap.width()) {
+                  leftButton.hide();
+                  rightButton.hide();
+               }
+
+               var move = function (direction) {
+                  if (animationInterval !== null) {
+                     clearInterval(animationInterval);
+                  }
+
+                  animationInterval = setInterval(function () {
+                     if (direction < 0) { // left
+                        currentVelocity -= options.acceleration;
+                        if (currentVelocity < -options.maximumVelocity) {
+                           currentVelocity = -options.maximumVelocity;
+                        }
+                     } else if (direction > 0) { // right
+                        currentVelocity += options.acceleration;
+                        if (currentVelocity > options.maximumVelocity) {
+                           currentVelocity = options.maximumVelocity;
+                        }
+                     } else if (currentVelocity < 0) { // stop
+                        currentVelocity += options.friction;
+                        if (currentVelocity > 0) {
+                           currentVelocity = 0;
+                        }
+                     } else if (currentVelocity > 0) { // stop
+                        currentVelocity -= options.friction;
+                        if (currentVelocity < 0) {
+                           currentVelocity = 0;
+                        }
+                     } else {
+                        clearInterval(animationInterval);
+                     }
+
+                     // everything calculcated? okay, lets get ready to rumble.
+                     sliderWrap.scrollLeft(Math.round(sliderWrap.scrollLeft() + currentVelocity));
+                  }, 16); // ~ 60 FPS
+               };
+
+               // bindings
+               leftButton.mousedown(function () {
+                  move(-1);
+                  return false;
+               });
+
+               rightButton.mousedown(function () {
+                  move(1);
+                  return false;
+               });
+
+               $().add(leftButton).add(rightButton).bind('mouseup mouseleave', function () {
+                  move(0);
+                  return false;
+               }).mouseenter(function() {
+                  $(this).stop().animate({opacity: 0.8}, 200);
+               }).mouseleave(function() {
+                  $(this).stop().animate({opacity: 0}, 500);
+               }).animate({opacity: 0.8}, 2000, function() {
+                  $(this).animate({opacity: 0}, 2000);
+               });
+            });
+         }).call(slideshow);
          
          self.element().append(slideshow);
       } else {
