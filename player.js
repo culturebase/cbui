@@ -331,8 +331,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                options.maximumVelocity = options.pixelsPerSecond / 60;
 
                // prepare
-               images.width(options.slidesWidth).height(options.slidesHeight)
-                  .not(':last').css('padding-right', options.slidesSeparator+'px');
+               images.css({
+                  'display': 'block',
+                  'float':   'left',
+                  'cursor':  'pointer'
+               }).width(options.slidesWidth).height(options.slidesHeight)
+                  .not(':last').css('margin-right', options.slidesSeparator+'px');
 
                slider.width(options.slidesWidth * options.slides.length + options.slidesSeparator * (options.slides.length - 1));
 
