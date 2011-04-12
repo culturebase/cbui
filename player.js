@@ -299,8 +299,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                      // prepare
                      images.last().css('margin-right', '0px');
 
-                     images.each(function (i) {
-                        sliderWidth += $(this).outerWidth(true);
+                     images.each(function (i, e) {
+                        sliderWidth += e.outerWidth(true);
                         console.log('sliderWidth:', i, ',', sliderWidth);
                      });
 
