@@ -246,6 +246,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
    handleReady : function(options) {
       var self = this,
+         widgetOptions = options,
          slideshow = $('<div class="slideshow">'
                          +'<div class="left-button"></div>'
                          +'<div class="right-button"></div>'
@@ -261,7 +262,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
-         console.log('foo');
+         console.log(1);
 
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img'))
@@ -303,6 +304,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             }
          });
          
+         console.log(2);
+         
          if (icon !== null && triggerImg !== null) {
             icon.css({
                display:   'block',
@@ -312,6 +315,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                'z-index': 2
             });
          }
+
+         console.log(3);
 
          (function (options) {
             options = $.extend({
@@ -337,10 +342,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   'display': 'block',
                   'float':   'left',
                   'cursor':  'pointer'
-               }).width(options.slidesWidth).height(options.slidesHeight)
-                  .not(':last').css('margin-right', options.slidesSeparator+'px');
+               }).width(widgetOptions.slidesWidth).height(widgetOptions.slidesHeight)
+                  .not(':last').css('margin-right', widgetOptions.slidesSeparator+'px');
 
-               slider.width(options.slidesWidth * options.slides.length + options.slidesSeparator * (options.slides.length - 1));
+               slider.width(widgetOptions.slidesWidth * widgetOptions.slides.length
+                            + widgetOptions.slidesSeparator * (widgetOptions.slides.length - 1));
 
                if (slider.width() <= sliderWrap.width()) {
                   leftButton.hide();
@@ -406,7 +412,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             });
          }).call(slideshow);
          
+         console.log(4);
+         
          self.element().append(slideshow);
+
+         console.log(5);
       } else {
          self.element().hide();
       }
