@@ -413,7 +413,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                .data('orig-src', image.original)
                .appendTo(slider);
 
-            console.log('img appended');
+            console.log('append:', i);
 
             imgObj = new Image();
             imgObj.onload = loadCallback;
