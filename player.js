@@ -25,7 +25,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
             clearTimeout(t);
             return;
          } catch(e) {
-            // resume
+            // continue
          }
          t = setTimeout(function () {
             callMenu.call(self, type);
@@ -256,6 +256,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          slider = slideshow.find('.slider'),
          callbackCount = 0,
          images = [],
+         imgObjs = [],
          icon = null,
          iconSrc = null,
          triggerImg = null,
@@ -377,7 +378,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          console.log('inc:', callbackCount);
 
          $.each(options.slides, function(i, image) {
-            var img;
+            var img,
+               imgObj;
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -391,23 +393,29 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   console.log('inc(icon):', callbackCount);
 
                   icon = $(document.createElement('img'))
-                     .attr('src', "baum")
+                     .attr('src', iconSrc)
                      .appendTo(slider)
-                     .load(loadCallback)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
                      });
-                  icon.attr('src', iconSrc)
+
+                  imgObj = new Image();
+                  imgObj.onload = loadCallback;
+                  imgObj.src = iconSrc;
+                  imgObjs.push(imgObj);
                }
             }
             
             img = $(document.createElement('img'))
-               .attr('src', "baum")
+               .attr('src', image.thumbnail)
                .data('orig-src', image.original)
-               .appendTo(slider)
-               .load(loadCallback);
-            img.attr('src', image.thumbnail)
+               .appendTo(slider);
+
+            imgObj = new Image();
+            imgObj.onload = loadCallback;
+            imgObj.src = image.thumbnail;
+            imgObjs.push(imgObj);
 
             if (i == 0) {
                if (iconSrc !== null) {
