@@ -395,11 +395,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
                   icon = $(document.createElement('img'))
                      .attr('src', iconSrc)
-                     .appendTo(slider)
                      .addClass('video-trigger-icon')
                      .click(function() {
                         self.player.play();
-                     });
+                     })
+                     .appendTo(slider);
 
                   imgObj = new Image();
                   imgObj.onload = loadCallback;
