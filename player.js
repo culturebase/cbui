@@ -306,16 +306,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
 
             img.attr('src', image.thumbnail).appendTo(slider);
          });
-         
-         if (icon !== null && triggerImg !== null) {
-            icon.css({
-               display:   'block',
-               position:  'absolute',
-               top:       Math.round(triggerImg.height() / 2 - icon.height() / 2)+'px',
-               left:      Math.round(triggerImg.width() / 2 - icon.width() / 2)+'px',
-               'z-index': 2
-            });
-         }
 
          (function (options) {
             options = $.extend({
