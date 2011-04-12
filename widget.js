@@ -239,7 +239,6 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.base();
       base2.assignID(this);
       this.parentElement = element;
-      var self = this;
       this.element().CbWidget(this);
       /* element() and parentElement may differ */
       this.parentElement.CbWidget(this);
