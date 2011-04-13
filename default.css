@@ -24,10 +24,11 @@
 
 .__CbUiInputText,.__CbUiPassword,.__CbUiSelect,.__CbUiSearchBox,.__CbUiChooseList {
    border: 1px solid #000000;
-   height: 16px;
    font-size: 14px;
-   /* display: block; -- 'block' is a very bad choice as default input style and
-                         breaks a lot of things! */
+}
+
+.__CbUiInputText,.__CbUiPassword,.__CbUiSelect,.__CbUiSearchBox {
+   height: 16px;
 }
 
 .__CbUiInputText[disabled],.__CbUiPassword[disabled],.__CbUiSelect[disabled] {
