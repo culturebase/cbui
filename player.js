@@ -261,6 +261,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
+         console.log(1);
+
          $.each(options.slides, function(i, image) {
             var img = $(document.createElement('img'));
             
@@ -307,7 +309,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.attr('src', image.thumbnail).appendTo(slider);
          });
 
+         console.log(2);
+
          self.element().append(slideshow);
+         
+         console.log(3);
 
          (function (options) {
             options = $.extend({
@@ -403,6 +409,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             });
          }).call(slideshow);
+
+         console.log(5);
       } else {
          self.element().hide();
       }
