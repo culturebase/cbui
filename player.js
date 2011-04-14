@@ -259,6 +259,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          iconSrc = null;
 
       this.player = options.widgets.player;
+
+      console.log(0);
       
       if (options.slides && options.slides.length >= 1) {
          console.log(1);
