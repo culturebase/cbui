@@ -398,6 +398,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   }).animate({opacity: 0.8}, 2000, function() {
                      jQuery(this).animate({opacity: 0}, 2000);
                   });
+               } else {
+                  jQuery().add(leftButton).add(rightButton).css('opacity', 0.8);
                }
             });
          }).call(slideshow);
