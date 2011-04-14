@@ -241,6 +241,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
 
 jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
+      console.log(-1);
       return this.base(element);
    },
 
