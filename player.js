@@ -338,6 +338,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                slider.width(widgetOptions.slides_width * widgetOptions.slides.length
                   + widgetOptions.slides_separator * (widgetOptions.slides.length - 1));
 
+               console.log(slider.width(), element.width());
+
                if (slider.width() <= element.width()) {
                   leftButton.hide();
                   rightButton.hide();
