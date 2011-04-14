@@ -241,30 +241,22 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
 
 jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
    handleReady : function(options) {
-      console.log(-2);
-      
       var self = this,
          widgetOptions = options,
-         slideshow = $(document.createElement('div')).addClass('slideshow')
-            .append($(document.createElement('div')).addClass('left-button'))
-            .append($(document.createElement('div')).addClass('right-button'))
-            .append($(document.createElement('div')).addClass('slider-wrap')
-               .append($(document.createElement('div')).addClass('slider'))),
+         slideshow = jQuery(document.createElement('div')).addClass('slideshow')
+            .append(jQuery(document.createElement('div')).addClass('left-button'))
+            .append(jQuery(document.createElement('div')).addClass('right-button'))
+            .append(jQuery(document.createElement('div')).addClass('slider-wrap')
+               .append(jQuery(document.createElement('div')).addClass('slider'))),
          slider = slideshow.find('.slider'),
          icon = null,
          iconSrc = null;
-      
-      console.log(-1);
 
       this.player = options.widgets.player;
-
-      console.log(0);
       
       if (options.slides && options.slides.length >= 1) {
-         console.log(1);
-
          $.each(options.slides, function(i, image) {
-            var img = $(document.createElement('img'));
+            var img = jQuery(document.createElement('img'));
             
             // first image of slide is video trigger
             if (i == 0) {
@@ -274,7 +266,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                })[0] || null;
 
                if (iconSrc !== null) {
-                  icon = $(document.createElement('img'))
+                  icon = jQuery(document.createElement('img'))
                      .attr('src', iconSrc)
                      .addClass('video-trigger-icon')
                      .click(function() {
@@ -309,11 +301,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.attr('src', image.thumbnail).appendTo(slider);
          });
 
-         console.log(2);
-
          self.element().append(slideshow);
-         
-         console.log(3);
 
          (function (options) {
             options = $.extend({
@@ -322,11 +310,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                pixelsPerSecond: 500
             }, options || {});
 
-            $(this).each(function () {
+            jQuery(this).each(function () {
                // movement
                var animationInterval = null,
                   currentVelocity = 0,
-                  element = $(this),
+                  element = jQuery(this),
                   sliderWrap = element.find('.slider-wrap'),
                   slider = sliderWrap.find('.slider'),
                   images = slider.find('img').not('.video-trigger-icon'),
@@ -397,20 +385,18 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                   return false;
                });
 
-               $().add(leftButton).add(rightButton).bind('mouseup mouseleave', function () {
+               jQuery().add(leftButton).add(rightButton).bind('mouseup mouseleave', function () {
                   move(0);
                   return false;
                }).mouseenter(function() {
-                  $(this).stop().animate({opacity: 0.8}, 200);
+                  jQuery(this).stop().animate({opacity: 0.8}, 200);
                }).mouseleave(function() {
-                  $(this).stop().animate({opacity: 0}, 500);
+                  jQuery(this).stop().animate({opacity: 0}, 500);
                }).animate({opacity: 0.8}, 2000, function() {
-                  $(this).animate({opacity: 0}, 2000);
+                  jQuery(this).animate({opacity: 0}, 2000);
                });
             });
          }).call(slideshow);
-
-         console.log(5);
       } else {
          self.element().hide();
       }
