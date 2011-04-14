@@ -240,12 +240,9 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
 });
 
 jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
-   constructor : function(element) {
-      console.log(-1);
-      return this.base(element);
-   },
-
    handleReady : function(options) {
+      console.log(-2);
+      
       var self = this,
          widgetOptions = options,
          slideshow = $('<div class="slideshow">'
