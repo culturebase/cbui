@@ -318,11 +318,12 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                // movement
                var animationInterval = null,
                   currentVelocity = 0,
-                  sliderWrap = $(this).find('.slider-wrap'),
+                  element = $(this),
+                  sliderWrap = element.find('.slider-wrap'),
                   slider = sliderWrap.find('.slider'),
                   images = slider.find('img').not('.video-trigger-icon'),
-                  leftButton = $(this).find('.left-button'),
-                  rightButton = $(this).find('.right-button');
+                  leftButton = element.find('.left-button'),
+                  rightButton = element.find('.right-button');
 
                options.maximumVelocity = options.pixelsPerSecond / 60;
 
@@ -337,9 +338,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                slider.width(widgetOptions.slides_width * widgetOptions.slides.length
                   + widgetOptions.slides_separator * (widgetOptions.slides.length - 1));
 
-               console.log(slider.width(), sliderWrap.width());
-
-               if (slider.width() <= sliderWrap.width()) {
+               if (slider.width() <= element.width()) {
                   leftButton.hide();
                   rightButton.hide();
                }
