@@ -307,6 +307,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
             img.attr('src', image.thumbnail).appendTo(slider);
          });
 
+         self.element().append(slideshow);
+
          (function (options) {
             options = $.extend({
                acceleration:    0.5, // how fast the slider gains speed (more means faster)
@@ -338,9 +340,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                slider.width(widgetOptions.slides_width * widgetOptions.slides.length
                   + widgetOptions.slides_separator * (widgetOptions.slides.length - 1));
 
-               console.log(slider.width(), element.width());
-
-               if (slider.width() <= element.width()) {
+               if (slider.width() <= sliderWrap.width()) {
                   leftButton.hide();
                   rightButton.hide();
                }
@@ -403,8 +403,6 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                });
             });
          }).call(slideshow);
-         
-         self.element().append(slideshow);
       } else {
          self.element().hide();
       }
