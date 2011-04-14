@@ -245,7 +245,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       
       var self = this,
          widgetOptions = options,
-         slideshow = $('<div class="slideshow"><div class="left-button"></div><div class="right-button"></div><div class="slider-wrap"><div class="slider"></div></div></div>'),
+         slideshow = $(document.createElement('div')).addClass('slideshow')
+            .append($(document.createElement('div')).addClass('left-button'))
+            .append($(document.createElement('div')).addClass('right-button'))
+            .append($(document.createElement('div')).addClass('slider-wrap')
+               .append($(document.createElement('div')).addClass('slider'))),
          slider = slideshow.find('.slider'),
          icon = null,
          iconSrc = null;
