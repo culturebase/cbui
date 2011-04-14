@@ -255,6 +255,8 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          slider = slideshow.find('.slider'),
          icon = null,
          iconSrc = null;
+      
+      console.log(-1);
 
       this.player = options.widgets.player;
 
