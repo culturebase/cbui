@@ -388,13 +388,17 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                jQuery().add(leftButton).add(rightButton).bind('mouseup mouseleave', function () {
                   move(0);
                   return false;
-               }).mouseenter(function() {
-                  jQuery(this).stop().animate({opacity: 0.8}, 200);
-               }).mouseleave(function() {
-                  jQuery(this).stop().animate({opacity: 0}, 500);
-               }).animate({opacity: 0.8}, 2000, function() {
-                  jQuery(this).animate({opacity: 0}, 2000);
-               });
+               })
+
+               if (!(jQuery.browser.msie && jQuery.browser.version < 9)) {
+                  jQuery().add(leftButton).add(rightButton).mouseenter(function() {
+                     jQuery(this).stop().animate({opacity: 0.8}, 200);
+                  }).mouseleave(function() {
+                     jQuery(this).stop().animate({opacity: 0}, 500);
+                  }).animate({opacity: 0.8}, 2000, function() {
+                     jQuery(this).animate({opacity: 0}, 2000);
+                  });
+               }
             });
          }).call(slideshow);
       } else {
