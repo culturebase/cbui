@@ -22,7 +22,7 @@
    line-height: 100%;
 }
 
-.__CbUiInputText,.__CbUiPassword,.__CbUiSelect,.__CbUiSearchBox,.__CbUiChooseList {
+.__CbUiInputText,.__CbUiPassword,.__CbUiSelect,.__CbUiSearchBox,.__CbUiChooseList, .__CbUiInputTextArea {
    border: 1px solid #000000;
    font-size: 14px;
 }

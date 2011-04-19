@@ -525,13 +525,14 @@ function language_window_callback(locale) {
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(options) {
       options = jQuery.extend({'useFlags' : false}, options);
+      jQuery.CbWidgetRegistry.retrofitProjects();
       this.base({template : '/module/lib/framework/getLanguageWindow.php',
          postParams : {
             'use_callback' : true,
             'no_close_icon' : true,
             'dynamic_height' : true,
             'use_flags' : options.useFlags,
-            'project' : jQuery.CbWidgetRegistry.project
+            'projects' : jQuery.CbWidgetRegistry.projects
          }
       }, options);
       this.autocenter();

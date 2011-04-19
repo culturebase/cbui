@@ -34,16 +34,15 @@ jQuery.CbWidgetRegistry = {
    },
    
    /* some properties you can change to modify the behaviour of the widget registry */
-   
+
    /**
-    * the project to be queried for ML bricks
+    * The projects to be queried for ML bricks.
     */
-   project : 'cb-framework',
-   
-   /**
-    * secondary project to be queried for ML bricks if they aren't found in 'project'
-    */
-   baseProject : 'cb-framework',
+   projects : ['cb-framework'],
+
+   /** old API for querying bricks; deprecated */
+   project : '',
+   baseProject : '',
    
    /**
     * language to be used
@@ -58,8 +57,20 @@ jQuery.CbWidgetRegistry = {
    bricks : {},
    
    /**
+    * Create a proper projects array from this.project and this.baseProject if
+    * they're given.
+    */
+   retrofitProjects : function() {
+      if (this.project || this.baseProject) {
+         this.projects = [this.project, this.baseProject];
+         this.project = '';
+         this.baseProject = '';
+      }
+   },
+
+   /**
     * change the language of all widgets in the given context
-    * @þaram language the new language (locale)
+    * @param language the new language (locale)
     * @param context the context to be manipulated - for example a window
     */
    changeLanguage : function(language, context) {
@@ -78,6 +89,9 @@ jQuery.CbWidgetRegistry = {
 
       if (labels.length == 0) return; // no translation needed
 
+      /* for backward compatibility */
+      this.retrofitProjects();
+
       /* fetch bricks */
       jQuery.ajax({
          type : 'GET',
@@ -85,8 +99,7 @@ jQuery.CbWidgetRegistry = {
          async : false,
          dataType : 'json',
          data : {
-            "project" : this.project, 
-            "base_project" : this.baseProject, 
+            "projects" : this.projects, 
             "language" : this.language,
             "labels[]" : labels
          },
@@ -118,7 +131,7 @@ jQuery.CbWidgetRegistry = {
          });
       }
       
-      for (var name in jQuery.CbValidate) {
+      for (name in jQuery.CbValidate) {
          jQuery(self.translateToClass(name, 'Validate'), context).each(function() {
             new (jQuery.CbValidate[name])(jQuery(this).CbWidget());
          });
@@ -202,6 +215,8 @@ jQuery.CbWidget = function() {}; // maybe do something useful here; e.g. find el
  *    from the element.
  *    When querying for the widget CbWidget will recursively search the elements
  *    parent nodes.
+ * @param recursive If the widget should be looked for recursively up the DOM
+ *    tree. If undefined, true is assumed.
  */
 jQuery.fn.CbWidget = function(widget, recursive) {
    if (recursive === undefined) recursive = true;
