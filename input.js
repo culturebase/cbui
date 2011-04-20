@@ -225,11 +225,18 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
     */
    constructor : function(field) {
       this.pivot = new CbElementPivot(field);
-      this.pivot.parent.prepend(
-            this.pivot.child.clone().attr('type', 'text').removeAttr('id'));
+      /* We can't use clone() here as IE and Opera don't like setting the
+       * type attribute on existing nodes.
+       */
+      var new_child = $('<input type="text"/>');
+      jQuery.each(this.pivot.child[0].attributes, function(i, attrib) {
+         if (attrib.name != 'type' && attrib.name != 'id') {
+            new_child.attr(attrib.name, attrib.value);
+         }
+      });
+      this.pivot.parent.prepend(new_child);
       this.cycler = new CbElementCycler(this.pivot.parent.children());
       this.base(this.pivot.parent);
-      var self = this;
    },
    
    /**
