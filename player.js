@@ -84,11 +84,12 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          return this;
       },
 
-      load : function(id, image, play_icon, active) {
+      load : function(id, image, play_icon, active, id_type) {
          this.options.id = id;
          this.options.image = image;
          this.options.play_icon = play_icon;
          this.options.active = active;
+         this.options.id_type = id_type;
          this.reset();
       },
 
@@ -119,9 +120,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          }
       },
 
-      play : function(id) {
+      play : function(id, id_type) {
          var self = this;
          if(id) this.options.id = id;
+         if(id_type) this.options.id_type = id_type;
 
          // TODO: Check wether to use Flash or the <video> tag.
 
@@ -206,10 +208,10 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          self.player = options.widgets.player;
          self.element().change(function() {
             var version = self.versions[self.value()];
-            if(options.versions_autoplay == 1 && version.active) {
-               self.player.play(self.value());
+            if(options.versions_autoplay && version.active) {
+               self.player.play(self.value(), 'td');
             } else {
-               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon) , version.active);
+               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon) , version.active, 'td');
             }
          });
       } else {
