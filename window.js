@@ -524,7 +524,7 @@ function language_window_callback(locale) {
  */
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(options) {
-      options = jQuery.extend({'useFlags' : false}, options);
+      options = jQuery.extend({'useFlags' : true}, options);
       jQuery.CbWidgetRegistry.retrofitProjects();
       this.base({template : '/module/lib/framework/getLanguageWindow.php',
          postParams : {
