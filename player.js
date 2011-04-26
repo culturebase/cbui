@@ -211,7 +211,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
             if(options.versions_autoplay && version.active) {
                self.player.play(self.value(), 'td');
             } else {
-               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon) , version.active, 'td');
+               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon), version.active, 'td');
             }
          });
       } else {
