@@ -82,7 +82,8 @@
 .__CbUiLayer {
    width: 100%;
    height: 100%;
-   position: absolute;
+   position: absolute; /* fallback for IE 6 and lower */
+   position: fixed; /* all browsers above IE 6 know what this is and use it */
    left: 0px;
    top: 0px;
    z-index: 1336;
