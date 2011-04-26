@@ -89,7 +89,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          this.options.image = image;
          this.options.play_icon = play_icon;
          this.options.active = active;
-         this.options.id_type = id_type;
+         this.options.id_type = id_type || this.options.id_type;
          this.reset();
       },
 
