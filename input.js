@@ -123,6 +123,8 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
          self.focus();
       }).blur(function() {
          self.blur();
+      }).click(function() {
+         this.select();
       });
       return this;
    },
@@ -170,7 +172,6 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
     * focus handler. Sets the class '__CbUiFieldEdited' on the element.
     */
    handleFocus : function() {
-      this.element().select();
       this.element().removeClass('__CbUiFieldUnedited');
       this.element().addClass('__CbUiFieldEdited');
       return this;
@@ -179,7 +180,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
    init : function() {
       jQuery.CbEvent(this, 'focus');
       jQuery.CbEvent(this, 'blur');
-      this.base();
+      return this.base();
    }
 });
 
