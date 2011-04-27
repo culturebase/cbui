@@ -536,6 +536,5 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
          }
       }, options);
       this.autocenter();
-      this.autoresize();
    }
 });
