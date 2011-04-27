@@ -424,3 +424,9 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
       return this.pivot.child;
    }
 });
+
+/**
+ * Same as inputText, but with a textarea as base element. The distinction may
+ * be important for styling.
+ */
+jQuery.CbWidget.inputTextArea = jQuery.CbWidget.inputText.extend({});
