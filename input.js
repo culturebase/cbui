@@ -237,6 +237,8 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       this.pivot.parent.prepend(new_child);
       this.cycler = new CbElementCycler(this.pivot.parent.children());
       this.base(this.pivot.parent);
+      this.pivot.parent.children().first().unbind('blur'); // no need to handle blur event of text field
+      return this;
    },
    
    /**
@@ -254,11 +256,11 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
          this.cycler.getShown().focus();
          /* The field should have focus so that you can type a password now. */
       }
-      
+
       if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
          this.value('');
       }
-      
+
       if (this.strength_check) {
          this.cycler.getShown().css('background-color', this.current_color);
          if (this.hint_element !== undefined) this.hint_element.slideDown();
@@ -276,7 +278,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
          this.cycler.getShown().css('background-color', this.default_color);
          if (this.hint_element !== undefined) this.hint_element.slideUp();
       }
-      
+
       if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
          this.cycler.show();
       }

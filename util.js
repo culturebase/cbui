@@ -5,13 +5,13 @@ var CbElementCycler = base2.Base.extend({
     * given one.
     */
    show : function(index) {
-      if (index === undefined) index = this.shown_field + 1;
+      if (typeof(index) == 'undefined') index = this.shown_field + 1;
       if (index >= this.elements.length) index = 0;
       
       if (this.shown_field >= 0) {
          $(this.elements[this.shown_field]).hide();
       }
-      var next = $(this.elements[index]).show();
+      $(this.elements[index]).show();
       
       this.shown_field = index;
    },
