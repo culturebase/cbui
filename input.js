@@ -201,6 +201,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       this.pivot.refreshElement();
       this.cycler.refreshElement();
       if (this.strength_check) this.cycler.elements.pstrength();
+      this.pivot.parent.children().first().unbind('blur');
    },
    
    /**
