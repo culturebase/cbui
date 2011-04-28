@@ -538,3 +538,35 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
       this.autocenter();
    }
 });
+
+
+jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
+   constructor : function(loadOptions, options, texts) {
+      this.replace_text = texts;
+      this.base(loadOptions, options);
+   },
+
+   regex : function(pattern) {
+      return new RegExp('{'+pattern.toUpperCase()+'}', 'g');
+   },
+
+   handleShow : function() {
+      var self = this;
+      if (self.replace_text) {
+         self.element().find('.__CbUiReplaceText').each(function() {
+            var el = $(this);
+            $.each(self.replace_text, function(pattern, replacement) {
+               el.text(el.text().replace(self.regex(pattern), replacement));
+            });
+         });
+         self.element().find('.__CbUiReplaceVal').each(function() {
+            var el = $(this);
+            $.each(self.replace_text, function(pattern, replacement) {
+               el.val(el.val().replace(self.regex(pattern), replacement));
+            });
+         });
+      }
+      return this.base();
+   }
+
+});
