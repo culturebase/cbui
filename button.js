@@ -65,14 +65,12 @@ jQuery.CbWidget.langSelectFlag = jQuery.CbWidget.imgButton.extend({
    },
 
    changeLanguage : function(bricks) {
-      var lang = jQuery.CbWidgetRegistry.language.split('_')[0];
-
       /* 123 is 97 + 26 where 97 is the offset of 'a' in the ascii alphabet and
        * 26 is the number of useful characters in the locale. So in fact we're
        * counting the flags from right/bottom here.
        */
-      var pos_x = (123 - lang.charCodeAt(0)) * this.element().innerWidth();
-      var pos_y = (123 - lang.charCodeAt(1)) * this.element().innerHeight();
+      var pos_x = (123 - jQuery.CbWidgetRegistry.language.charCodeAt(0)) * this.element().innerWidth();
+      var pos_y = (123 - jQuery.CbWidgetRegistry.language.charCodeAt(1)) * this.element().innerHeight();
       this.element().css('background-position', pos_x + 'px ' + pos_y + 'px');
    },
 
