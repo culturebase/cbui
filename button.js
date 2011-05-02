@@ -71,8 +71,8 @@ jQuery.CbWidget.langSelectFlag = jQuery.CbWidget.imgButton.extend({
        * 26 is the number of useful characters in the locale. So in fact we're
        * counting the flags from right/bottom here.
        */
-      var pos_x = (123 - lang.charCodeAt(0)) * this.element().outerWidth();
-      var pos_y = (123 - lang.charCodeAt(1)) * this.element().outerHeight();
+      var pos_x = (123 - lang.charCodeAt(0)) * this.element().innerWidth();
+      var pos_y = (123 - lang.charCodeAt(1)) * this.element().innerHeight();
       this.element().css('background-position', pos_x + 'px ' + pos_y + 'px');
    },
 
