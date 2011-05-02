@@ -49,8 +49,8 @@ jQuery.CbWidgetRegistry = {
     */
    language : 'en_EN',
    
-   brickSource : "/module/lib/framework/getMlBricks.php", 
-   
+   brickSource : "/module/lib/framework/getMlBricks.php",
+
    /**
     * The actual translated bricks. Be careful when modifying this.
     */

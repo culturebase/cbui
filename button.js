@@ -2,9 +2,7 @@
  * A text button. I'm sure we'll eventually need some kind of special behaviour
  * here. Maybe the click handler should be centralized.
  */
-jQuery.CbWidget.textButton = jQuery.CbWidget.text.extend({
-   
-});
+jQuery.CbWidget.textButton = jQuery.CbWidget.text.extend({});
 
 /**
  * A button intended for language selection. It always shows an isocode for the
@@ -49,6 +47,33 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
          }
          element.CbWidget().close();
       });
+   }
+});
+
+/**
+ * Language selector with flag. Assumes a background image that's indexed by
+ * background-position. The outerWidth of the given element is assumed to be
+ * the unit of indexing.
+ */
+jQuery.CbWidget.langSelectFlag = jQuery.CbWidget.imgButton.extend({
+   constructor : function(element) {
+      this.base(element);
+      this.element().click(function() {
+         language_window_callback.window = new jQuery.CbWidget.language_window();
+         language_window_callback.window.open();
+      });
+   },
+
+   changeLanguage : function(bricks) {
+      var lang = jQuery.CbWidgetRegistry.language.split('_')[0];
+      var pos_x = (123 - lang.charCodeAt(0)) * this.element().outerWidth();
+      var pos_y = (123 - lang.charCodeAt(1)) * this.element().outerHeight();
+      this.element().css('background-position', pos_x + 'px ' + pos_y + 'px');
+   },
+
+   handleReady : function(params) {
+      this.base(params);
+      this.changeLanguage(); // call changeLanguage again to get the outerWidth right
    }
 });
 

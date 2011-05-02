@@ -71,13 +71,32 @@
    text-align: center;
 }
 
-.__CbUiImgButton,.__CbUiCloseButton {
+.__CbUiImgButton, .__CbUiCloseButton, .__CbUiLangSelectFlag {
    position: absolute;
-   right: 3px;
-   top: 3px;
    cursor: pointer;
    z-index: 1338;
+   display: inline;
+   background-position: 0px 0px;
+   font-size: 0px; /* IE prevents us from making an element smaller than its font-size */
+   padding: 0px;
 }
+
+.__CbUiCloseButton {
+   right: 3px;
+   top: 3px;
+   padding-top: 11px; /* height */
+   padding-left: 11px; /* width */
+   background-image: url('/module/lib/framework/pics/delete.gif');
+}
+
+.__CbUiLangSelectFlag {
+   right: 16px;
+   top: 3px;
+   padding-top: 11px; /* height */
+   padding-left: 16px; /* width */
+   background-image: url('/module/lib/location/language_flags/16x11.png');
+}
+
 
 .__CbUiLayer {
    width: 100%;
