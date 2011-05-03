@@ -61,8 +61,11 @@ jQuery.CbWidgetRegistry = {
     * they're given.
     */
    retrofitProjects : function() {
-      if (this.project || this.baseProject) {
-         this.projects = [this.project, this.baseProject];
+      var projects = [];
+      if (this.project) projects.push(this.project);
+      if (this.baseProject) projects.push(this.baseProject);
+      if (projects.length > 0) {
+         this.projects = projects
          this.project = '';
          this.baseProject = '';
       }
