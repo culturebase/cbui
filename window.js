@@ -507,35 +507,35 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    }
 });
 
-
 /**
- * callback needed for the language window to work. Just calls 
- * jQuery.CbWidgetRegistry.changeLanguage and closes the window
- * @param locale the language being chosen
- */
-function language_window_callback(locale) {
-   jQuery.CbWidgetRegistry.changeLanguage(locale);
-   language_window_callback.window.close();
-}
-
-/**
- * language choice window. This is loaded from /module/lib/framework/getLanguageWindow.php
- * @deprecated will be replaced with a native equivalent 
+ * Language choice window. Will call jQuery.CbWidgetRegistry.changeLanguage
+ * when an option is clicked.
  */
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(options) {
-      options = jQuery.extend({'useFlags' : true}, options);
+      this.base({template : '/module/jscript/lib/cb_ui/templates/language_window.html'}, options);
+      return this.autocenter();
+   },
+
+   open : function (params) {
       jQuery.CbWidgetRegistry.retrofitProjects();
-      this.base({template : '/module/lib/framework/getLanguageWindow.php',
-         postParams : {
-            'use_callback' : true,
-            'no_close_icon' : true,
-            'dynamic_height' : true,
-            'use_flags' : options.useFlags,
-            'projects' : jQuery.CbWidgetRegistry.projects
-         }
-      }, options);
-      this.autocenter();
+      var self = this;
+      var base = this.base;
+      jQuery.getJSON('/module/lib/framework/getMlLanguages.php', {
+         projects : jQuery.CbWidgetRegistry.projects
+      }, function(data) {
+         self.languages = data;
+         base.call(self, params);
+      });
+      return this;
+   },
+
+   handleLoad : function(params) {
+      var list = this.element().find('.__CbUiLangChooseList');
+      jQuery.each(this.languages, function(i, language) {
+         jQuery.CbWidget.langChooseList.addOption(list, language.locale, language.name);
+      });
+      return this.base(params);
    }
 });
 
@@ -554,14 +554,14 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
       var self = this;
       if (self.replace_text) {
          self.element().find('.__CbUiReplaceText').each(function() {
-            var el = $(this);
-            $.each(self.replace_text, function(pattern, replacement) {
+            var el = jQuery(this);
+            jQuery.each(self.replace_text, function(pattern, replacement) {
                el.text(el.text().replace(self.regex(pattern), replacement));
             });
          });
          self.element().find('.__CbUiReplaceVal').each(function() {
-            var el = $(this);
-            $.each(self.replace_text, function(pattern, replacement) {
+            var el = jQuery(this);
+            jQuery.each(self.replace_text, function(pattern, replacement) {
                el.val(el.val().replace(self.regex(pattern), replacement));
             });
          });
