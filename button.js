@@ -14,8 +14,7 @@ jQuery.CbWidget.langSelect = jQuery.CbWidget.textButton.extend({
       this.base(element);
       this.element().html(jQuery.CbWidgetRegistry.language.split('_')[0]);
       this.element().click(function() {
-         language_window_callback.window = new jQuery.CbWidget.language_window(); 
-         language_window_callback.window.open();
+         new jQuery.CbWidget.language_window().open();
       });
    },
    
@@ -34,19 +33,27 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
    
    constructor : function(element) {
       this.base(element);
+      this.closer = new CbWindowCloser(element);
       var self = this;
-      this.element().click(function() {
-         var element = self.element();
-         while(element.CbWidget().close == undefined) {
-            var parent = $(element.parent());
-            if (!parent || parent == element) {
-               return;
-            } else {
-               element = parent;
-            }
-         }
-         element.CbWidget().close();
-      });
+      this.element().click(function() {self.closer.destroy();});
+      return this;
+   },
+
+   refreshElement : function() {
+      this.closer.refreshElement();
+      this.base();
+   }
+});
+
+jQuery.CbWidget.langFlag = jQuery.CbWidget.imgButton.extend({
+   setLanguage : function(isocode) {
+      /* 123 is 97 + 26 where 97 is the offset of 'a' in the ascii alphabet and
+       * 26 is the number of useful characters in the locale. So in fact we're
+       * counting the flags from right/bottom here.
+       */
+      var pos_x = (123 - isocode.charCodeAt(0)) * this.element().innerWidth();
+      var pos_y = (123 - isocode.charCodeAt(1)) * this.element().innerHeight();
+      this.element().css('background-position', pos_x + 'px ' + pos_y + 'px');
    }
 });
 
@@ -55,28 +62,22 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
  * background-position. The outerWidth of the given element is assumed to be
  * the unit of indexing.
  */
-jQuery.CbWidget.langSelectFlag = jQuery.CbWidget.imgButton.extend({
+jQuery.CbWidget.langSelectFlag = jQuery.CbWidget.langFlag.extend({
    constructor : function(element) {
       this.base(element);
       this.element().click(function() {
-         language_window_callback.window = new jQuery.CbWidget.language_window();
-         language_window_callback.window.open();
+         new jQuery.CbWidget.language_window().open();
       });
    },
 
    changeLanguage : function(bricks) {
-      /* 123 is 97 + 26 where 97 is the offset of 'a' in the ascii alphabet and
-       * 26 is the number of useful characters in the locale. So in fact we're
-       * counting the flags from right/bottom here.
-       */
-      var pos_x = (123 - jQuery.CbWidgetRegistry.language.charCodeAt(0)) * this.element().innerWidth();
-      var pos_y = (123 - jQuery.CbWidgetRegistry.language.charCodeAt(1)) * this.element().innerHeight();
-      this.element().css('background-position', pos_x + 'px ' + pos_y + 'px');
+      this.base(bricks);
+      this.setLanguage(jQuery.CbWidgetRegistry.language);
    },
 
    handleReady : function(params) {
       this.base(params);
-      this.changeLanguage(); // call changeLanguage again to get the outerWidth right
+      this.changeLanguage(); // call changeLanguage again to get the dimensions right
    }
 });
 
@@ -123,3 +124,41 @@ jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
    }
 });
 
+
+jQuery.CbWidget.langChooseList = jQuery.CbWidget.chooseList.extend({
+   constructor : function(element) {
+      this.closer = new CbWindowCloser(element);
+      return this.base(element);
+   },
+
+   handleReady : function(params) {
+      this.element().children().each(function() {
+         $(this).find('.__CbUiLangFlag').CbWidget()
+               .setLanguage($(this).find('.__CbUiTextButton').text());
+      });
+      return this.base(params);
+   },
+
+   handleSelect : function(params) {
+      jQuery.CbWidgetRegistry.changeLanguage(params.id);
+      this.closer.destroy();
+      return this.base(params);
+   },
+
+   refreshElement : function() {
+      this.closer.refreshElement();
+      return this.base();
+   }
+
+}, {
+   addOption : function(element, locale, name) {
+      var desc = $(document.createElement('div'));
+      desc.append($(document.createElement('span')).text(name));
+      desc.append($(document.createElement('span')).addClass('__CbUiLangFlag'));
+      var button = $(document.createElement('span')).addClass('__CbUiTextButton')
+            .text(locale.split('_')[0]);
+      if (locale == jQuery.CbWidgetRegistry.language) button.addClass('__CbUiSelected');
+      desc.append(button);
+      jQuery.CbWidget.chooseList.addOption.call(this, element, locale, desc);
+   }
+});
