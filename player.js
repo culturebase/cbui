@@ -127,7 +127,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
          // TODO: Check wether to use Flash or the <video> tag.
 
-         this.embed = $(document.createElement('embed'))
+         this.embed = jQuery(document.createElement('embed'))
             .attr('id', generateUniqueId(self.options.id))
             .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config)
             .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
@@ -201,7 +201,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          for(var i in options.versions) {
             var version = options.versions[i];
             self.versions[version.id] = version;
-            var el = $(document.createElement('option')).val(version.id).text(version.name);
+            var el = jQuery(document.createElement('option')).val(version.id).text(version.name);
             if (version.id == options.id) el.attr('selected', 'true');
             self.element().append(el);
          }
@@ -228,8 +228,8 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
    handleReady : function(options) {
       var self = this;
       this.player = options.widgets.player;
-      $.each(options.controls, function(type,text){
-         var a = $(document.createElement('a')).attr('href', 'javascript://').text(text).addClass(type);
+      jQuery.each(options.controls, function(type,text){
+         var a = jQuery(document.createElement('a')).attr('href', 'javascript://').text(text).addClass(type);
          if(type == 'buy' && self.player.options.buy_url == '')
             a.addClass('inactive');
          else
@@ -257,13 +257,13 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       
       if (options.slides && options.slides.length >= 1) {
-         $.each(options.slides, function(i, image) {
+         jQuery.each(options.slides, function(i, image) {
             var img = jQuery(document.createElement('img'));
             
             // first image of slide is video trigger
             if (i == 0) {
                // select the best available icon source
-               iconSrc = $.map([options.slides_video_trigger_icon, options.play_icon], function (val) {
+               iconSrc = jQuery.map([options.slides_video_trigger_icon, options.play_icon], function (val) {
                   return val || null;
                })[0] || null;
 
@@ -306,7 +306,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          self.element().append(slideshow);
 
          (function (options) {
-            options = $.extend({
+            options = jQuery.extend({
                acceleration:    0.5, // how fast the slider gains speed (more means faster)
                friction:        0.5, // how fast the slider looses speed (more means faster)
                pixelsPerSecond: 500

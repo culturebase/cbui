@@ -89,7 +89,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
       var self = this;
       item.find('.__CbUiDragIcon').mousedown(function () {
          self.trigger('dragStart', {target: item});
-         $(document).one('mouseup', function () { // mouseup can be triggered on a different element
+         jQuery(document).one('mouseup', function () { // mouseup can be triggered on a different element
             self.trigger('dragStop');
          });
       });

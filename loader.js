@@ -1,9 +1,9 @@
 jQuery.CbWidget.loader = jQuery.CbWidget.widget.extend({
    constructor: function (options) {
-      this.base($(document.createElement('div'))
+      this.base(jQuery(document.createElement('div'))
          .addClass('__CbUiLayer').addClass('__CbUiLoader'));
 
-      this.options = $.extend({
+      this.options = jQuery.extend({
          opacity:         0.25,
          fadeingDuration: 250
       }, options || {});
@@ -18,7 +18,7 @@ jQuery.CbWidget.loader = jQuery.CbWidget.widget.extend({
 
    handleHide: function () {
       this.element().stop().fadeOut(this.options.fadingDuration, function () {
-         $(this).detach();
+         jQuery(this).detach();
       });
 
       return this;

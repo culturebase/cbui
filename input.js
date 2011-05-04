@@ -230,7 +230,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       /* We can't use clone() here as IE and Opera don't like setting the
        * type attribute on existing nodes.
        */
-      var new_child = $('<input type="text"/>');
+      var new_child = jQuery('<input type="text"/>');
       jQuery.each(this.pivot.child[0].attributes, function(i, attrib) {
          if (attrib.name != 'type' && attrib.name != 'id') {
             new_child.attr(attrib.name, attrib.value);
@@ -368,7 +368,7 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
       
       this.pivot = new CbElementPivot(element);
       this.name_field = this.pivot.child;
-      var id_field = $(document.createElement('input')).attr('type', 'hidden');
+      var id_field = jQuery(document.createElement('input')).attr('type', 'hidden');
       
       this.base(this.pivot.parent);
       var id = 'searchbox' + this.base2ID;

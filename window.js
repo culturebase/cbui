@@ -206,7 +206,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
          var layer = jQuery(document.createElement('div')).addClass('__CbUiLayer');
          layer.appendTo('body').fadeTo(options.delay, options.layerOpacity, function() {
             try {
-               self.layer = $(layer).css({
+               self.layer = jQuery(layer).css({
                   'background-color': self.options.layerColor,
 
                   // jQuery tends to stop at an unprecise value (like 0.98423421

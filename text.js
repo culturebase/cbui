@@ -1,6 +1,6 @@
 /**
  * A text widget. This simply shows the text for some ML label retrieved via
- * $(element).text().
+ * jQuery(element).text().
  */
 jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
    
@@ -38,7 +38,7 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
       this.cycler.hide();
       var self = this;
       this.cycler.elements.each(function(index) {
-         var label = $(this).text();
+         var label = jQuery(this).text();
          self.texts[index] = label;
       });
    },
@@ -81,7 +81,7 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
    changeLanguage : function(bricks) {
       var self = this;
       this.cycler.elements.each(function(index) {
-         $(this).html(bricks[self.texts[index]]);
+         jQuery(this).html(bricks[self.texts[index]]);
       });
    },
    

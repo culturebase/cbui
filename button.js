@@ -96,8 +96,8 @@ jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
       this.base(element);
       var self = this;
       this.element().children().each(function() {
-         $(this).click(function() {
-            self.trigger('select', {id : $($(this).children()[0]).text()});
+         jQuery(this).click(function() {
+            self.trigger('select', {id : jQuery(jQuery(this).children()[0]).text()});
          });
       });
    }
@@ -107,8 +107,8 @@ jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
     * widgets might be defined in the description.
     */
    addOption : function(element, id, description) {
-      var node = $(document.createElement('div'));
-      node.append($(document.createElement('span')).text(id).hide());
+      var node = jQuery(document.createElement('div'));
+      node.append(jQuery(document.createElement('span')).text(id).hide());
       node.append(description);
       if (element.children().length % 2) {
          node.addClass("__CbUiListEvenColor");
@@ -133,8 +133,8 @@ jQuery.CbWidget.langChooseList = jQuery.CbWidget.chooseList.extend({
 
    handleReady : function(params) {
       this.element().children().each(function() {
-         $(this).find('.__CbUiLangFlag').CbWidget()
-               .setLanguage($(this).find('.__CbUiTextButton').text());
+         jQuery(this).find('.__CbUiLangFlag').CbWidget()
+               .setLanguage(jQuery(this).find('.__CbUiTextButton').text());
       });
       return this.base(params);
    },
@@ -152,10 +152,10 @@ jQuery.CbWidget.langChooseList = jQuery.CbWidget.chooseList.extend({
 
 }, {
    addOption : function(element, locale, name) {
-      var desc = $(document.createElement('div'));
-      desc.append($(document.createElement('span')).addClass('__CbUiText').text(name));
-      desc.append($(document.createElement('span')).addClass('__CbUiLangFlag'));
-      var button = $(document.createElement('span')).addClass('__CbUiTextButton')
+      var desc = jQuery(document.createElement('div'));
+      desc.append(jQuery(document.createElement('span')).addClass('__CbUiText').text(name));
+      desc.append(jQuery(document.createElement('span')).addClass('__CbUiLangFlag'));
+      var button = jQuery(document.createElement('span')).addClass('__CbUiTextButton')
             .text(locale.split('_')[0]);
       if (locale == jQuery.CbWidgetRegistry.language) button.addClass('__CbUiSelected');
       desc.append(button);

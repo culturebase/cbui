@@ -303,7 +303,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
     * here. 
     */
    refreshElement : function() {
-      this.parentElement = $(this.parentElement);
+      this.parentElement = jQuery(this.parentElement);
       this.element().CbWidget(this);
    },
    

@@ -23,7 +23,7 @@ var CbElementCycler = base2.Base.extend({
    },
    
    getShown : function() {
-      return $(this.elements[this.shown_field]);
+      return jQuery(this.elements[this.shown_field]);
    },
    
    constructor : function(elements) {
@@ -34,21 +34,21 @@ var CbElementCycler = base2.Base.extend({
       this.original_state = [];
       var self = this;
       elements.each(function(index) {
-         self.original_state[index] = $(this).css('display');
+         self.original_state[index] = jQuery(this).css('display');
       });
       this.elements.hide();
-      $(this.elements[0]).show();
+      jQuery(this.elements[0]).show();
    },
    
    destroy : function() {
       var self = this;
       this.elements.each(function(index) {
-         $(this).css('display', self.original_state[index]);
+         jQuery(this).css('display', self.original_state[index]);
       });
    },
    
    refreshElement : function() {
-      this.elements = $(this.elements);
+      this.elements = jQuery(this.elements);
    }
 });
 
