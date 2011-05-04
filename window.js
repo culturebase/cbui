@@ -512,8 +512,8 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
  * when an option is clicked.
  */
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
-   constructor : function(options) {
-      this.base({template : '/module/jscript/lib/cb_ui/templates/language_window.html'}, options);
+   constructor : function(loadOptions, options) {
+      this.base(jQuery.extend({template : '/module/jscript/lib/cb_ui/templates/language_window.html'}, loadOptions), options);
       return this.autocenter();
    },
 
