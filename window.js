@@ -513,7 +513,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
  */
 jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
    constructor : function(loadOptions, options) {
-      this.base(jQuery.extend({template : '/module/jscript/lib/cb_ui/templates/language_window.html'}, loadOptions), options);
+      this.base(jQuery.extend({
+         template : '/module/jscript/lib/cb_ui/templates/language_window.html'
+      }, loadOptions), jQuery.extend({
+         modal    : false // not modal by default as it's expected to be placed on top of another modal window
+      }, options));
       return this.autocenter();
    },
 
