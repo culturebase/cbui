@@ -71,7 +71,7 @@
    text-align: center;
 }
 
-.__CbUiImgButton, .__CbUiCloseButton, .__CbUiLangSelectFlag {
+.__CbUiImgButton, .__CbUiCloseButton, .__CbUiLangSelectFlag, .__CbUiLangFlag {
    position: absolute;
    cursor: pointer;
    z-index: 1338;
@@ -90,13 +90,39 @@
 }
 
 .__CbUiLangSelectFlag {
-   right: 16px;
+   right: 37px;
    top: 3px;
    padding-top: 11px; /* height */
    padding-left: 16px; /* width */
    background-image: url('/module/lib/location/language_flags/16x11.png');
 }
 
+.__CbUiLangChooseList div {
+   margin-left: 35px;
+   color: rgb(180, 0, 0);
+   margin-bottom: 10px;
+   font-weight: bold;
+}
+
+.__CbUiLangChooseList .__CbUiTextButton {
+   position: absolute;
+   padding-bottom: 1px;
+   padding-top: 1px;
+   background-color: white;
+   color: black;
+   right: 65px;
+}
+
+.__CbUiLangChooseList .__CbUiSelected {
+   background-color: rgb(180, 0, 0);
+}
+
+.__CbUiLangFlag {
+   right: 92px;
+   padding-top: 17px;
+   padding-left: 24px;
+   background-image: url('/module/lib/location/language_flags/24x17.png');
+}
 
 .__CbUiLayer {
    width: 100%;
