@@ -153,7 +153,7 @@ jQuery.CbWidget.langChooseList = jQuery.CbWidget.chooseList.extend({
 }, {
    addOption : function(element, locale, name) {
       var desc = $(document.createElement('div'));
-      desc.append($(document.createElement('span')).text(name));
+      desc.append($(document.createElement('span')).addClass('__CbUiText').text(name));
       desc.append($(document.createElement('span')).addClass('__CbUiLangFlag'));
       var button = $(document.createElement('span')).addClass('__CbUiTextButton')
             .text(locale.split('_')[0]);
