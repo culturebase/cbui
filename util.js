@@ -9,16 +9,16 @@ var CbElementCycler = base2.Base.extend({
       if (index >= this.elements.length) index = 0;
       
       if (this.shown_field >= 0) {
-         $(this.elements[this.shown_field]).hide();
+         jQuery(this.elements[this.shown_field]).hide();
       }
-      $(this.elements[index]).show();
+      jQuery(this.elements[index]).show();
       
       this.shown_field = index;
    },
    
    hide : function() {
       if (this.shown_field < 0) return;
-      $(this.elements[this.shown_field]).hide();
+      jQuery(this.elements[this.shown_field]).hide();
       this.shown_field = -1;
    },
    
@@ -56,11 +56,11 @@ var CbElementPivot = base2.Base.extend({
    
    constructor : function(element) {
       this.base();
-      this.parent = $(document.createElement('span'));
+      this.parent = jQuery(document.createElement('span'));
       this.parent.attr('id', element.attr('id'));
       element.removeAttr('id');
       this.parent.insertAfter(element);
-      this.parent = $(this.parent);
+      this.parent = jQuery(this.parent);
       this.parent.append(element.remove());
       this.child = this.parent.children();
    },
@@ -71,7 +71,31 @@ var CbElementPivot = base2.Base.extend({
    },
    
    refreshElement : function() {
-      this.children = $(this.children);
-      this.parent = $(this.parent);
+      this.children = jQuery(this.children);
+      this.parent = jQuery(this.parent);
+   }
+});
+
+var CbWindowCloser = base2.Base.extend({
+   constructor : function(element) {
+      this.base();
+      this.element = element;
+   },
+
+   destroy : function() {
+      var element = this.element;
+      while(typeof(element.CbWidget().close) != 'function') {
+         var parent = jQuery(element.parent());
+         if (!parent || parent == element) {
+            return;
+         } else {
+            element = parent;
+         }
+      }
+      element.CbWidget().close();
+   },
+
+   refreshElement : function() {
+      this.element = jQuery(this.element);
    }
 });
