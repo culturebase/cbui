@@ -557,17 +557,21 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
    handleShow : function() {
       var self = this;
       if (self.replace_text) {
-         self.element().find('.__CbUiReplaceText').each(function() {
-            var el = jQuery(this);
+         var doReplace = function(method, el) {
+            el = jQuery(el);
             jQuery.each(self.replace_text, function(pattern, replacement) {
-               el.text(el.text().replace(self.regex(pattern), replacement));
+               el[method](el[method]().replace(self.regex(pattern), replacement));
             });
+         }
+
+         self.element().find('.__CbUiReplaceText').each(function() {
+            doReplace('text', this);
+         });
+         self.element().find('.__CbUiReplaceHtml').each(function() {
+            doReplace('html', this);
          });
          self.element().find('.__CbUiReplaceVal').each(function() {
-            var el = jQuery(this);
-            jQuery.each(self.replace_text, function(pattern, replacement) {
-               el.val(el.val().replace(self.regex(pattern), replacement));
-            });
+            doReplace('val', this);
          });
       }
       return this.base();
