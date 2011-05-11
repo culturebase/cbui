@@ -43,6 +43,13 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
       }
       return true;
    },
+
+   /**
+    * Certain widgets have defined "finished" states which may be important.
+    * For example the search box will return a value but an invalid ID if it's
+    * queries before editing is finished.
+    */
+   editingFinished : function() {return true;},
    
    /**
     * callback to announce that this field has an input error. Assigns the
@@ -394,7 +401,11 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
       this.name_field = jQuery(this.name_field);
       this.name_field.autoComplete(this.options);
    },
-   
+
+   editingFinished : function() {
+      return this.name_field.hasClass('__AC_freetext') || this.name_field.hasClass('__AC_validated');
+   },
+
    value : function(val) {
       if (typeof(val) == 'undefined') {
          return this.name_field.val();

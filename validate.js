@@ -95,3 +95,7 @@ jQuery.CbValidate.number = jQuery.CbValidate.nonempty.extend({
       return this.base(widget) && widget.value().match(/\d*/);
    }
 });
+
+jQuery.CbValidate.editingFinished = jQuery.CbValidate.validator.extend({
+   valid : function(widget) {return widget.editingFinished();}
+});
