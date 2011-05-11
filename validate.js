@@ -99,3 +99,19 @@ jQuery.CbValidate.number = jQuery.CbValidate.nonempty.extend({
 jQuery.CbValidate.editingFinished = jQuery.CbValidate.validator.extend({
    valid : function(widget) {return widget.editingFinished();}
 });
+
+jQuery.CbValidate.length = jQuery.CbValidate.validator.extend({
+   constructor : function(widget, min, max) {
+      this.base(widget);
+      this.min = (typeof(min) == 'undefined') ? jQuery.CbValidate.length.default_min : min;
+      this.max = (typeof(max) == 'undefined') ? jQuery.CbValidate.length.default_max : max;
+   },
+
+   valid : function(widget) {
+      var length = widget.value().length;
+      return this.base(widget) && length >= this.min && length <= this.max;
+   }
+}, {
+   default_min : 5,
+   default_max : 255
+});
