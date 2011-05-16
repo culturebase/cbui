@@ -92,7 +92,7 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       this.base(bricks);
       
       // changing the language is a change as the sizes of texts may have changed
-      this.change();
+      return this.change();
    },
 
    /**
@@ -554,7 +554,8 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
       return new RegExp('{'+pattern.toUpperCase()+'}', 'g');
    },
 
-   handleShow : function() {
+   changeLanguage : function(bricks) {
+      this.base(bricks);
       var self = this;
       if (self.replace_text) {
          var doReplace = function(method, el) {
@@ -574,7 +575,7 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
             doReplace('val', this);
          });
       }
-      return this.base();
+      return this;
    }
 
 });

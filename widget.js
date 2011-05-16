@@ -83,12 +83,16 @@ jQuery.CbWidgetRegistry = {
       var self = this;
       
       /* collect labels */
-      for (var name in jQuery.CbWidget) {
-         jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
+      jQuery.each(jQuery.CbWidget, function(name, w) {
+         var clazz = self.translateToClass(name, 'Ui');
+         jQuery(clazz, context).each(function() {
             jQuery.merge(labels, jQuery(this).CbWidget().getLabels());
          });
+         if (context && context.is(clazz)) {
+            jQuery.merge(labels, jQuery(context).CbWidget().getLabels());
+         }
          labels = jQuery.unique(labels);
-      }
+      });
 
       if (labels.length == 0) return; // no translation needed
 
@@ -109,11 +113,15 @@ jQuery.CbWidgetRegistry = {
          success : function(bricks) {
          /* loop over widgets again and apply bricks */
          self.bricks = bricks;
-         for (var name in jQuery.CbWidget) {
-            jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
+         jQuery.each(jQuery.CbWidget, function(name, w) {
+            var clazz = self.translateToClass(name, 'Ui');
+            jQuery(clazz, context).each(function() {
                jQuery(this).CbWidget().changeLanguage(bricks);
             });
-         }
+            if (context && context.is(clazz)) {
+               jQuery(context).CbWidget().changeLanguage(bricks);
+            }
+         });
       }});
    },
    
