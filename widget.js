@@ -133,20 +133,20 @@ jQuery.CbWidgetRegistry = {
       var self = this;
       
       /* create widgets */
-      for (var name in jQuery.CbWidget) {
+      jQuery.each(jQuery.CbWidget, function(name, widget) {
          jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
             var el = jQuery(this);
             if (el.CbWidget(undefined, false) === undefined) { // but don't overwrite existing ones
-               new (jQuery.CbWidget[name])(el);
+               new widget(el);
             }
          });
-      }
+      });
       
-      for (name in jQuery.CbValidate) {
+      jQuery.each(jQuery.CbValidate, function(name, validator) {
          jQuery(self.translateToClass(name, 'Validate'), context).each(function() {
-            new (jQuery.CbValidate[name])(jQuery(this).CbWidget());
+            new validator(jQuery(this).CbWidget());
          });
-      }
+      });
       
       this.changeLanguage(this.language, context);
    }
@@ -217,6 +217,7 @@ jQuery.CbEvent = function(target, name) {
 };
 
 jQuery.CbWidget = function() {}; // maybe do something useful here; e.g. find elements belonging to certain widget types
+jQuery.CbValidate = function() {};
 
 /**
  * jquery plugin to enable $(element).CbWidget() functionality. Saves information
