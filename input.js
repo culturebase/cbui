@@ -238,10 +238,9 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
        * type attribute on existing nodes.
        */
       var new_child = jQuery('<input type="text"/>');
-      jQuery.each(this.pivot.child[0].attributes, function(i, attrib) {
-         if (attrib.name != 'type' && attrib.name != 'id') {
-            new_child.attr(attrib.name, attrib.value);
-         }
+      var self = this;
+      jQuery.each(['style', 'class', 'value', 'size', 'maxLength', 'name'], function(i, attrib) {
+         new_child.attr(attrib, self.pivot.child.attr(attrib));
       });
       this.pivot.parent.prepend(new_child);
       this.cycler = new CbElementCycler(this.pivot.parent.children());
