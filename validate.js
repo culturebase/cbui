@@ -2,8 +2,6 @@
  * validate input widgets according to classes defined on input fields (or assigned manually)
  */
 
-jQuery.CbValidate = {};
-
 /**
  * Validator base class. Handles life cycle
  */
@@ -100,11 +98,11 @@ jQuery.CbValidate.editingFinished = jQuery.CbValidate.validator.extend({
    valid : function(widget) {return widget.editingFinished();}
 });
 
-jQuery.CbValidate.length = jQuery.CbValidate.validator.extend({
+jQuery.CbValidate.inputLength = jQuery.CbValidate.validator.extend({
    constructor : function(widget, min, max) {
       this.base(widget);
-      this.min = (typeof(min) == 'undefined') ? jQuery.CbValidate.length.default_min : min;
-      this.max = (typeof(max) == 'undefined') ? jQuery.CbValidate.length.default_max : max;
+      this.min = (typeof(min) == 'undefined') ? jQuery.CbValidate.inputLength.default_min : min;
+      this.max = (typeof(max) == 'undefined') ? jQuery.CbValidate.inputLength.default_max : max;
    },
 
    valid : function(widget) {
