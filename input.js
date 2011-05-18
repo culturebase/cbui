@@ -239,8 +239,12 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
        */
       var new_child = jQuery('<input type="text"/>');
       var self = this;
-      jQuery.each(['style', 'class', 'value', 'size', 'maxLength', 'name'], function(i, attrib) {
-         new_child.attr(attrib, self.pivot.child.attr(attrib));
+      jQuery.each(['style', 'class', 'value', 'size', 'maxlength', 'name'], function(i, attrib) {
+         var val = self.pivot.child.attr(attrib);
+         /* extra ugly clutch to make FF 4 happy: you can't set maxlength = -1 */
+         if (typeof(val) != 'undefined' && (attrib != 'maxlength' || val != -1)) {
+            new_child.attr(attrib, val);
+         }
       });
       this.pivot.parent.prepend(new_child);
       this.cycler = new CbElementCycler(this.pivot.parent.children());
