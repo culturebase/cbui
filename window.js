@@ -546,22 +546,36 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
 
 jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
    constructor : function(loadOptions, options, texts) {
-      this.replace_text = texts;
       this.base(loadOptions, options);
+      this.texts = texts;
    },
 
    regex : function(pattern) {
       return new RegExp('{'+pattern.toUpperCase()+'}', 'g');
    },
 
+   isTranslatable : function(pattern) {
+      return pattern.substr(0, 3) == 'ml_';
+   },
+
+   getLabels : function() {
+      var labels = [];
+      var self = this;
+      jQuery.each(this.texts, function(label, value) {
+         if (self.isTranslatable(label)) labels.push(value);
+      });
+      return labels;
+   },
+
    changeLanguage : function(bricks) {
       this.base(bricks);
       var self = this;
-      if (self.replace_text) {
+      if (self.texts) {
          var doReplace = function(method, el) {
             el = jQuery(el);
-            jQuery.each(self.replace_text, function(pattern, replacement) {
-               el[method](el[method]().replace(self.regex(pattern), replacement));
+            jQuery.each(self.texts, function(pattern, replacement) {
+               el[method](el[method]().replace(self.regex(pattern), 
+                  self.isTranslatable(pattern) ? bricks[replacement] : replacement));
             });
          }
 
