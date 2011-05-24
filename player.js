@@ -141,7 +141,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
       handleBuyControl: function() {
          window.open(this.options.buy_url, 'cbshop',
-            'width=500,height=600,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
+            'width=650,height=550,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
          ).focus();
       },
 
