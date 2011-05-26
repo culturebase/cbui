@@ -1,35 +1,48 @@
 jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
    // "private members"
-   var sendEvent = function(event) {
+   var createEmbed = function(id, id_type) {
          var self = this;
-         var t;
-         if (!self.embed) self.play();
-         try {
-            self.embed.get(0).sendEvent(event);
-            clearTimeout(t);
-            return;
-         } catch(e) {
-            // continue
+         if(id) this.options.id = id;
+         if(id_type) this.options.id_type = id_type;
+
+         // TODO: Check wether to use Flash or the <video> tag.
+
+         var uniqueId = generateUniqueId(self.options.id);
+         window["player" + uniqueId] = function() {
+            self.embedReady();
+            window["player" + uniqueId] = undefined;
          }
-         t = setTimeout(function () {
-            sendEvent.call(self, event);
-         }, 100);
+         this.embed = jQuery(document.createElement('embed'))
+            .attr('id', uniqueId)
+            .attr('flashvars',
+               'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config +
+               '&playerready=player' + uniqueId) // CbWidget does a recursive search
+            .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
+            .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
+         this.element().empty().append(this.embed);
+      },
+
+      callJwPlayer = function(func, param) {
+         var self = this;
+         if (!self.embed) createEmbed.call(self);
+         var doCall = function() {
+            self.embed.get(0)[func](param);
+            self.unbind('embedReady', doCall);
+         };
+
+         if (self.embedCallable) {
+            doCall();
+         } else {
+            self.embedReady(doCall);
+         }
+      },
+
+      sendEvent = function(event) {
+         callJwPlayer.call(this, 'sendEvent', event);
       },
 
       callMenu = function(type) {
-         var self = this;
-         var t;
-         if (!self.embed) self.play();
-         try {
-            self.embed.get(0).callMenu(type);
-            clearTimeout(t);
-            return;
-         } catch(e) {
-            // continue
-         }
-         t = setTimeout(function () {
-            callMenu.call(self, type);
-         }, 100);
+         callJwPlayer.call(this, 'callMenu', type);
       },
 
       /**
@@ -46,7 +59,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          return function (base) {
             base = base || 0;
             ids[base] = (ids[base] || 0) + 1;
-            return 'cb-player-'+base+'-'+ids[base];
+            return 'cb_player_'+base+'_'+ids[base];
          };
       }());
 
@@ -74,6 +87,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
          return this.base(element);
          var self = this;
          this.element().click(function() {self.play();});
+         this.embedCallable = false;
       },
 
       handleReady : function(options) {
@@ -94,7 +108,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       },
 
       reset : function() {
+         this.embedCallable = false;
          var self = this;
+         this.playerReady = false;
          this.element().css({position:'relative'}).empty().append(
                jQuery(document.createElement('img'))
                .attr('src', self.options.image)
@@ -121,18 +137,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       },
 
       play : function(id, id_type) {
-         var self = this;
-         if(id) this.options.id = id;
-         if(id_type) this.options.id_type = id_type;
-
-         // TODO: Check wether to use Flash or the <video> tag.
-
-         this.embed = jQuery(document.createElement('embed'))
-            .attr('id', generateUniqueId(self.options.id))
-            .attr('flashvars', 'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config)
-            .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
-            .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
-         this.element().empty().append(this.embed);
+         createEmbed.call(this, id, id_type);
          sendEvent.call(this, 'PLAY'); // It is important to use .call(this, ...), since sendEvent() does not belong to the scope of this instance.
          return this;
       },
@@ -174,6 +179,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
 
       handleZoomControl: function() {
          // TODO
+      },
+
+      handleEmbedReady: function() {
+         this.embedCallable = true;
       }
    };
 }()), {
@@ -185,6 +194,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
       jQuery.CbEvent(this, 'menuControl');
       jQuery.CbEvent(this, 'popupControl');
       jQuery.CbEvent(this, 'zoomControl');
+      jQuery.CbEvent(this, 'embedReady');
       this.base();
    }
 });
