@@ -546,8 +546,9 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
 
 jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
    constructor : function(loadOptions, options, texts) {
-      this.base(loadOptions, options);
+      this.base(loadOptions, options); // creates an empty "texts" member
       if (texts) this.texts = texts;
+      return this;
    },
 
    regex : function(pattern) {
