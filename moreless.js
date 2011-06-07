@@ -1,3 +1,10 @@
+
+/**
+ * Frame to show more or less content and associated "more" and "less" buttons
+ * depending on length of content. This is a frame where you can place all kinds
+ * of buttons, titles, annotations and other things. It should contain one
+ * element with the class "CbUiMoreLessContent" which will react to the buttons.
+ */
 jQuery.CbWidget.moreLess = jQuery.CbWidget.frame.extend({
    handleMore : function() {
       jQuery('.__CbUiMoreButton', this.element()).hide();
@@ -30,12 +37,23 @@ jQuery.CbWidget.moreLess = jQuery.CbWidget.frame.extend({
    }
 }, {
    init : function() {
+      /**
+       * Show full version of the content.
+       */
       jQuery.CbEvent(this, 'more');
+      /**
+       * Show abbreviated version of the content.
+       */
       jQuery.CbEvent(this, 'less');
       return this.base();
    }
 });
 
+/**
+ * More/Less frame for text. Abbreviated text will be shown with a trailing
+ * '...'. All text is expected to be placed directly in '.CbUiMoreLessContent'.
+ * Maximum length refers to number of characters here.
+ */
 jQuery.CbWidget.moreLessText = jQuery.CbWidget.moreLess.extend({
    constructor : function(element) {
       this.maxLength(jQuery.CbWidget.moreLessText.default_max_length);
@@ -69,6 +87,10 @@ jQuery.CbWidget.moreLessText = jQuery.CbWidget.moreLess.extend({
    default_max_length : 20
 });
 
+/**
+ * More/Less frame for nested elements. Maximum length refers to
+ * CbUiMoreLessContent's number of children here.
+ */
 jQuery.CbWidget.moreLessElements = jQuery.CbWidget.moreLess.extend({
    constructor : function(element) {
       this.maxLength(jQuery.CbWidget.moreLessElements.default_max_length);
