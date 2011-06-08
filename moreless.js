@@ -32,8 +32,8 @@ jQuery.CbWidget.moreLess = jQuery.CbWidget.frame.extend({
       jQuery('.__CbUiLessButton', this.element()).click(function() {
          self.less();
       });
-      this.less();
-      return this.base();
+      this.base();
+      return this.less();
    }
 }, {
    init : function() {
