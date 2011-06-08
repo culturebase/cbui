@@ -64,7 +64,7 @@ jQuery.CbWidget.moreLessText = jQuery.CbWidget.moreLess.extend({
    handleMore : function() {
       var content = jQuery('.__CbUiMoreLessContent', this.element());
       if (this.hidden_content != '') {
-         content.text(content.text().substr(0, -3) + this.hidden_content);
+         content.html(this.hidden_content);
          this.hidden_content = '';
       }
       if (content.text().length > this.maxLength()) {
@@ -77,14 +77,14 @@ jQuery.CbWidget.moreLessText = jQuery.CbWidget.moreLess.extend({
       if (this.hidden_content.length) return this;
       var content = jQuery('.__CbUiMoreLessContent', this.element());
       if (content.text().length > this.maxLength()) {
-         this.hidden_content = content.text().substr(this.maxLength());
+         this.hidden_content = content.html();
          content.text(content.text().substr(0, this.maxLength()) + '...');
          jQuery('.__CbUiMoreButton', this.element()).show();
       }
       return this.base();
    }
 }, {
-   default_max_length : 20
+   default_max_length : 250
 });
 
 /**
