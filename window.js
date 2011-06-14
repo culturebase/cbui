@@ -551,10 +551,6 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
       return this;
    },
 
-   regex : function(pattern) {
-      return new RegExp('{'+pattern.toUpperCase()+'}', 'g');
-   },
-
    isTranslatable : function(pattern) {
       return pattern.substr(0, 3) == 'ml_';
    },
@@ -563,7 +559,13 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
       var labels = [];
       var self = this;
       jQuery.each(this.texts, function(label, value) {
-         if (self.isTranslatable(label)) labels.push(value);
+         if (self.isTranslatable(label)) {
+            if (typeof(value) == 'object') {
+               jQuery.merge(labels, value);
+            } else {
+               labels.push(value);
+            }
+         }
       });
       return labels;
    },
@@ -571,23 +573,37 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
    changeLanguage : function(bricks) {
       this.base(bricks);
       var self = this;
+      var indices = {};
       if (self.texts) {
          var doReplace = function(method, el) {
-            el = jQuery(el);
             jQuery.each(self.texts, function(pattern, replacement) {
-               el[method](el[method]().replace(self.regex(pattern), 
-                  self.isTranslatable(pattern) ? bricks[replacement] : replacement));
+               if (typeof(replacement) == 'object') {
+                  if (!indices[pattern]) indices[pattern] = 0;
+                  var regex = new RegExp('{'+pattern.toUpperCase()+'}');
+                  do {
+                     var val = replacement[indices[pattern]];
+                     var oldtext = el[method]();
+                     var newtext = oldtext.replace(regex,
+                        self.isTranslatable(pattern) ? bricks[val] : val);
+                     el[method](newtext);
+                  } while (oldtext != newtext && replacement.length > ++indices[pattern]);
+               } else {
+                  el[method](el[method]().replace(
+                        new RegExp('{'+pattern.toUpperCase()+'}', 'g'),
+                        self.isTranslatable(pattern) ? bricks[replacement] : replacement));
+               }
             });
          }
 
-         self.element().find('.__CbUiReplaceText').each(function() {
-            doReplace('text', this);
-         });
-         self.element().find('.__CbUiReplaceHtml').each(function() {
-            doReplace('html', this);
-         });
-         self.element().find('.__CbUiReplaceVal').each(function() {
-            doReplace('val', this);
+         self.element().find('.__CbUiReplaceText, .__CbUiReplaceHtml, .__CbUiReplaceVal').each(function() {
+            var el = jQuery(this);
+            if (el.hasClass('__CbUiReplaceText')) {
+               doReplace('text', el);
+            } else if (el.hasClass('__CbUiReplaceHtml')) {
+               doReplace('html', el);
+            } else if (el.hasClass('__CbUiReplaceVal')) {
+               doReplace('val', el);
+            }
          });
       }
       return this;
