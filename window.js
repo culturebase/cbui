@@ -577,7 +577,7 @@ jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
       if (self.texts) {
          var doReplace = function(method, el) {
             jQuery.each(self.texts, function(pattern, replacement) {
-               if (typeof(replacement) == 'object') {
+               if (replacement != null && typeof(replacement) == 'object') {
                   if (!indices[pattern]) indices[pattern] = 0;
                   var regex = new RegExp('{'+pattern.toUpperCase()+'}');
                   do {
