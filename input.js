@@ -361,6 +361,54 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
 });
 
 /**
+ * A widget for the "checkbox" input. The pivoting is needed to make the element
+ * stylable (checkboxes themselves can't be styled in firefox).
+ */
+jQuery.CbWidget.checkbox= jQuery.CbWidget.input.extend({
+   constructor : function(element) {
+      this.pivot = new CbElementPivot(element);
+      this.checkbox = this.pivot.child;
+      this.base(this.pivot.parent);
+   },
+
+   handleDestroy : function() {
+      this.base();
+      this.pivot.destroy();
+   },
+
+   refreshElement : function() {
+      this.base();
+      this.checkbox = jQuery(this.checkbox);
+      this.pivot.refreshElement();
+   },
+
+   /**
+    * Query or set the current value of the checkbox.
+    * An unchecked checkbox always returns false when queried.
+    * A checked checkbox without attribute "value" set returns true when queried.
+    * A checked checkbox with value set returns the value when queried.
+    * When setting the value, only the "checked" state is set according to the
+    * truthiness of the parameter.
+    * @param val the new value (optional)
+    * @return the value of the checkbox
+    */
+   value : function(val) {
+      if (typeof(val) == 'undefined') {
+         if (!this.checkbox.attr('checked')) {
+            return false;
+         } else if (!this.checkbox.val()) {
+            return true;
+         } else {
+            return this.checkbox.val();
+         }
+      } else {
+         this.checkbox.attr('checked', val);
+         return this.value();
+      }
+   }
+});
+
+/**
  * a searchbox widget. It invokes autocomplete() on its element's second child
  * and has the ID recorded in its element's first child. You can configure it 
  * using the "options" member. All options are passed on to autocomplete.
@@ -403,6 +451,7 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
       this.base();
       this.name_field = jQuery(this.name_field);
       this.name_field.autoComplete(this.options);
+      this.pivot.refreshElement();
    },
 
    editingFinished : function() {

@@ -71,7 +71,7 @@ var CbElementPivot = base2.Base.extend({
    },
    
    refreshElement : function() {
-      this.children = jQuery(this.children);
+      this.child = jQuery(this.child);
       this.parent = jQuery(this.parent);
    }
 });
