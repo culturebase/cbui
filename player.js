@@ -1,203 +1,215 @@
-jQuery.CbWidget.player = jQuery.CbWidget.widget.extend((function () {
-   // "private members"
-   var createEmbed = function(id, id_type) {
-         var self = this;
-         if(id) this.options.id = id;
-         if(id_type) this.options.id_type = id_type;
 
-         // TODO: Check wether to use Flash or the <video> tag.
 
-         var uniqueId = generateUniqueId(self.options.id);
-         window["player" + uniqueId] = function() {
-            self.embedReady();
-            window["player" + uniqueId] = undefined;
-         }
-         this.embed = jQuery(document.createElement('embed'))
-            .attr('id', uniqueId)
-            .attr('flashvars',
-               'config=' + self.options.player_root + 'config/xml/' + self.options.id_type + self.options.id + '/' + self.options.config +
-               '&playerready=player' + uniqueId) // CbWidget does a recursive search
-            .attr('allowfullscreen', self.options.allow_fullscreen).attr('allowscriptaccess', self.options.allow_script_access)
-            .attr('src', self.options.player_root + self.options.embed_source).attr('width', self.options.width).attr('height', self.options.height);
-         this.element().empty().append(this.embed);
-      },
+jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
 
-      callJwPlayer = function(func, param) {
-         var self = this;
-         if (!self.embed) createEmbed.call(self);
-         var doCall = function() {
-            self.embed.get(0)[func](param);
-            self.unbind('embedReady', doCall);
-         };
+   /**
+    * Generates a unique ID for id-attributes to avoid conflicts between
+    * multiple players (playing the same video) on the same page. This is not
+    * uncommon when layers are used on a website.
+    *
+    * @param <number> base (optional) "seed" used for ID generation
+    * @return ID
+    */
+   generateUniqueId : (function () {
+      var ids = {};
 
-         if (self.embedCallable) {
-            doCall();
-         } else {
-            self.embedReady(doCall);
-         }
-      },
+      return function (base) {
+         base = base || 0;
+         ids[base] = (ids[base] || 0) + 1;
+         return 'cb_player_'+base+'_'+ids[base];
+      };
+   })(),
 
-      sendEvent = function(event) {
-         callJwPlayer.call(this, 'sendEvent', event);
-      },
+   handleReady : function(options) {
+      this.options = jQuery.extend(jQuery.CbWidget.base_player.defaultOptions, this.options, options);
+      this.load(this.options.id, this.options.image,
+         (this.options.active ? this.options.play_icon : this.options.na_icon),
+         this.options.active);
+      return this.base(options);
+   },
 
-      callMenu = function(type) {
-         callJwPlayer.call(this, 'callMenu', type);
-      },
+   load : function(id, image, play_icon, active, id_type) {
+      this.options.id = id;
+      this.options.image = image;
+      this.options.play_icon = play_icon;
+      this.options.active = active;
+      this.options.id_type = id_type || this.options.id_type;
+      this.reset();
+   },
 
-      /**
-       * Generates a unique ID for id-attributes to avoid conflicts between
-       * multiple players (playing the same video) on the same page. This is not
-       * uncommon when layers are used on a website.
-       *
-       * @param <number> base (optional) "seed" used for ID generation
-       * @return ID
-       */
-      generateUniqueId = (function () {
-         var ids = {};
+   reset : function() {
+      this.embedCallable = false;
+      var self = this;
 
-         return function (base) {
-            base = base || 0;
-            ids[base] = (ids[base] || 0) + 1;
-            return 'cb_player_'+base+'_'+ids[base];
-         };
-      }());
+      this.element().css({
+         position : 'relative'
+      }).empty().append(
+         jQuery(document.createElement('img'))
+         .attr('src', self.options.image)
+         .attr('width', self.options.width).attr('height', self.options.height)
+         .click(function() {if (self.options.active) self.play();})
+      );
 
-   // "public members"
-   return {
-      defaultOptions : {
-         image : '',
-         play_icon : '',
-         play_icon_width : 100,
-         play_icon_height : 100,
-         player_root : '/player40/',
-         config : '_default',
-         allow_fullscreen : true,
-         allow_script_access : 'always',
-         embed_source : 'flash/player.swf',
-         width : 550, // width and height are necessary to make it play nice with IE
-         height : 350,
-         id : 0,
-         buy_url: '',
-         active : true,
-         id_type : 'td'
-      },
-
-      constructor : function(element) {
-         return this.base(element);
-         var self = this;
-         this.element().click(function() {self.play();});
-         this.embedCallable = false;
-      },
-
-      handleReady : function(options) {
-         this.options = jQuery.extend({}, this.defaultOptions, options);
-         this.load(this.options.id, this.options.image,
-               (this.options.active ? this.options.play_icon : this.options.na_icon),
-               this.options.active);
-         return this;
-      },
-
-      load : function(id, image, play_icon, active, id_type) {
-         this.options.id = id;
-         this.options.image = image;
-         this.options.play_icon = play_icon;
-         this.options.active = active;
-         this.options.id_type = id_type || this.options.id_type;
-         this.reset();
-      },
-
-      reset : function() {
-         this.embedCallable = false;
-         var self = this;
-         this.playerReady = false;
-         this.element().css({position:'relative'}).empty().append(
-               jQuery(document.createElement('img'))
-               .attr('src', self.options.image)
-               .attr('width', self.options.width).attr('height', self.options.height)
-               .click(function() {
-                  if (self.options.active) self.play();
-               })
+      if (this.options.play_icon) {
+         this.element().append(
+            jQuery(document.createElement('img'))
+            .attr('src', self.options.play_icon)
+            .css({
+               position : 'absolute',
+               width : self.options.play_icon_width,
+               height : self.options.play_icon_height,
+               top : ((self.options.height/2)-(self.options.play_icon_height/2)),
+               left : ((self.options.width/2)-(self.options.play_icon_width/2))
+            }).click(function() {
+               if (self.options.active) self.play();
+            })
          );
-         if(this.options.play_icon) {
-            this.element().append(
-               jQuery(document.createElement('img'))
-               .attr('src', self.options.play_icon)
-               .css({
-                  position:'absolute',
-                  width: self.options.play_icon_width,
-                  height: self.options.play_icon_height,
-                  top: ((self.options.height/2)-(self.options.play_icon_height/2)),
-                  left: ((self.options.width/2)-(self.options.play_icon_width/2))
-               }).click(function() {
-                  if (self.options.active) self.play();
-               })
-            );
-         }
-      },
-
-      play : function(id, id_type) {
-         createEmbed.call(this, id, id_type);
-         sendEvent.call(this, 'PLAY'); // It is important to use .call(this, ...), since sendEvent() does not belong to the scope of this instance.
-         return this;
-      },
-
-      // CbEvent handler for playerControls Widget
-
-      handleBuyControl: function() {
-         window.open(this.options.buy_url, 'cbshop',
-            'width=650,height=550,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
-         ).focus();
-      },
-
-      handleContactControl: function() {
-         callMenu.call(this, 'CONTACT');
-      },
-
-      handleEmbedControl: function() {
-         callMenu.call(this, 'EMBED');
-      },
-
-      handleInfoControl: function() {
-         callMenu.call(this, 'INFO');
-      },
-
-      handleMailControl: function() {
-         callMenu.call(this, 'MAIL');
-      },
-
-      handleMenuControl: function() {
-         callMenu.call(this, 'MENU');
-      },
-
-      handlePopupControl: function() {
-         this.reset();
-         var url = this.options.player_root+'td'+this.options.id+'/'+this.options.popup_config;
-         window.open(url, 'cbplayer', this.options.popup_windowfeatures).focus();
-         return false;
-      },
-
-      handleZoomControl: function() {
-         // TODO
-      },
-
-      handleEmbedReady: function() {
-         this.embedCallable = true;
       }
-   };
-}()), {
+   },
+
+   play : function(id, id_type) {
+      this.trigger('embed', {id : id, id_type : id_type});
+      this.trigger('embedEvent', {event : 'PLAY'});
+      return this;
+   },
+
+   // CbEvent handler for playerControls Widget
+
+   handleBuyControl: function() {
+      window.open(this.options.buy_url, 'cbshop',
+         'width=650,height=550,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
+      ).focus();
+   },
+
+   handleContactControl: function() {
+      this.trigger('control', {type : 'CONTACT'});
+   },
+
+   handleEmbedControl: function() {
+      this.trigger('control', {type : 'EMBED'});
+   },
+
+   handleInfoControl: function() {
+      this.trigger('control', {type : 'INFO'});
+   },
+
+   handleMailControl: function() {
+      this.trigger('control', {type : 'MAIL'});
+   },
+
+   handleMenuControl: function() {
+      this.trigger('control', {type : 'MENU'});
+   },
+
+   handlePopupControl: function() {
+      this.reset();
+      var url = this.options.player_root+'td'+this.options.id+'/'+this.options.popup_config;
+      window.open(url, 'cbplayer', this.options.popup_windowfeatures).focus();
+      return false;
+   },
+
+   handleZoomControl: function() {
+      // TODO
+   },
+
+   handleEmbedReady: function() {
+      this.embedCallable = true;
+   }
+}, {
    init : function() {
-      jQuery.CbEvent(this, 'contactControl');
-      jQuery.CbEvent(this, 'embedControl');
+      jQuery.CbEvent(this, 'contactControl'); ///< Show contact information.
+      jQuery.CbEvent(this, 'embedControl');   ///< Generate an embed code for other websites.
       jQuery.CbEvent(this, 'infoControl');
       jQuery.CbEvent(this, 'mailControl');
       jQuery.CbEvent(this, 'menuControl');
       jQuery.CbEvent(this, 'popupControl');
       jQuery.CbEvent(this, 'zoomControl');
-      jQuery.CbEvent(this, 'embedReady');
-      this.base();
+      jQuery.CbEvent(this, 'control');        ///< General purpose event for above control actions.
+      jQuery.CbEvent(this, 'embed');          ///< Trigger this to create the embedded player.
+      jQuery.CbEvent(this, 'embedReady');     ///< Triggered when the embedded player has been created.
+      jQuery.CbEvent(this, 'embedEvent');     ///< Trigger an event on the embedded player.
+      return this.base();
+   },
+
+   defaultOptions : {
+      image : '',
+      play_icon : '',
+      play_icon_width : 100,
+      play_icon_height : 100,
+      player_root : '/player40/',
+      config : '_default',
+      allow_fullscreen : true,
+      allow_script_access : 'always',
+      width : 550, // width and height are necessary to make it play nice with IE
+      height : 350,
+      id : 0,
+      buy_url: '',
+      active : true,
+      id_type : 'td'
    }
 });
+
+jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
+   handleEmbed : function(params) {
+      var self = this;
+      if (params.id) this.options.id = params.id;
+      if (params.id_type) this.options.id_type = params.id_type;
+
+      var uniqueId = this.generateUniqueId(self.options.id);
+      window["player" + uniqueId] = function() {
+         self.embedReady();
+         window["player" + uniqueId] = undefined;
+      }
+      this.player_embed = jQuery(document.createElement('embed'))
+            .attr('id', uniqueId)
+            .attr('flashvars', 'config=' + self.options.player_root +
+               'config/xml/' + self.options.id_type + self.options.id + '/' +
+               self.options.config + '&playerready=player' + uniqueId) // CbWidget does a recursive search
+            .attr('allowfullscreen', self.options.allow_fullscreen)
+            .attr('allowscriptaccess', self.options.allow_script_access)
+            .attr('src', self.options.player_root + self.options.embed_source)
+            .attr('width', self.options.width)
+            .attr('height', self.options.height);
+      this.element().empty().append(this.player_embed);
+      return this.base(params);
+   },
+
+   callJwPlayer : function(func, param) {
+      var self = this;
+      if (!self.player_embed) this.trigger('embed');
+      var doCall = function() {
+         self.player_embed.get(0)[func](param);
+         self.unbind('embedReady', doCall);
+      };
+
+      if (self.embedCallable) {
+         doCall();
+      } else {
+         self.embedReady(doCall);
+      }
+   },
+
+   handleEmbedEvent : function(params) {
+      this.callJwPlayer('sendEvent', params.event);
+      return this.base(params);
+   },
+
+   handleControl : function(params) {
+      this.callJwPlayer('callMenu', params.type);
+      return this.base(params);
+   },
+
+   handleReady : function(options) {
+      this.options = jQuery.extend(jQuery.CbWidget.jw_player.defaultOptions, this.options, options);
+      return this.base(options);
+   }
+}, {
+   defaultOptions : {
+      embed_source : 'flash/player.swf'
+   }
+});
+
+jQuery.CbWidget.player = jQuery.CbWidget.jw_player.extend({});
 
 jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
    constructor : function(element) {
