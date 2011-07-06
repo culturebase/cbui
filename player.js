@@ -237,8 +237,48 @@ jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
    }
 });
 
-jQuery.CbWidget.player = jQuery.CbWidget.html5_player.extend({
+jQuery.CbWidget.player = jQuery.CbWidget.base_player.extend({
+   players : {
+      'flash/flv' : jQuery.CbWidget.jw_player,
+      'flash/h264' : jQuery.CbWidget.jw_player,
+      'html5/webm' : jQuery.CbWidget.html5_player,
+      'html5/h264' : jQuery.CbWidget.html5_player
+   },
 
+   /**
+    * The abstract "meta"-player is destroyed on ready and replaced by the
+    * correct implementation.
+    */
+   handleReady : function(options) {
+      var player = this.players[options.player];
+      if (player) {
+         var element = this.element();
+         this.destroy();
+         player = new player(element);
+         player.trigger('ready', options);
+      }
+   }
+}, {
+   detect : function() {
+      var supported = [];
+
+      /* Wikipedia says they added it in version 7. */
+      if (FlashDetect.versionAtLeast(7)) supported.push('flash/flv');
+
+      /* 9.0.114 added h264 suppport, I heard. */
+      if (FlashDetect.versionAtLeast(9, 0, 114)) supported.push('flash/h264');
+
+      var v = document.createElement('video');
+      if (!!v.canPlayType) {
+         var mp4 = v.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+         if (mp4 && mp4 != 'no') supported.push('html5/h264');
+
+         var webm = v.canPlayType('video/webm; codecs="vp8, vorbis"');
+         if (webm && webm != 'no') supported.push('html5/webm');
+      }
+
+      return supported;
+   }
 });
 
 jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
