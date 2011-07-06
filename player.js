@@ -75,45 +75,51 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
 
    // CbEvent handler for playerControls Widget
 
-   handleBuyControl: function() {
+   handleBuyControl : function() {
       window.open(this.options.buy_url, 'cbshop',
          'width=650,height=550,dependent=no,hotkeys=no,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no'
       ).focus();
    },
 
-   handleContactControl: function() {
+   handleContactControl : function() {
       this.trigger('control', {type : 'CONTACT'});
    },
 
-   handleEmbedControl: function() {
+   handleEmbedControl : function() {
       this.trigger('control', {type : 'EMBED'});
    },
 
-   handleInfoControl: function() {
+   handleInfoControl : function() {
       this.trigger('control', {type : 'INFO'});
    },
 
-   handleMailControl: function() {
+   handleMailControl : function() {
       this.trigger('control', {type : 'MAIL'});
    },
 
-   handleMenuControl: function() {
+   handleMenuControl : function() {
       this.trigger('control', {type : 'MENU'});
    },
 
-   handlePopupControl: function() {
+   handlePopupControl : function() {
       this.reset();
       var url = this.options.player_root+'td'+this.options.id+'/'+this.options.popup_config;
       window.open(url, 'cbplayer', this.options.popup_windowfeatures).focus();
       return false;
    },
 
-   handleZoomControl: function() {
+   handleZoomControl : function() {
       // TODO
    },
 
-   handleEmbedReady: function() {
+   handleEmbedReady : function() {
       this.embedCallable = true;
+   },
+
+   handleEmbed : function(params) {
+      if (params.id) this.options.id = params.id;
+      if (params.id_type) this.options.id_type = params.id_type;
+      return this;
    }
 }, {
    init : function() {
@@ -151,9 +157,8 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
 
 jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
    handleEmbed : function(params) {
+      this.base(params);
       var self = this;
-      if (params.id) this.options.id = params.id;
-      if (params.id_type) this.options.id_type = params.id_type;
 
       var uniqueId = this.generateUniqueId(self.options.id);
       window["player" + uniqueId] = function() {
@@ -206,6 +211,29 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
 }, {
    defaultOptions : {
       embed_source : 'flash/player.swf'
+   }
+});
+
+jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
+   handleEmbed : function(params) {
+      this.base(params);
+
+      var self = this;
+      var uniqueId = this.generateUniqueId(self.options.id);
+      jQuery.getJSON(self.options.player_root + 'config/json/' +
+         self.options.id_type + self.options.id + '/' + self.options.config,
+         {}, function(data) {
+            self.player_embed = jQuery(document.createElement('video'))
+               .attr('id', uniqueId)
+               .attr('src', data.file)
+               .attr('width', self.options.width)
+               .attr('height', self.options.height)
+               .attr('controls', '')
+               .text('ouch!');
+            self.element().empty().append(self.player_embed);
+         }
+      );
+      return this.base(params);
    }
 });
 
