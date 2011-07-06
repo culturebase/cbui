@@ -237,7 +237,9 @@ jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
    }
 });
 
-jQuery.CbWidget.player = jQuery.CbWidget.jw_player.extend({});
+jQuery.CbWidget.player = jQuery.CbWidget.html5_player.extend({
+
+});
 
 jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
    constructor : function(element) {
