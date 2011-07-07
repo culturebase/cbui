@@ -246,19 +246,17 @@ jQuery.CbWidget.player = jQuery.CbWidget.base_player.extend({
    },
 
    handleReady : function(options) {
+      options = jQuery.extend({player : 'flash/flv'}, options);
       var self = this;
-      var player = this.players[options.player];
-      if (player) {
-         self.player = new player(self.element());
-         jQuery.each(this.player, function(name, val) {
-            if (typeof(val) == 'function') {
-               self[name] = function() {
-                  return val.apply(self.player, arguments);
-               }
+      self.player = new self.players[options.player](self.element());
+      jQuery.each(self.player, function(name, val) {
+         if (typeof(val) == 'function') {
+            self[name] = function() {
+               return val.apply(self.player, arguments);
             }
-         });
-         self.trigger('ready', options);
-      }
+         }
+      });
+      self.trigger('ready', options);
    }
 }, {
    detect : function() {
