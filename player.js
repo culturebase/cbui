@@ -322,7 +322,7 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
       this.player = options.widgets.player;
       jQuery.each(options.controls, function(type,text){
          var a = jQuery(document.createElement('a')).attr('href', 'javascript://').text(text).addClass(type);
-         if(type == 'buy' && self.player.options.buy_url == '')
+         if(type == 'buy' && options.buy_url == '')
             a.addClass('inactive');
          else
             a.click(function() {
