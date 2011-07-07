@@ -245,17 +245,19 @@ jQuery.CbWidget.player = jQuery.CbWidget.base_player.extend({
       'html5/h264' : jQuery.CbWidget.html5_player
    },
 
-   /**
-    * The abstract "meta"-player is destroyed on ready and replaced by the
-    * correct implementation.
-    */
    handleReady : function(options) {
+      var self = this;
       var player = this.players[options.player];
       if (player) {
-         var element = this.element();
-         this.destroy();
-         player = new player(element);
-         player.trigger('ready', options);
+         self.player = new player(self.element());
+         jQuery.each(this.player, function(name, val) {
+            if (typeof(val) == 'function') {
+               self[name] = function() {
+                  return val.apply(self.player, arguments);
+               }
+            }
+         });
+         self.trigger('ready', options);
       }
    }
 }, {
