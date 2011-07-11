@@ -157,12 +157,22 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
 });
 
 jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
+   constructor : function(element) {
+      this.base(element);
+      this.unbind_callbacks = [];
+   },
+
    handleEmbed : function(params) {
       this.base(params);
+      delete this.player_embed;
       var self = this;
 
       var uniqueId = this.generateUniqueId(self.options.id);
       window["player" + uniqueId] = function() {
+         jQuery.each(self.unbind_callbacks, function(i, callback) {
+            self.unbind('embedReady', callback);
+         });
+         self.unbind_callbacks = [];
          self.embedReady();
          window["player" + uniqueId] = undefined;
       }
@@ -177,21 +187,20 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
             .attr('width', self.options.width)
             .attr('height', self.options.height);
       this.element().empty().append(this.player_embed);
-      return this.base(params);
+      return this;
    },
 
    callJwPlayer : function(func, param) {
       var self = this;
       if (!self.player_embed) this.trigger('embed');
-      var doCall = function() {
-         self.player_embed.get(0)[func](param);
-         self.unbind('embedReady', doCall);
-      };
-
+      
       if (self.embedCallable) {
-         doCall();
+         self.player_embed.get(0)[func](param);
       } else {
-         self.embedReady(doCall);
+         self.embedReady(function(params) {
+            self.player_embed.get(0)[params.func](params.param);
+            self.unbind_callbacks.push(this.callback);
+         }, {'func' : func, 'param' : param});
       }
    },
 
@@ -234,7 +243,7 @@ jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
             self.element().empty().append(self.player_embed);
          }
       );
-      return this.base(params);
+      return this;
    }
 });
 
