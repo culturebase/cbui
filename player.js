@@ -117,6 +117,7 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
    },
 
    handleEmbed : function(params) {
+      this.embedCallable = false;
       if (params.id) this.options.id = params.id;
       if (params.id_type) this.options.id_type = params.id_type;
       return this;
@@ -290,13 +291,34 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
    handleReady : function(options) {
       var self = this;
       if(options.versions != '' && (options.versions.length > 1 || options.versions_always)) {
-         for(var i in options.versions) {
-            var version = options.versions[i];
+         var sorted_versions = {};
+
+         jQuery.each(options.versions, function(i, version) {
             self.versions[version.id] = version;
-            var el = jQuery(document.createElement('option')).val(version.id).text(version.name);
-            if (version.id == options.id) el.attr('selected', 'true');
-            self.element().append(el);
-         }
+            var source = version.generated_from ? version.generated_from : version.id;
+            if (!sorted_versions[source]) sorted_versions[source] = [];
+            sorted_versions[source].push(version);
+         });
+
+         jQuery.each(sorted_versions, function(i, source_versions) {
+            source_versions.sort(function(a, b) {
+               if (a.generated_from == 0) return -1;
+               if (b.generated_from == 0) return 1;
+               if (a.f_format == b.f_format) return 0;
+               return a.f_format < b.f_format ? -1 : 1;
+            });
+            jQuery.each(source_versions, function(i, version) {
+               var el = jQuery(document.createElement('option')).val(version.id).text(version.name);
+               if (version.id == options.id) el.attr('selected', 'true');
+               if (version.generated_from == 0) {
+                  el.addClass('__CbUiPlayerVersionsParent');
+               } else {
+                  el.addClass('__CbUiPlayerVersionsChild');
+               }
+               self.element().append(el);
+            });
+         });
+
          self.player = options.widgets.player;
          self.element().change(function() {
             var version = self.versions[self.value()];
