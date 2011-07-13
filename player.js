@@ -284,11 +284,11 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    detect : function() {
       var supported = [];
 
-      /* Wikipedia says they added it in version 7. */
-      if (FlashDetect.versionAtLeast(7)) supported.push('flash/flv');
-
       /* 9.0.114 added h264 suppport, I heard. */
       if (FlashDetect.versionAtLeast(9, 0, 114)) supported.push('flash/h264');
+
+      /* Wikipedia says they added it in version 7. */
+      if (FlashDetect.versionAtLeast(7)) supported.push('flash/flv');
 
       var v = document.createElement('video');
       if (!!v.canPlayType) {
