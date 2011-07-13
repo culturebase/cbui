@@ -225,7 +225,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    },
 
    play : function(id, id_type, player) {
-      this.player.destroy();
+      if (this.player) this.player.destroy();
       this.trigger('ready', {id : id, id_type : id_type, player : player});
       this.player.trigger('embedEvent', {event : 'PLAY'});
       return this;
