@@ -162,13 +162,16 @@ jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
    }
 });
 
+jQuery.CbWidget.dummy_player = jQuery.CbWidget.base_player.extend({});
+
 jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
 
    players : {
       'flash/flv' : jQuery.CbWidget.jw_player,
       'flash/h264' : jQuery.CbWidget.jw_player,
       'html5/webm' : jQuery.CbWidget.html5_player,
-      'html5/h264' : jQuery.CbWidget.html5_player
+      'html5/h264' : jQuery.CbWidget.html5_player,
+      'none' : jQuery.CbWidget.dummy_player
    },
 
    handleReady : function(options) {
