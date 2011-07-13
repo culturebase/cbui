@@ -296,7 +296,14 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          if (mp4 && mp4 != 'no') supported.push('html5/h264');
 
          var webm = v.canPlayType('video/webm; codecs="vp8, vorbis"');
-         if (webm && webm != 'no') supported.push('html5/webm');
+         if (webm && webm != 'no') {
+            if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+               /* Android has bad flash support, so we prefer webm here. */
+               supported.unshift('html5/webm');
+            } else {
+               supported.push('html5/webm');
+            }
+         }
       }
 
       return supported;
