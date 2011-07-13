@@ -174,10 +174,19 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       'none' : jQuery.CbWidget.dummy_player
    },
 
+   getIcon : function(options, active) {
+      
+      if (options.id) {
+         if (typeof(active) == 'undefined') active = options.active;
+         return active ? options.play_icon : options.na_icon;
+      } else {
+         return options.no_icon;
+      }
+   },
+
    handleReady : function(options) {
       this.options = jQuery.extend(jQuery.CbWidget.player.defaultOptions, this.options, options);
-      this.load(this.options.id, this.options.image,
-         (this.options.active ? this.options.play_icon : this.options.na_icon),
+      this.load(this.options.id, this.options.image, this.getIcon(this.options),
          this.options.active);
       this.player = new this.players[this.options.player](this.element().children());
       this.player.trigger('ready', this.options);
@@ -190,7 +199,11 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       this.options.play_icon = play_icon;
       this.options.active = active;
       this.options.id_type = id_type || this.options.id_type;
-      this.options.player = player || this.options.player;
+      if (this.options.id) {
+         this.options.player = player || this.options.player;
+      } else { // prevent old configs from launching default flash player on non-films
+         this.options.player = 'none';
+      }
       this.reset();
    },
 
@@ -374,7 +387,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
             if(options.versions_autoplay && version.active) {
                self.player.play(self.value(), 'td', version.player);
             } else {
-               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon), version.active, 'td', version.player);
+               self.player.load(self.value(), version.image, self.player.getIcon(options, version.active), version.active, 'td', version.player);
             }
          });
       } else {
