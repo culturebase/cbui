@@ -1,5 +1,10 @@
 
 
+/**
+ * A base player is a widget nested in a player and fully controlled by it. It
+ * creates the embedded element that handles the actual video playback (i.e. a
+ * <video>-Tag or a flash-<embed>).
+ */
 jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
 
    /**
@@ -20,25 +25,177 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
       };
    })(),
 
+   constructor : function(element) {
+      this.embedCallable = false;
+      this.unbind_embed_ready = [];
+      return this.base(element);
+   },
+
+   handleEmbedReady : function(params) {
+      this.embedCallable = true;
+      return this;
+   },
+
+   handleEmbed : function(params) {
+      this.embedCallable = false;
+      return this;
+   },
+
+   /**
+    * We can do this in the special case of embedded players as
+    * a, we don't need to route any events between the element and other widgets.
+    * b, there are no other elements in the player div.
+    */
+   replaceElement : function(el) {
+      this.element().parent().empty().append(el);
+      this.parentElement = el;
+      this.refreshElement();
+      return this;
+   },
+
+   callPlayer : function(func, param) {
+      var self = this;
+      if (self.element().is('img')) this.trigger('embed');
+
+      if (self.embedCallable) {
+         self.element().get(0)[func](param);
+      } else {
+         self.embedReady(function(params) {
+            self.element().get(0)[params.func](params.param);
+            self.unbind_embed_ready.push(this.callback); // will be unbound next time
+         }, {'func' : func, 'param' : param});
+      }
+   },
+
+   doEmbedReady : function() {
+      var self = this;
+      jQuery.each(self.unbind_embed_ready, function(i, callback) {
+         self.unbind('embedReady', callback);
+      });
+      self.unbind_embed_ready = [];
+      self.embedReady();
+   }
+}, {
+   init : function() {
+      jQuery.CbEvent(this, 'control');    ///< General purpose event for above control actions.
+      jQuery.CbEvent(this, 'embed');      ///< Trigger this to create the embedded player.
+      jQuery.CbEvent(this, 'embedReady'); ///< Triggered when the embedded player has been created.
+      jQuery.CbEvent(this, 'embedEvent'); ///< Trigger an event on the embedded player.
+      return this.base();
+   }
+});
+
+jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
+
+   handleEmbed : function(params) {
+      this.base(params);
+      var self = this;
+
+      var uniqueId = this.generateUniqueId(self.options.id);
+      window["player" + uniqueId] = function() {
+         self.doEmbedReady();
+         delete window["player" + uniqueId];
+      }
+
+      return this.replaceElement(jQuery(document.createElement('embed'))
+            .attr('id', uniqueId)
+            .attr('flashvars', 'config=' + self.options.player_root +
+               'config/xml/' + self.options.id_type + self.options.id + '/' +
+               self.options.config + '&playerready=player' + uniqueId) // CbWidget does a recursive search
+            .attr('allowfullscreen', self.options.allow_fullscreen)
+            .attr('allowscriptaccess', self.options.allow_script_access)
+            .attr('src', self.options.player_root + self.options.embed_source)
+            .attr('width', self.options.width)
+            .attr('height', self.options.height));
+   },
+
+   handleEmbedEvent : function(params) {
+      this.callPlayer('sendEvent', params.event);
+      return this.base(params);
+   },
+
+   handleControl : function(params) {
+      this.callPlayer('callMenu', params.type);
+      return this.base(params);
+   },
+
    handleReady : function(options) {
-      this.options = jQuery.extend(jQuery.CbWidget.base_player.defaultOptions, this.options, options);
-      this.load(this.options.id, this.options.image,
-         (this.options.active ? this.options.play_icon : this.options.na_icon),
-         this.options.active);
+      this.options = jQuery.extend(jQuery.CbWidget.jw_player.defaultOptions, this.options, options);
+      return this.base(options);
+   }
+}, {
+   defaultOptions : {
+      embed_source : 'flash/player.swf'
+   }
+});
+
+jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
+   handleEmbed : function(params) {
+      this.base(params);
+
+      var self = this;
+      var uniqueId = this.generateUniqueId(self.options.id);
+      jQuery.getJSON(self.options.player_root + 'config/json/' +
+         self.options.id_type + self.options.id + '/' + self.options.config,
+         {}, function(data) {
+            self.replaceElement(jQuery(document.createElement('video'))
+                  .attr('id', uniqueId)
+                  .attr('src', data.file)
+                  .attr('width', self.options.width)
+                  .attr('height', self.options.height)
+                  .attr('controls', '')
+                  .text('ouch!'));
+            self.doEmbedReady();
+         }
+      );
+      return this;
+   },
+
+   handleReady : function(options) {
+      this.options = jQuery.extend(this.options, options);
       return this.base(options);
    },
 
-   load : function(id, image, play_icon, active, id_type) {
+   handleEmbedEvent : function(params) {
+      if (params.event == 'PLAY') this.callPlayer('play');
+      return this.base(params);
+   }
+});
+
+jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
+
+   players : {
+      'flash/flv' : jQuery.CbWidget.jw_player,
+      'flash/h264' : jQuery.CbWidget.jw_player,
+      'html5/webm' : jQuery.CbWidget.html5_player,
+      'html5/h264' : jQuery.CbWidget.html5_player
+   },
+
+   handleReady : function(options) {
+      this.options = jQuery.extend(jQuery.CbWidget.player.defaultOptions, this.options, options);
+      this.load(this.options.id, this.options.image,
+         (this.options.active ? this.options.play_icon : this.options.na_icon),
+         this.options.active);
+      this.player = new this.players[this.options.player](this.element().children());
+      this.player.trigger('ready', this.options);
+      return this.base(options);
+   },
+
+   load : function(id, image, play_icon, active, id_type, player) {
       this.options.id = id;
       this.options.image = image;
       this.options.play_icon = play_icon;
       this.options.active = active;
       this.options.id_type = id_type || this.options.id_type;
+      this.options.player = player || this.options.player;
       this.reset();
    },
 
    reset : function() {
-      this.embedCallable = false;
+      if (this.player) {
+         this.player.destroy();
+         delete this.player;
+      }
       var self = this;
 
       this.element().css({
@@ -67,9 +224,10 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
       }
    },
 
-   play : function(id, id_type) {
-      this.trigger('embed', {id : id, id_type : id_type});
-      this.trigger('embedEvent', {event : 'PLAY'});
+   play : function(id, id_type, player) {
+      this.player.destroy();
+      this.trigger('ready', {id : id, id_type : id_type, player : player});
+      this.player.trigger('embedEvent', {event : 'PLAY'});
       return this;
    },
 
@@ -82,45 +240,34 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
    },
 
    handleContactControl : function() {
-      this.trigger('control', {type : 'CONTACT'});
+      this.player.trigger('control', {type : 'CONTACT'});
    },
 
    handleEmbedControl : function() {
-      this.trigger('control', {type : 'EMBED'});
+      this.player.trigger('control', {type : 'EMBED'});
    },
 
    handleInfoControl : function() {
-      this.trigger('control', {type : 'INFO'});
+      this.player.trigger('control', {type : 'INFO'});
    },
 
    handleMailControl : function() {
-      this.trigger('control', {type : 'MAIL'});
+      this.player.trigger('control', {type : 'MAIL'});
    },
 
    handleMenuControl : function() {
-      this.trigger('control', {type : 'MENU'});
+      this.player.trigger('control', {type : 'MENU'});
    },
 
    handlePopupControl : function() {
       this.reset();
-      var url = this.options.player_root+'td'+this.options.id+'/'+this.options.popup_config;
+      var url = this.options.player_root + this.options.id_type + this.options.id + '/' + this.options.popup_config;
       window.open(url, 'cbplayer', this.options.popup_windowfeatures).focus();
       return false;
    },
 
    handleZoomControl : function() {
       // TODO
-   },
-
-   handleEmbedReady : function() {
-      this.embedCallable = true;
-   },
-
-   handleEmbed : function(params) {
-      this.embedCallable = false;
-      if (params.id) this.options.id = params.id;
-      if (params.id_type) this.options.id_type = params.id_type;
-      return this;
    }
 }, {
    init : function() {
@@ -131,144 +278,9 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
       jQuery.CbEvent(this, 'menuControl');
       jQuery.CbEvent(this, 'popupControl');
       jQuery.CbEvent(this, 'zoomControl');
-      jQuery.CbEvent(this, 'control');        ///< General purpose event for above control actions.
-      jQuery.CbEvent(this, 'embed');          ///< Trigger this to create the embedded player.
-      jQuery.CbEvent(this, 'embedReady');     ///< Triggered when the embedded player has been created.
-      jQuery.CbEvent(this, 'embedEvent');     ///< Trigger an event on the embedded player.
       return this.base();
    },
 
-   defaultOptions : {
-      image : '',
-      play_icon : '',
-      play_icon_width : 100,
-      play_icon_height : 100,
-      player_root : '/player40/',
-      config : '_default',
-      allow_fullscreen : true,
-      allow_script_access : 'always',
-      width : 550, // width and height are necessary to make it play nice with IE
-      height : 350,
-      id : 0,
-      buy_url: '',
-      active : true,
-      id_type : 'td'
-   }
-});
-
-jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
-   constructor : function(element) {
-      this.base(element);
-      this.unbind_callbacks = [];
-   },
-
-   handleEmbed : function(params) {
-      this.base(params);
-      delete this.player_embed;
-      var self = this;
-
-      var uniqueId = this.generateUniqueId(self.options.id);
-      window["player" + uniqueId] = function() {
-         jQuery.each(self.unbind_callbacks, function(i, callback) {
-            self.unbind('embedReady', callback);
-         });
-         self.unbind_callbacks = [];
-         self.embedReady();
-         window["player" + uniqueId] = undefined;
-      }
-      this.player_embed = jQuery(document.createElement('embed'))
-            .attr('id', uniqueId)
-            .attr('flashvars', 'config=' + self.options.player_root +
-               'config/xml/' + self.options.id_type + self.options.id + '/' +
-               self.options.config + '&playerready=player' + uniqueId) // CbWidget does a recursive search
-            .attr('allowfullscreen', self.options.allow_fullscreen)
-            .attr('allowscriptaccess', self.options.allow_script_access)
-            .attr('src', self.options.player_root + self.options.embed_source)
-            .attr('width', self.options.width)
-            .attr('height', self.options.height);
-      this.element().empty().append(this.player_embed);
-      return this;
-   },
-
-   callJwPlayer : function(func, param) {
-      var self = this;
-      if (!self.player_embed) this.trigger('embed');
-      
-      if (self.embedCallable) {
-         self.player_embed.get(0)[func](param);
-      } else {
-         self.embedReady(function(params) {
-            self.player_embed.get(0)[params.func](params.param);
-            self.unbind_callbacks.push(this.callback);
-         }, {'func' : func, 'param' : param});
-      }
-   },
-
-   handleEmbedEvent : function(params) {
-      this.callJwPlayer('sendEvent', params.event);
-      return this.base(params);
-   },
-
-   handleControl : function(params) {
-      this.callJwPlayer('callMenu', params.type);
-      return this.base(params);
-   },
-
-   handleReady : function(options) {
-      this.options = jQuery.extend(jQuery.CbWidget.jw_player.defaultOptions, this.options, options);
-      return this.base(options);
-   }
-}, {
-   defaultOptions : {
-      embed_source : 'flash/player.swf'
-   }
-});
-
-jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
-   handleEmbed : function(params) {
-      this.base(params);
-
-      var self = this;
-      var uniqueId = this.generateUniqueId(self.options.id);
-      jQuery.getJSON(self.options.player_root + 'config/json/' +
-         self.options.id_type + self.options.id + '/' + self.options.config,
-         {}, function(data) {
-            self.player_embed = jQuery(document.createElement('video'))
-               .attr('id', uniqueId)
-               .attr('src', data.file)
-               .attr('width', self.options.width)
-               .attr('height', self.options.height)
-               .attr('controls', '')
-               .text('ouch!');
-            self.element().empty().append(self.player_embed);
-         }
-      );
-      return this;
-   }
-});
-
-jQuery.CbWidget.player = jQuery.CbWidget.base_player.extend({
-   players : {
-      'flash/flv' : jQuery.CbWidget.jw_player,
-      'flash/h264' : jQuery.CbWidget.jw_player,
-      'html5/webm' : jQuery.CbWidget.html5_player,
-      'html5/h264' : jQuery.CbWidget.html5_player
-   },
-
-   handleReady : function(options) {
-      options = jQuery.extend({player : 'flash/flv'}, options);
-      var self = this;
-      self.player = new self.players[options.player](self.element());
-      jQuery.each(self.player, function(name, val) {
-         if (typeof(val) == 'function') {
-            self[name] = function() {
-               return val.apply(self.player, arguments);
-            }
-         }
-      });
-      self.trigger('ready', options);
-   }
-}, {
    detect : function() {
       var supported = [];
 
@@ -288,6 +300,24 @@ jQuery.CbWidget.player = jQuery.CbWidget.base_player.extend({
       }
 
       return supported;
+   },
+
+   defaultOptions : {
+      image : '',
+      play_icon : '',
+      play_icon_width : 100,
+      play_icon_height : 100,
+      player_root : '/player40/',
+      config : '_default',
+      allow_fullscreen : true,
+      allow_script_access : 'always',
+      width : 550, // width and height are necessary to make it play nice with IE
+      height : 350,
+      id : 0,
+      buy_url: '',
+      active : true,
+      id_type : 'td',
+      player : 'flash/flv'
    }
 });
 
@@ -332,9 +362,9 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          self.element().change(function() {
             var version = self.versions[self.value()];
             if(options.versions_autoplay && version.active) {
-               self.player.play(self.value(), 'td');
+               self.player.play(self.value(), 'td', version.player);
             } else {
-               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon), version.active, 'td');
+               self.player.load(self.value(), version.image, (version.active ? options.play_icon : options.na_icon), version.active, 'td', version.player);
             }
          });
       } else {
