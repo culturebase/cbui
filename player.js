@@ -174,11 +174,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       'none' : jQuery.CbWidget.dummy_player
    },
 
-   getIcon : function(options, active) {
+   getIcon : function(options) {
       
       if (options.id) {
-         if (typeof(active) == 'undefined') active = options.active;
-         return active ? options.play_icon : options.na_icon;
+         return (options.active && options.player != 'none') ? options.play_icon : options.na_icon;
       } else {
          return options.no_icon;
       }
@@ -387,7 +386,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
             if(options.versions_autoplay && version.active) {
                self.player.play(self.value(), 'td', version.player);
             } else {
-               self.player.load(self.value(), version.image, self.player.getIcon(options, version.active), version.active, 'td', version.player);
+               self.player.load(self.value(), version.image, self.player.getIcon(jQuery.extend(options, version)), version.active, 'td', version.player);
             }
          });
       } else {
