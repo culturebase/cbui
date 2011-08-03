@@ -102,7 +102,7 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
             .attr('name', uniqueId)
             .attr('flashvars', 'config=' + self.options.player_root +
                'config/xml/' + self.options.id_type + self.options.id + '/' +
-               self.options.config + '&playerready=player' + uniqueId) // CbWidget does a recursive search
+               self.options.config + '&playerready=' + uniqueId) // CbWidget does a recursive search
             .attr('allowfullscreen', self.options.allow_fullscreen)
             .attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source)
