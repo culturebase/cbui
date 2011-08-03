@@ -61,13 +61,9 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
          self.element().get(0)[func](param);
       } else {
          self.embedReady(function(params) {
-            try {
-            self.element().get(0)[params.func](params.param);
+            // IE stops here and throws: "Object doesn't support property or method xyz"
+            self.element().get(0)[params.func](params.param);            
             self.unbind_embed_ready.push(this.callback); // will be unbound next time
-            }
-            catch(e) {
-               alert(e.message);
-            }
          }, {'func' : func, 'param' : param});
       }
    },
@@ -102,7 +98,9 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
          delete window["player" + uniqueId];
       }
 
-      return this.replaceElement(jQuery(document.createElement('embed'))
+      return this.replaceElement(jQuery(document.createElement('object')).
+            .attr('id', uniqueId).
+            jQuery(document.createElement('embed'))
             .attr('id', uniqueId)
             .attr('name', uniqueId)
             .attr('flashvars', 'config=' + self.options.player_root +
