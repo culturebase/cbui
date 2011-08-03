@@ -92,7 +92,7 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
       var self = this;
 
       var uniqueId = this.generateUniqueId(self.options.id);
-      window["player" + uniqueId] = function() {
+      window["player" + uniqueId] = function(player) {
          self.doEmbedReady();
          delete window["player" + uniqueId];
       }
