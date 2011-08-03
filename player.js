@@ -61,8 +61,13 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
          self.element().get(0)[func](param);
       } else {
          self.embedReady(function(params) {
+            try {
             self.element().get(0)[params.func](params.param);
             self.unbind_embed_ready.push(this.callback); // will be unbound next time
+            }
+            catch(e) {
+               alert(e.getMessage());
+            }
          }, {'func' : func, 'param' : param});
       }
    },
@@ -92,7 +97,7 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
       var self = this;
 
       var uniqueId = this.generateUniqueId(self.options.id);
-      window["player" + uniqueId] = function(player) {
+      window["player" + uniqueId] = function() {
          self.doEmbedReady();
          delete window["player" + uniqueId];
       }
