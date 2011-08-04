@@ -61,7 +61,7 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
          self.element().get(0)[func](param);
       } else {
          self.embedReady(function(params) {
-            // IE stops here and throws: "Object doesn't support property or method xyz"
+            // IE throws here: "Object doesn't support property or method <params.func>"
             self.element().get(0)[params.func](params.param);            
             self.unbind_embed_ready.push(this.callback); // will be unbound next time
          }, {'func' : func, 'param' : param});
