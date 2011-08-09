@@ -100,7 +100,6 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
 
       return this.replaceElement(jQuery(document.createElement('embed'))
             .attr('id', uniqueId)
-            .attr('name', uniqueId)
             .attr('flashvars', 'config=' + self.options.player_root +
                'config/xml/' + self.options.id_type + self.options.id + '/' +
                self.options.config + '&playerready=player' + uniqueId) // CbWidget does a recursive search
