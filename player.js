@@ -340,7 +340,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       buy_url: '',
       active : true,
       id_type : 'td',
-      player : 'flash/flv'
+      player : 'flash/flv',
+      wmode : 'window' // set to opaque to overlap flash
    }
 });
 
