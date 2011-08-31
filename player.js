@@ -107,7 +107,8 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
             .attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source)
             .attr('width', self.options.width)
-            .attr('height', self.options.height));
+            .attr('height', self.options.height)
+            .attr('wmode', self.options.wmode));
    },
 
    handleEmbedEvent : function(params) {
