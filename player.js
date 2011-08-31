@@ -107,7 +107,8 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
             .attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source)
             .attr('width', self.options.width)
-            .attr('height', self.options.height));
+            .attr('height', self.options.height)
+            .attr('wmode', self.options.wmode));
    },
 
    handleEmbedEvent : function(params) {
@@ -340,7 +341,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       buy_url: '',
       active : true,
       id_type : 'td',
-      player : 'flash/flv'
+      player : 'flash/flv',
+      wmode: 'window' // http://kb2.adobe.com/cps/127/tn_12701.html#main_Using_Window_Mode__wmode__values_
    }
 });
 
