@@ -127,7 +127,8 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
    }
 }, {
    defaultOptions : {
-      embed_source : 'flash/player.swf'
+      embed_source : 'flash/player.swf',
+      wmode: 'window' // http://kb2.adobe.com/cps/127/tn_12701.html#main_Using_Window_Mode__wmode__values_
    }
 });
 
@@ -341,8 +342,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       buy_url: '',
       active : true,
       id_type : 'td',
-      player : 'flash/flv',
-      wmode: 'window' // http://kb2.adobe.com/cps/127/tn_12701.html#main_Using_Window_Mode__wmode__values_
+      player : 'flash/flv'      
    }
 });
 
