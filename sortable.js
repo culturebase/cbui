@@ -57,6 +57,15 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
       this.bindDrag(item);
       return item;
    },
+
+   /**
+    * Get item with the given index.
+    * @param index Position of requested item.
+    * @return Item at given position.
+    */
+   getItem : function(index) {
+      return jQuery(this.element().find('.__CbUiSortableItem')[index]);
+   },
    
    /**
     * manually remove the item at index.
