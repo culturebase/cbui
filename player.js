@@ -406,16 +406,19 @@ jQuery.CbWidget.playerControls = jQuery.CbWidget.widget.extend({
    handleReady : function(options) {
       var self = this;
       this.player = options.widgets.player;
-      jQuery.each(options.controls, function(type,text){
-         var a = jQuery(document.createElement('a')).attr('href', 'javascript://').text(text).addClass(type);
-         if(type == 'buy' && options.buy_url == '')
-            a.addClass('inactive');
-         else
-            a.click(function() {
-               self.player.trigger(type+'Control');
-            });
-         self.element().append(a);
-      });
+      if (options.controls) {
+         jQuery.each(options.controls, function(type, text){
+            var a = jQuery(document.createElement('a')).attr('href', 'javascript://').text(text).addClass(type);
+            if(type == 'buy' && options.buy_url == '')
+               a.addClass('inactive');
+            else
+               a.click(function() {
+                  self.player.trigger(type+'Control');
+               });
+            self.element().append(a);
+         });
+      }
+      return this;
    }
 });
 
