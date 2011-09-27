@@ -242,9 +242,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       }
    },
 
-   play : function(id, id_type, player) {
+   handlePlay : function(options) {
       if (this.player) this.player.destroy();
-      this.trigger('ready', {id : id, id_type : id_type, player : player});
+      this.trigger('ready', options);
       this.player.trigger('embedEvent', {event : 'PLAY'});
       return this;
    },
@@ -296,6 +296,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       jQuery.CbEvent(this, 'menuControl');
       jQuery.CbEvent(this, 'popupControl');
       jQuery.CbEvent(this, 'zoomControl');
+      jQuery.CbEvent(this, 'play');
       return this.base();
    },
 
@@ -387,7 +388,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          self.element().change(function() {
             var version = self.versions[self.value()];
             if(options.versions_autoplay && version.active) {
-               self.player.play(self.value(), 'td', version.player);
+               self.player.play({id : self.value(), id_type : 'td', player : version.player});
             } else {
                self.player.load(self.value(), version.image, self.player.getIcon(jQuery.extend(options, version)), version.active, 'td', version.player);
             }
