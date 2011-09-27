@@ -389,7 +389,7 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
          self.element().change(function() {
             var version = self.versions[self.value()];
             if(options.versions_autoplay && version.active) {
-               self.player.play({id : self.value(), id_type : 'td', player : version.player});
+               self.player.trigger('play', {id : self.value(), id_type : 'td', player : version.player});
             } else {
                self.player.load(self.value(), version.image, self.player.getIcon(jQuery.extend(options, version)), version.active, 'td', version.player);
             }
