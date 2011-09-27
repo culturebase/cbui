@@ -228,16 +228,17 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       if (this.options.play_icon) {
          this.element().append(
             jQuery(document.createElement('img'))
-            .attr('src', self.options.play_icon)
-            .css({
-               position : 'absolute',
-               width : self.options.play_icon_width,
-               height : self.options.play_icon_height,
-               top : ((self.options.height/2)-(self.options.play_icon_height/2)),
-               left : ((self.options.width/2)-(self.options.play_icon_width/2))
-            }).click(function() {
-               if (self.options.active) self.play();
-            })
+               .addClass('__CbUiPlayerPlayButton')
+               .attr('src', self.options.play_icon)
+               .css({
+                  position : 'absolute',
+                  width : self.options.play_icon_width + 'px',
+                  height : self.options.play_icon_height + 'px',
+                  top : ((self.options.height/2)-(self.options.play_icon_height/2)),
+                  left : ((self.options.width/2)-(self.options.play_icon_width/2))
+               }).click(function() {
+                  if (self.options.active) self.play();
+               })
          );
       }
    },
