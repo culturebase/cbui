@@ -229,19 +229,18 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          if (typeof(this.options.play_icon) == 'string') {
             // element is an url to be loaded and image has to be positioned
             var icon = jQuery(document.createElement('img'))
-                  .addClass('__CbUiPlayerPlayButton')
-                  .attr('src', self.options.play_icon);
-            icon.css({
-                  position : 'absolute',
-                  width : self.options.play_icon_width + 'px',
-                  height : self.options.play_icon_height + 'px',
-                  top : ((self.options.height/2)-(self.options.play_icon_height/2)),
-                  left : ((self.options.width/2)-(self.options.play_icon_width/2))
+                  .attr('src', self.options.play_icon)
+                  .css({
+                     position : 'absolute',
+                     width : self.options.play_icon_width + 'px',
+                     height : self.options.play_icon_height + 'px',
+                     top : ((self.options.height/2)-(self.options.play_icon_height/2)),
+                     left : ((self.options.width/2)-(self.options.play_icon_width/2))
             });
          } else { // element was directly specified
             icon = this.options.play_icon;
          }
-         this.element().append(icon.click(function() {
+         this.element().append(icon.addClass('__CbUiPlayerPlayButton').click(function() {
             if (self.options.active) self.play();
          }));
       }
