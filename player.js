@@ -225,20 +225,25 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .click(function() {if (self.options.active) self.play();})
       );
 
-      if (this.options.play_icon) {
-         if (typeof(this.options.play_icon) == 'string') {
-            // element is an url to be loaded and image has to be positioned
-            var icon = jQuery(document.createElement('img'))
-                  .attr('src', self.options.play_icon)
-                  .css({
-                     position : 'absolute',
-                     width : self.options.play_icon_width + 'px',
-                     height : self.options.play_icon_height + 'px',
-                     top : ((self.options.height/2)-(self.options.play_icon_height/2)),
-                     left : ((self.options.width/2)-(self.options.play_icon_width/2))
-            });
-         } else { // element was directly specified
-            icon = this.options.play_icon;
+      if (self.options.play_icon) {
+         var icon = self.options.play_icon;
+
+         // if not we assume DOM element was directly specificified
+         if (typeof(icon) == 'string') {
+            // element is an url to be loaded
+            icon = jQuery(document.createElement('img')).attr('src', icon);
+         }
+
+         if (self.options.play_icon_width || self.options.play_icon_height) {
+            // do the positioning
+            var css = {
+               position : 'absolute',
+               top : ((self.options.height/2)-(self.options.play_icon_height/2)),
+               left : ((self.options.width/2)-(self.options.play_icon_width/2))
+            };
+            if (self.options.play_icon_width) css.width = self.options.play_icon_width + 'px';
+            if (self.options.play_icon_height) css.height = self.options.play_icon_height + 'px';
+            icon.css(css);
          }
          this.element().append(icon.addClass('__CbUiPlayerPlayButton').click(function() {
             if (self.options.active) self.play();
