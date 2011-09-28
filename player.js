@@ -226,20 +226,26 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       );
 
       if (this.options.play_icon) {
-         this.element().append(
-            jQuery(document.createElement('img'))
-               .addClass('__CbUiPlayerPlayButton')
-               .attr('src', self.options.play_icon)
-               .css({
+         if (typeof(this.options.play_icon) == 'string') {
+            // element is an url to be loaded and image has to be positioned
+            var icon = jQuery(document.createElement('img'))
+                  .addClass('__CbUiPlayerPlayButton')
+                  .attr('src', self.options.play_icon)
+                  .click(function() {
+                     if (self.options.active) self.play();
+                  }
+            );
+            icon.css({
                   position : 'absolute',
                   width : self.options.play_icon_width + 'px',
                   height : self.options.play_icon_height + 'px',
                   top : ((self.options.height/2)-(self.options.play_icon_height/2)),
                   left : ((self.options.width/2)-(self.options.play_icon_width/2))
-               }).click(function() {
-                  if (self.options.active) self.play();
-               })
-         );
+            });
+         } else { // element was directly specified
+            icon = this.options.play_icon;
+         }
+         this.element().append(icon);
       }
    },
 
@@ -332,8 +338,6 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    defaultOptions : {
       image : '',
       play_icon : '',
-      play_icon_width : 100,
-      play_icon_height : 100,
       player_root : '/player40/',
       config : '_default',
       allow_fullscreen : true,
