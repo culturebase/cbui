@@ -215,6 +215,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          delete this.player;
       }
       var self = this;
+      var active = self.options.id && self.options.active && self.options.player != 'none';
 
       this.element().css({
          position : 'relative'
@@ -222,6 +223,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          jQuery(document.createElement('img'))
          .attr('src', self.options.image)
          .attr('width', self.options.width).attr('height', self.options.height)
+         .addClass(active ? '__CbUiPlayerActivePreview' : '__CbUiPlayerDummyPreview')
          .click(function() {if (self.options.active) self.play();})
       );
 
@@ -245,9 +247,10 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             if (self.options.play_icon_height) css.height = self.options.play_icon_height + 'px';
             icon.css(css);
          }
-         this.element().append(icon.addClass('__CbUiPlayerPlayButton').click(function() {
-            if (self.options.active) self.play();
-         }));
+         if (active) {
+            icon.addClass('__CbUiImgButton').click(function() {self.play();});
+         }
+         this.element().append(icon.addClass('__CbUiPlayerPlayButton'));
       }
    },
 
