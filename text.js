@@ -53,13 +53,17 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
       if (typeof(params.label) == 'number') {
          this.cycler.show(params.label);
       } else {
-         for (pos in this.texts) {
+         for (var pos in this.texts) {
             if (this.texts[pos] == params.label) {
                this.cycler.show(pos);
                break;
             }
          }
       }
+   },
+
+   getShown : function() {
+      return this.cycler.getShown();
    },
 
    numTexts : function() {
@@ -71,11 +75,11 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
     * Hide any other text. short for trigger('show', ...)
     */
    showText : function(label) {
-      this.trigger('show', {'label' : label});
+      return this.trigger('show', {'label' : label});
    },
    
    hideText : function() {
-      this.hide();
+      return this.hide();
    },
    
    changeLanguage : function(bricks) {
@@ -83,6 +87,7 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
       this.cycler.elements.each(function(index) {
          jQuery(this).html(bricks[self.texts[index]]);
       });
+      return this;
    },
    
    handleDestroy : function() {
