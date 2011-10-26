@@ -62,6 +62,10 @@ jQuery.CbWidget.multiText = jQuery.CbWidget.widget.extend({
       }
    },
 
+   /**
+    * Get the currently shown text.
+    * @return Currently shown text.
+    */
    getShown : function() {
       return this.cycler.getShown();
    },
