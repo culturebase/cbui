@@ -359,8 +359,11 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
       });
    },
 
-   addOption : function(value, text) {
-      this.element().append($(document.createElement('option')).val(value).text(text));
+   addOption : function(value, text, css_class, selected) {
+      var el = $(document.createElement('option')).val(value).text(text);
+      if (css_class) el.addClass(css_class);
+      if (selected) el.attr('selected', 'true');
+      this.element().append(el);
    }
 });
 

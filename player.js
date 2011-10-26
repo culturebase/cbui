@@ -383,14 +383,9 @@ jQuery.CbWidget.playerVersions = jQuery.CbWidget.select.extend({
                return a.f_format < b.f_format ? -1 : 1;
             });
             jQuery.each(source_versions, function(i, version) {
-               var el = jQuery(document.createElement('option')).val(version.id).text(version.name);
-               if (version.id == options.id) el.attr('selected', 'true');
-               if (version.generated_from == 0) {
-                  el.addClass('__CbUiPlayerVersionsParent');
-               } else {
-                  el.addClass('__CbUiPlayerVersionsChild');
-               }
-               self.element().append(el);
+               self.addOption(version.id, version.name,
+                     version.generated_from == 0 ? '__CbUiPlayerVersionsParent' : '__CbUiPlayerVersionsChild',
+                     version.id == options.id);
             });
          });
 
