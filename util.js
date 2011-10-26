@@ -84,7 +84,7 @@ var CbWindowCloser = base2.Base.extend({
 
    destroy : function() {
       var element = this.element;
-      while(typeof(element.CbWidget().close) != 'function') {
+      while(typeof(element.CbWidget) != 'function' || typeof(element.CbWidget().close) != 'function') {
          var parent = jQuery(element.parent());
          if (!parent || parent == element) {
             return;
