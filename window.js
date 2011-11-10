@@ -362,11 +362,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       
       this.element().hide(); // don't fire the event here
       if (this.template) {
-         var inner = this.element().children().eq(0);
+         var inner = $(this.element().children().eq(0));
          if (this.postParams) {
-            inner.load(this.template, this.postParams, function() {self.postLoadFrame(options);});
+            inner.load(this.template, this.postParams, function() {$(document).ready(function() {self.postLoadFrame(options);})});
          } else {
-            inner.load(this.template, function() {self.postLoadFrame(options);});
+            inner.load(this.template, function() {$(document).ready(function() {self.postLoadFrame(options);})});
          }
       } else {
          this.postLoadFrame(options);
