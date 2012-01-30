@@ -28,14 +28,8 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.embedCallable = false;
       this.unbind_embed_ready = [];
-
-      var baseReturnValue = this.base(element);
-
-      // Generate the unique ID here to avoid race conditions when embedding the
-      // player.
-      this.uniqueId = this.generateUniqueId(this.options.id);
-
-      return baseReturnValue;
+      this.uniqueId = this.generateUniqueId();
+      return this.base(element);
    },
 
    handleEmbedReady : function(params) {
