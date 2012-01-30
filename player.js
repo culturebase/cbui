@@ -28,7 +28,14 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.embedCallable = false;
       this.unbind_embed_ready = [];
-      return this.base(element);
+
+      var baseReturnValue = this.base(element);
+
+      // Generate the unique ID here to avoid race conditions when embedding the
+      // player.
+      this.uniqueId = this.generateUniqueId(this.options.id);
+
+      return baseReturnValue;
    },
 
    handleEmbedReady : function(params) {
@@ -62,7 +69,7 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
       } else {
          self.embedReady(function(params) {
             // IE throws here: "Object doesn't support property or method <params.func>"
-            self.element().get(0)[params.func](params.param);            
+            self.element().get(0)[params.func](params.param);
             self.unbind_embed_ready.push(this.callback); // will be unbound next time
          }, {'func' : func, 'param' : param});
       }
@@ -92,17 +99,16 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
       this.base(params);
       var self = this;
 
-      var uniqueId = this.generateUniqueId(self.options.id);
-      window["player" + uniqueId] = function() {
+      window["player" + this.uniqueId] = function () {
          self.doEmbedReady();
-         delete window["player" + uniqueId];
-      }
+         delete window["player" + this.uniqueId];
+      };
 
       return this.replaceElement(jQuery(document.createElement('embed'))
-            .attr('id', uniqueId)
+            .attr('id', self.uniqueId)
             .attr('flashvars', 'config=' + self.options.player_root +
                'config/xml/' + self.options.id_type + self.options.id + '/' +
-               self.options.config + '&playerready=player' + uniqueId) // CbWidget does a recursive search
+               self.options.config + '&playerready=player' + self.uniqueId) // CbWidget does a recursive search
             .attr('allowfullscreen', self.options.allow_fullscreen)
             .attr('allowscriptaccess', self.options.allow_script_access)
             .attr('src', self.options.player_root + self.options.embed_source)
@@ -137,12 +143,11 @@ jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
       this.base(params);
 
       var self = this;
-      var uniqueId = this.generateUniqueId(self.options.id);
       jQuery.getJSON(self.options.player_root + 'config/json/' +
          self.options.id_type + self.options.id + '/' + self.options.config,
          {}, function(data) {
             self.replaceElement(jQuery(document.createElement('video'))
-                  .attr('id', uniqueId)
+                  .attr('id', self.uniqueId)
                   .attr('src', data.file)
                   .attr('width', self.options.width)
                   .attr('height', self.options.height)
@@ -178,7 +183,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    },
 
    getIcon : function(options) {
-      
+
       if (options.id) {
          return (options.active && options.player != 'none') ? options.play_icon : options.na_icon;
       } else {
@@ -353,7 +358,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       buy_url: '',
       active : true,
       id_type : 'td',
-      player : 'flash/flv'      
+      player : 'flash/flv'
    }
 });
 
@@ -442,11 +447,11 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
          iconSrc = null;
 
       this.player = options.widgets.player;
-      
+
       if (options.slides && options.slides.length > 1) {
          jQuery.each(options.slides, function(i, image) {
             var img = jQuery(document.createElement('img'));
-            
+
             // first image of slide is video trigger
             if (i == 0) {
                // select the best available icon source
@@ -462,7 +467,7 @@ jQuery.CbWidget.playerSlides = jQuery.CbWidget.widget.extend({
                         self.player.play();
                      })
                      .appendTo(slider);
-                  
+
                   img.load(function () {
                      icon.css({
                         display:   'block',
