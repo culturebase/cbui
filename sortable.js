@@ -31,14 +31,14 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
          return false;
       });
    },
-   
+
    handleReady : function() {
       this.base();
       this.element().sortable({
          handle : '.__CbUiDragIcon'
       });      
    },
-   
+
    /**
     * manually add an item to the end of the list.
     * @param index the position where the element should be inserted
@@ -66,7 +66,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
    getItem : function(index) {
       return jQuery(this.element().find('.__CbUiSortableItem')[index]);
    },
-   
+
    /**
     * manually remove the item at index.
     * @param index index of the item to be removed.
@@ -86,10 +86,13 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
    handleDragStop : function () {
       this.element().find('.__CbUiSortableItemDragging').removeClass('__CbUiSortableItemDragging');
    },
-   
+
    bindIcons : function(item) {
+      var self = this;
       item.find('.__CbUiRemoveIcon').click(function() {
-         item.remove();
+         if (!self.options.remove_warning || confirm(self.options.remove_warning)) {
+            item.remove();
+         }
          return false;
       });
    },
@@ -103,7 +106,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
          });
       });
    },
-   
+
    /**
     * remove all items.
     */
