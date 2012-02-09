@@ -254,7 +254,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             icon.css(css);
          }
          if (active) {
-            icon.addClass('__CbUiImgButton').click(function() {self.play();});
+            icon.addClass('__CbUiImgButton').click(bind_click(self));
          }
          this.element().append(icon.addClass('__CbUiPlayerPlayButton'));
       }
