@@ -213,7 +213,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
     */
    bindPlayClick : function(element) {
       var self = this;
-      element.click(function() {self.play();}
+      element.click(function() {self.play();});
       return this;
    },
 
