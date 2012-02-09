@@ -216,6 +216,13 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       var self = this;
       var active = self.options.id && self.options.active && self.options.player != 'none';
 
+      /* wrap click handler in extra scope so that self stays the same even
+       * if other players have been reset in between.
+       */
+      var bind_click = function(self) {
+         return function() {self.play();}
+      };
+
       this.element().css({
          position : 'relative'
       }).empty().append(
@@ -223,7 +230,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .attr('src', self.options.image)
          .attr('width', self.options.width).attr('height', self.options.height)
          .addClass(active ? '__CbUiPlayerActivePreview' : '__CbUiPlayerDummyPreview')
-         .click(function() {if (self.options.active) self.play();})
+         .click(active ? bind_click(self) : jQuery.noop())
       );
 
       if (self.options.play_icon) {
