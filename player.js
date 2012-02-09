@@ -122,7 +122,7 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
    },
 
    handleReady : function(options) {
-      this.options = jQuery.extend(jQuery.CbWidget.jw_player.defaultOptions, this.options, options);
+      this.options = jQuery.extend({}, jQuery.CbWidget.jw_player.defaultOptions, this.options, options);
       return this.base(options);
    }
 }, {
