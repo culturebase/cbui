@@ -208,6 +208,15 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       this.reset();
    },
 
+   /* wrap click handler in extra scope so that self stays the same even
+    * if other players have been reset in between.
+    */
+   bindPlayClick : function(element) {
+      var self = this;
+      element.click(function() {self.play();}
+      return this;
+   },
+
    reset : function() {
       if (this.player) {
          this.player.destroy();
@@ -216,13 +225,6 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       var self = this;
       var active = self.options.id && self.options.active && self.options.player != 'none';
 
-      /* wrap click handler in extra scope so that self stays the same even
-       * if other players have been reset in between.
-       */
-      var bind_click = function(self) {
-         return function() {self.play();}
-      };
-
       this.element().css({
          position : 'relative'
       }).empty().append(
@@ -230,8 +232,8 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
          .attr('src', self.options.image)
          .attr('width', self.options.width).attr('height', self.options.height)
          .addClass(active ? '__CbUiPlayerActivePreview' : '__CbUiPlayerDummyPreview')
-         .click(active ? bind_click(self) : jQuery.noop())
       );
+      if (active) self.bindPlayClick(self.element());
 
       if (self.options.play_icon) {
          var icon = self.options.play_icon;
@@ -254,9 +256,9 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
             icon.css(css);
          }
          if (active) {
-            icon.addClass('__CbUiImgButton').click(bind_click(self));
+            self.bindPlayClick(icon.addClass('__CbUiImgButton'));
          }
-         this.element().append(icon.addClass('__CbUiPlayerPlayButton'));
+         self.element().append(icon.addClass('__CbUiPlayerPlayButton'));
       }
    },
 
