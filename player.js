@@ -186,7 +186,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
    },
 
    handleReady : function(options) {
-      this.options = jQuery.extend(jQuery.CbWidget.player.defaultOptions, this.options, options);
+      this.options = jQuery.extend({}, jQuery.CbWidget.player.defaultOptions, this.options, options);
       this.load(this.options.id, this.options.image, this.getIcon(this.options),
          this.options.active);
       this.player = new this.players[this.options.player](this.element().children());
