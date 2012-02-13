@@ -225,15 +225,16 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       var self = this;
       var active = self.options.id && self.options.active && self.options.player != 'none';
 
-      this.element().css({
-         position : 'relative'
-      }).empty().append(
-         jQuery(document.createElement('img'))
+      var img = jQuery(document.createElement('img'))
          .attr('src', self.options.image)
          .attr('width', self.options.width).attr('height', self.options.height)
-         .addClass(active ? '__CbUiPlayerActivePreview' : '__CbUiPlayerDummyPreview')
-      );
-      if (active) self.bindPlayClick(self.element());
+         .addClass(active ? '__CbUiPlayerActivePreview' : '__CbUiPlayerDummyPreview');
+      if (active) self.bindPlayClick(img);
+
+      self.element().css({
+         position : 'relative'
+      }).empty().append(img);
+      
 
       if (self.options.play_icon) {
          var icon = self.options.play_icon;
