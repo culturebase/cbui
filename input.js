@@ -424,23 +424,23 @@ jQuery.CbWidget.checkbox= jQuery.CbWidget.input.extend({
  * You'll need autocomplete2/mod.autocomplete.js if you want to use this widget.
  */
 jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
-   
+
    constructor : function(element) {
       this.options = {};
       if (jQuery.CbWidgetRegistry.language) {
          this.options.language = jQuery.CbWidgetRegistry.language;
       }
-      
+
       this.pivot = new CbElementPivot(element);
       this.name_field = this.pivot.child;
       var id_field = jQuery(document.createElement('input')).attr('type', 'hidden');
-      
+
       this.base(this.pivot.parent);
       var id = 'searchbox' + this.base2ID;
       this.options.putIdInto = '#'+ id;
       this.pivot.parent.prepend(id_field.attr('id', id));
    },
-   
+
    changeLanguage : function(bricks) {
       this.base(bricks);
       this.options.language = jQuery.CbWidgetRegistry.language;
@@ -472,7 +472,7 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
          return this.name_field.val(val);
       }
    },
-   
+
    /**
     * get or set the ID associated with the current value of the field
     */
@@ -483,12 +483,12 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
          return jQuery(this.options.putIdInto).val(val);
       }
    },
-   
+
    handleDestroy : function() {
       this.base();
       this.pivot.destroy();
    },
-   
+
    handleHide : function() {
       this.pivot.parent.find('.__AC_close').click();
       this.base();
