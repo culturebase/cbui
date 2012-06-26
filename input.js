@@ -223,6 +223,16 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       this.hint_element = hint_element;
       this.default_color = this.element().css('background-color');
       this.cycler.elements.pstrength();
+      this.cycler.getShown().css('background-color', this.current_color);
+      if (this.hint_element !== undefined) this.hint_element.slideDown();
+   },
+   
+   removeStrengthCheck : function() {
+      if (this.hint_element !== undefined) this.hint_element.slideUp();
+      this.cycler.elements.pstrength('destroy');
+      this.element().css('background-color', this.default_color);
+      delete this.hint_element;
+      this.strength_check = false;
    },
    
    /**
@@ -273,10 +283,6 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
          this.value('');
       }
 
-      if (this.strength_check) {
-         this.cycler.getShown().css('background-color', this.current_color);
-         if (this.hint_element !== undefined) this.hint_element.slideDown();
-      }
       return this.base();
    }, 
    
@@ -285,11 +291,6 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
     * change the type back to 'text' if the content hasn't been edited.
     */
    handleBlur : function() {
-      if (this.strength_check) {
-         this.current_color = this.cycler.getShown().css('background-color');
-         this.cycler.getShown().css('background-color', this.default_color);
-         if (this.hint_element !== undefined) this.hint_element.slideUp();
-      }
 
       if (this.value() == '' || this.value() == this.bricks[this.texts.text]) {
          this.cycler.show();
