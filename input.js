@@ -5,17 +5,17 @@
 jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
 
    /**
-    * Create the input widget.  
+    * Create the input widget.
     */
    constructor : function(element) {
       this.base(element);
-      
+
       /**
        * validators for this widget.
        */
       this.validators = [];
    },
-   
+
    /**
     * Query or set the current value of the field.
     * @param val the new value (optional)
@@ -28,7 +28,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
          return this.element().val(val);
       }
    },
-   
+
    /**
     * Run all validators on this widget.
     * @return true if validation was successful, false otherwise
@@ -50,7 +50,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     * queries before editing is finished.
     */
    editingFinished : function() {return true;},
-   
+
    /**
     * callback to announce that this field has an input error. Assigns the
     * class '__CbUiInputError' to the element.
@@ -59,7 +59,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
       this.element().addClass("__CbUiInputError");
       return this;
    },
-   
+
    /**
     * clear the error state and remove the CSS class '__CbUiInputError'.
     */
@@ -67,7 +67,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
       this.element().removeClass("__CbUiInputError");
       return this;
    },
-   
+
    /**
     * Remove the widget and all its validators.
     */
@@ -77,12 +77,12 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
       }
       this.base();
    }
-   
+
 }, {
    init : function() {
       /* triggered when the input has been found invalid */
       jQuery.CbEvent(this, 'error');
-      
+
       /* triggered when the input has been found valid */
       jQuery.CbEvent(this, 'valid');
 
@@ -93,7 +93,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
 /**
  * Text input widget.
  * Text input fields are expected to have a predefined standard value which is
- * the ML brick associated with the label registered at position "text" (i.e. 
+ * the ML brick associated with the label registered at position "text" (i.e.
  * this.bricks[this.texts.text]).
  * Focus handling is centralized for text input widgets.
  */
@@ -102,7 +102,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
     * change the language. The description of the widget is usually shown in
     * the input field itself if it hasn't been edited yet. This is reflected
     * here. You can override this function or value() to change the behaviour.
-    * 
+    *
     * For external labels, consider using separate text widgets, though.
     */
    changeLanguage : function(bricks) {
@@ -112,13 +112,13 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
       }
       this.bricks[label] = bricks[label];
    },
-   
+
    reset : function() {
       this.value(this.bricks[this.texts.text]);
       this.element().removeClass('__CbUiFieldEdited');
       this.element().addClass('__CbUiFieldUnedited');
    },
-   
+
    /**
     * (re-)bind the events associated with this widget. Focus and blur events
     * from the widget's elements are passed on to trigger the respective events
@@ -135,7 +135,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
       });
       return this;
    },
-   
+
    /**
     * reread the element from the DOM and rebind the events.
     */
@@ -144,26 +144,26 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
       this.bindEvents();
       return this;
    },
-   
+
    /**
     * Create the text input widget. Assigns the class __CbUiFieldUnedited to
-    * its element.  
+    * its element.
     */
    constructor : function(element) {
       this.base(element);
-      
+
       /**
        * bricks to be used for translation and for comparing with standard value.
        */
       this.bricks = {};
-      
+
       var label = this.value();
       this.texts = {text : label};
       this.bricks[label] = label;
       this.element().addClass('__CbUiFieldUnedited');
       this.bindEvents();
    },
-   
+
    /**
     * blur handler. Sets the class '__CbUiFieldUnedited' on the element if it's
     * empty or contains the standard value.
@@ -174,7 +174,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
       }
       return this;
    },
-   
+
    /**
     * focus handler. Sets the class '__CbUiFieldEdited' on the element.
     */
@@ -199,7 +199,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
  * You need pstrength.js if you want to use the password widget's strength check.
  */
 jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
-   
+
    /**
     * reread the element and the backup elements from the DOM and
     * reattach the strength handler.
@@ -211,7 +211,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       if (this.strength_check) this.cycler.elements.pstrength();
       this.pivot.parent.children().first().unbind('blur');
    },
-   
+
    /**
     * add a strength check. The background color will appear in various shades
     * of green and red depending on the strength of the password.
@@ -226,7 +226,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       this.cycler.getShown().css('background-color', this.current_color);
       if (this.hint_element !== undefined) this.hint_element.slideDown();
    },
-   
+
    removeStrengthCheck : function() {
       if (this.hint_element !== undefined) this.hint_element.slideUp();
       this.cycler.elements.pstrength('destroy');
@@ -234,7 +234,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       delete this.hint_element;
       this.strength_check = false;
    },
-   
+
    /**
     * create the password widget.
     * This actually replaces the given field with a span containing two input
@@ -262,7 +262,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       this.pivot.parent.children().first().unbind('blur'); // no need to handle blur event of text field
       return this;
    },
-   
+
    /**
     * focus handler.
     * Change the type attribute of the password field. This is complicated because of
@@ -284,8 +284,8 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       }
 
       return this.base();
-   }, 
-   
+   },
+
    /**
     * blur handler.
     * change the type back to 'text' if the content hasn't been edited.
@@ -297,20 +297,20 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       }
       return this.base();
    },
-   
+
    /**
     * get or set the current value for the password
     * @return the value of the currently active field
     */
    value : function(val) {
       if (typeof(val) != 'undefined') {
-         this.cycler.elements.val(val);
+         this.cycler.getShown().val(val);
          return val;
       } else {
          return this.cycler.getShown().val();
       }
    },
-   
+
    /**
     * destroy the widget and remove the backup elements.
     * @return this
@@ -320,7 +320,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
       this.pivot.destroy();
       return this.base();
    },
-   
+
    /**
     * return all elements in the cycler.
     */
@@ -330,11 +330,11 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
 });
 
 /**
- * A widget for the "select" input. It translates all its options on 
+ * A widget for the "select" input. It translates all its options on
  * changeLanguage.
  */
 jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
-   
+
    /**
     * create the widget and collect the texts to be translated
     * @param element the element the widget should attach itself to.
@@ -418,7 +418,7 @@ jQuery.CbWidget.checkbox= jQuery.CbWidget.input.extend({
 
 /**
  * a searchbox widget. It invokes autocomplete() on its element's second child
- * and has the ID recorded in its element's first child. You can configure it 
+ * and has the ID recorded in its element's first child. You can configure it
  * using the "options" member. All options are passed on to autocomplete.
  * Autocomplete is reinitialized when changing the language. As the text input
  * is managed by autocomplete, this is not a real text input widget.
