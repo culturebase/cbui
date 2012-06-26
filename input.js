@@ -304,7 +304,7 @@ jQuery.CbWidget.password = jQuery.CbWidget.inputText.extend({
     */
    value : function(val) {
       if (typeof(val) != 'undefined') {
-         this.cycler.getShown().val(val);
+         this.cycler.elements.val(val);
          return val;
       } else {
          return this.cycler.getShown().val();
