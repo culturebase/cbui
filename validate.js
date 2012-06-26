@@ -14,7 +14,7 @@ jQuery.CbValidate.validator = base2.Base.extend({
    valid : function(widget) {
       return true;
    },
-   
+
    destroy : function() {}
 });
 
@@ -30,11 +30,20 @@ jQuery.CbValidate.nonempty = jQuery.CbValidate.validator.extend({
 
 /**
  * makes sure a field contains an email address.
- */ 
+ */
 jQuery.CbValidate.email = jQuery.CbValidate.nonempty.extend({
    valid : function(widget) {
-      return this.base(widget) && 
+      return this.base(widget) &&
             widget.value().match(/^[\w_\-\.]{1,}@[\w_\-\.]{2,}\.[\w]{2,4}$/);
+   }
+});
+
+/**
+ * makes sure a field contains a valid account name.
+ */
+jQuery.CbValidate.account = jQuery.CbValidate.email.extend({
+   valid : function(widget) {
+      return widget.value().match(/^[a-z0-9][a-z0-9\-]{0,23}[a-z0-9]$/) || this.base(widget);
    }
 });
 
@@ -42,29 +51,29 @@ jQuery.CbValidate.email = jQuery.CbValidate.nonempty.extend({
  * makes sure a field has the same content as other fields in the same group
  */
 jQuery.CbValidate.equals = jQuery.CbValidate.nonempty.extend({
-   
+
    /**
     * constructor
     * @param widget the Widget to attach to
     * @param group the group this validator belongs to. If undefined 0 is assumed
     */
    constructor : function(widget, group) {
-      var static_self = jQuery.CbValidate.equals; 
+      var static_self = jQuery.CbValidate.equals;
       if (group === undefined) group = 0;
       this.base(widget);
       this.widget = widget;
-      
+
       if (static_self.groups[group] === undefined) {
          static_self.groups[group] = [];
       }
-      
+
       this.group = static_self.groups[group];
       this.group.push(this);
    },
-   
+
    valid : function(widget) {
       if (!this.base(widget)) return false;
-      
+
       for (var index in this.group) {
          if (this.group[index].widget.value() != widget.value()) {
             return false;
@@ -72,7 +81,7 @@ jQuery.CbValidate.equals = jQuery.CbValidate.nonempty.extend({
       }
       return true;
    },
-   
+
    destroy : function() {
       for (index in this.group) {
          if (this.group[index] == this) {
@@ -82,7 +91,7 @@ jQuery.CbValidate.equals = jQuery.CbValidate.nonempty.extend({
       this.base();
    }
 }, {
-   groups : {}  
+   groups : {}
 });
 
 /**
