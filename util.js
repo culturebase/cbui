@@ -54,9 +54,9 @@ var CbElementCycler = base2.Base.extend({
 
 var CbElementPivot = base2.Base.extend({
 
-   constructor : function(element) {
+   constructor : function(element, pivot_tag) {
       this.base();
-      this.parent = jQuery(document.createElement('span'));
+      this.parent = jQuery(document.createElement(pivot_tag || 'span'));
       this.parent.attr('id', element.attr('id'));
       element.removeAttr('id');
       this.parent.insertAfter(element);

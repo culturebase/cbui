@@ -372,7 +372,7 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
  * A widget for the "checkbox" input. The pivoting is needed to make the element
  * stylable (checkboxes themselves can't be styled in firefox).
  */
-jQuery.CbWidget.checkbox= jQuery.CbWidget.input.extend({
+jQuery.CbWidget.checkbox = jQuery.CbWidget.input.extend({
    constructor : function(element) {
       this.pivot = new CbElementPivot(element);
       this.checkbox = this.pivot.child;
@@ -432,7 +432,7 @@ jQuery.CbWidget.searchBox = jQuery.CbWidget.inputText.extend({
          this.options.language = jQuery.CbWidgetRegistry.language;
       }
 
-      this.pivot = new CbElementPivot(element);
+      this.pivot = new CbElementPivot(element, 'div');
       this.name_field = this.pivot.child;
       var id_field = jQuery(document.createElement('input')).attr('type', 'hidden');
 
