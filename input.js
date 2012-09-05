@@ -35,7 +35,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     */
    validate : function() {
       this.valid();
-      for (i in this.validators) {
+      for (var i in this.validators) {
          if (!this.validators[i].valid(this)) {
             this.error();
             return false;
@@ -72,7 +72,7 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     * Remove the widget and all its validators.
     */
    handleDestroy : function() {
-      for (index in this.validators) {
+      for (var index in this.validators) {
          this.validators[index].destroy();
       }
       this.base();
