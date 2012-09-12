@@ -62,8 +62,8 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
          self.element().get(0)[func](param);
       } else {
          self.embedReady(function(params) {
-            // IE throws here: "Object doesn't support property or method <params.func>"
-            self.element().get(0)[params.func](params.param);
+            var el = self.element().get(0);
+            if (el[params.func] !== undefined) el[params.func](params.param);
             self.unbind_embed_ready.push(this.callback); // will be unbound next time
          }, {'func' : func, 'param' : param});
       }
@@ -159,7 +159,14 @@ jQuery.CbWidget.html5_player = jQuery.CbWidget.base_player.extend({
    },
 
    handleEmbedEvent : function(params) {
-      if (params.event == 'PLAY') this.callPlayer('play');
+      switch(params.event) {
+         case 'PLAY':
+         case 'PAUSE':
+            this.callPlayer(params.event.toLowerCase());
+            break;
+         default:
+            break;
+      }
       return this.base(params);
    }
 });
@@ -234,7 +241,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       self.element().css({
          position : 'relative'
       }).empty().append(img);
-      
+
 
       if (self.options.play_icon) {
          var icon = self.options.play_icon;
@@ -267,6 +274,11 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       if (this.player) this.player.destroy();
       this.trigger('ready', options);
       this.player.trigger('embedEvent', {event : 'PLAY'});
+      return this;
+   },
+
+   handlePause : function(options) {
+      if (this.player) this.player.trigger('embedEvent', {event : 'PAUSE'});
       return this;
    },
 
@@ -318,6 +330,7 @@ jQuery.CbWidget.player = jQuery.CbWidget.widget.extend({
       jQuery.CbEvent(this, 'popupControl');
       jQuery.CbEvent(this, 'zoomControl');
       jQuery.CbEvent(this, 'play');
+      jQuery.CbEvent(this, 'pause');
       return this.base();
    },
 
