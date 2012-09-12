@@ -62,8 +62,7 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
          self.element().get(0)[func](param);
       } else {
          self.embedReady(function(params) {
-            var el = self.element().get(0);
-            if (el[params.func] !== undefined) el[params.func](params.param);
+            self.element().get(0)[params.func](params.param);
             self.unbind_embed_ready.push(this.callback); // will be unbound next time
          }, {'func' : func, 'param' : param});
       }
