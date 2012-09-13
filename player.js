@@ -54,17 +54,25 @@ jQuery.CbWidget.base_player = jQuery.CbWidget.widget.extend({
       return this;
    },
 
-   callPlayer : function(func, param) {
+   callPlayer : function(func, params) {
+      if (params === undefined) {
+         params = [];
+      } else if (!(params instanceof Array)) {
+         params = [params]
+      }
       var self = this;
       if (self.element().is('img')) this.trigger('embed');
-
+      var doCall = function(self, func, params) {
+         var el = self.element().get(0);
+         el[func].apply(el, params);
+      };
       if (self.embedCallable) {
-         self.element().get(0)[func](param);
+         doCall(self, func, params);
       } else {
          self.embedReady(function(params) {
-            self.element().get(0)[params.func](params.param);
-            self.unbind_embed_ready.push(this.callback); // will be unbound next time
-         }, {'func' : func, 'param' : param});
+            doCall(params.self, params.func, params.params);
+            params.self.unbind_embed_ready.push(this.callback); // will be unbound next time
+         }, {'self' : self, 'func' : func, 'params' : params});
       }
    },
 
@@ -111,7 +119,8 @@ jQuery.CbWidget.jw_player = jQuery.CbWidget.base_player.extend({
    },
 
    handleEmbedEvent : function(params) {
-      this.callPlayer('sendEvent', params.event);
+      // jwPlayer sees PAUSE as PLAY event with second parameter false ...
+      this.callPlayer('sendEvent', params.event === 'PAUSE' ? ['PLAY', false] : params.event);
       return this.base(params);
    },
 
