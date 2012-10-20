@@ -72,9 +72,9 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     * Remove the widget and all its validators.
     */
    handleDestroy : function() {
-      for (var index in this.validators) {
-         this.validators[index].destroy();
-      }
+      jQuery.each(this.validators, function(i, validator) {
+         validator.destroy();
+      });
       this.base();
    }
 
