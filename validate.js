@@ -73,13 +73,16 @@ jQuery.CbValidate.equals = jQuery.CbValidate.nonempty.extend({
 
    valid : function(widget) {
       if (!this.base(widget)) return false;
-
-      for (var index in this.group) {
-         if (this.group[index].widget.value() != widget.value()) {
+      var ret = true;
+      jQuery.each(this.group, function(i, group_widget) {
+         if (group_widget.value() !== widget.value()) {
+            ret = false;
             return false;
+         } else {
+            return true;
          }
-      }
-      return true;
+      });
+      return ret;
    },
 
    destroy : function() {
