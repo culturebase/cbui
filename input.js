@@ -34,14 +34,19 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     * @return true if validation was successful, false otherwise
     */
    validate : function() {
+      var self = this;
+      var ret = true;
       this.valid();
-      for (var i in this.validators) {
-         if (!this.validators[i].valid(this)) {
-            this.error();
+      jQuery.each(this.validators, function(i, validator) {
+         if (!validator.valid(self)) {
+            self.error();
+            ret = false;
             return false;
+         } else {
+            return true;
          }
-      }
-      return true;
+      });
+      return ret;
    },
 
    /**
@@ -361,7 +366,7 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
    },
 
    addOption : function(value, text, css_class, selected) {
-      var el = $(document.createElement('option')).val(value).text(text);
+      var el = jQuery(document.createElement('option')).val(value).text(text);
       if (css_class) el.addClass(css_class);
       if (selected) el.attr('selected', 'true');
       this.element().append(el);
