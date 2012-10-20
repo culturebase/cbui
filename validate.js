@@ -75,7 +75,7 @@ jQuery.CbValidate.equals = jQuery.CbValidate.nonempty.extend({
       if (!this.base(widget)) return false;
       var ret = true;
       jQuery.each(this.group, function(i, group_widget) {
-         if (group_widget.value() !== widget.value()) {
+         if (group_widget.widget.value() !== widget.value()) {
             ret = false;
             return false;
          } else {
