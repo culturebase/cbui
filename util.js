@@ -108,7 +108,7 @@ var CbBase64Codec = base2.Base.extend({
       if (typeof window.btoa === 'function') {
          return window.btoa(input);
       } else {
-      var output = "";
+         var output = "";
          var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
          var i = 0;
 
@@ -165,5 +165,4 @@ var CbBase64Codec = base2.Base.extend({
       }
       return window.decodeURIComponent(window.escape(output));
    }
-
 });
