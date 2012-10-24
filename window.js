@@ -15,19 +15,19 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
          base = this.base;
 
       options = options || {delay : 0};
-      
+
       this.element().fadeIn(options.delay, function() {
          // jQuery tends to stop at an unprecise value (like 0.98423421 instead
          // of 1.0), which can cause problems with certain contents of this
          // element.
          self.element().css('opacity', 1.0);
-         
+
          base.call(self, options);
       });
 
       return this;
    },
-   
+
    /**
     * hide the frame, using an optional delay (in milliseconds)
     * @param options optional parameters containing "delay"
@@ -44,13 +44,13 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
          // of 1.0), which can cause problems with certain contents of this
          // element.
          self.element().css('opacity', 0.0);
-         
+
          base.call(self, options);
       });
-      
+
       return this;
    },
-   
+
    /**
     * slide up the element, using the delay. Will trigger "hide"
     * @param delay the time to be taken for sliding the widget up
@@ -61,7 +61,7 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       this.element().slideUp(delay, function() {self.hide();});
       return this;
    },
-   
+
    /**
     * slide down the element, using the delay. Will trigger "show"
     * @param delay the time to be taken for sliding the widget down
@@ -72,12 +72,12 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
       this.element().slideDown(delay, function() {self.show();});
       return this;
    },
-   
+
    constructor : function(element) {
       this.base(element);
       var self = this;
       this.throwChange = function() {self.change();};
-      
+
       /* Binding the change event when ready.
        * This is not done by handleReady as you may wish to override the
        * configuration for various widgets on a per-window base. Binding the
@@ -87,10 +87,10 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
        */
       this.ready(function() {self.bindChange();});
    },
-   
+
    changeLanguage : function(bricks) {
       this.base(bricks);
-      
+
       // changing the language is a change as the sizes of texts may have changed
       return this.change();
    },
@@ -98,8 +98,8 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
    /**
     * bind the "change" event of the frame to all "show" and "hide"
     * events of its inner widgets so that we have a chance to autoposition
-    * the frame (or do other interesting things) when its widgets change. 
-    * 
+    * the frame (or do other interesting things) when its widgets change.
+    *
     * This doesn't work for adding or removing widgets as we have no way
     * of finding out about that. You'll have to call this method manually when
     * doing that in order to bind the new widgets' events.
@@ -121,22 +121,22 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
    init : function() {
       /*
        * "change" is triggered when the widget or some subwidget has changed its appearance
-       * In this case the layout may have to be recalculated. 
+       * In this case the layout may have to be recalculated.
        */
       jQuery.CbEvent(this, 'change');
       return this.base();
    }
-   
+
 });
 
 /**
  * Base class for all kinds of "window-like" things. Windows are supposed to be
- * contained in a DOM element (the "frame") and may have various widgets whose 
+ * contained in a DOM element (the "frame") and may have various widgets whose
  * life cycles are managed by the window. When calling open() window's structure
- * is loaded from a 'template' using AJAX. After that it's widgets and 
+ * is loaded from a 'template' using AJAX. After that it's widgets and
  * validators are instantiated. Before and after that hooks are called to allow
  * for customization in derived classes.
- * 
+ *
  * In order for this to work you need to include:
  * - jquery.js
  * - base2.js
@@ -144,11 +144,11 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
  * - cb_ui/validate.js (if there are any validated input fields)
  * - cb_ui/widget.js (if there are any widgets in the window)
  * - some styles for __CbUi* - otherwise it'll look strange
- * 
+ *
  * TODO: refactor to get more convenient smaller classes
  */
 jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
-   
+
    defaultOptions : {
       'showShadow'    : true,
       'modal'         : true,
@@ -160,7 +160,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       'height'        : 450,
       'delay'         : 0
    },
-   
+
    /**
     * create a window.
     * @param loadOptions Options for loading the template:
@@ -181,20 +181,20 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     */
    constructor : function(loadOptions, options) {
       this.options = jQuery.extend({}, this.defaultOptions, options);
-          
+
       var element = loadOptions.element;
       if (element == undefined) {
          element = jQuery(document.createElement('div')).addClass("__CbUiFrame");
          jQuery(document.createElement('div')).appendTo(element);
          this.insertElement = true;
       }
-      
+
       this.base(element);
       this.template = loadOptions.template;
       this.postParams = loadOptions.postParams;
       return this;
    },
-   
+
    /**
     * Open the window.
     * @param params if contains "delay" which is set to > 0 the window will fade in slowly in <delay> milliseconds.
@@ -241,41 +241,41 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    close : function(params) {
       var options = jQuery.extend({}, params || {}, this.options);
       var self = this;
-      
+
       if (options.modal) {
          self.layer.fadeOut(options.delay);
       }
-      
+
       this.hide(function() {
          self.destroy();
       });
-      
+
       return this.trigger('hide', options);
    },
-   
+
    /**
     * immediately destroy everything without any fading
     */
    handleDestroy : function() {
       var self = this;
       jQuery(window).unbind('resize.window' + this.base2ID);
-      
+
       jQuery('[class*="__CbUi"]', this.element()).each(function() {
          var widget = jQuery(this).CbWidget();
          if (widget && widget != self) {
             widget.destroy();
          }
       });
-      
+
       if (this.options.modal) this.layer.remove();
-      
+
       if (this.insertElement) this.element().remove();
 
       return this.base();
    },
-   
+
    /**
-    * Validate all validatable widgets in the window (those with a class __CbValidate*). 
+    * Validate all validatable widgets in the window (those with a class __CbValidate*).
     */
    validateInput : function() {
       var valid = true;
@@ -290,7 +290,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       if (valid) self.valid();
       return valid;
    },
-   
+
    /**
     * Passes the ready event and the configuration options on to all
     * child widgets. It's recommended to use this for final configuration
@@ -317,7 +317,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       if (this.insertElement) {
          this.element().appendTo('body');
       }
-      
+
       if (options.layerFrame) {
          // Style changes are more reliable when applied after an element has
          // been appended to the DOM.
@@ -328,9 +328,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
             this.element().css('position', 'absolute');
          }
       }
-      
+
       this.refreshElement();
-      
+
       if (options.showShadow && (!jQuery.browser.msie || jQuery.browser.version >= 7)) {
          addShadow(this.element());
       }
@@ -339,7 +339,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.trigger('show', options);
       this.trigger('ready', options);
       var self = this;
-      
+
       if (options.overlayClose) {
          this.element().keypress(function(key) {
             if (key.keyCode == 27) self.close(options);
@@ -347,19 +347,19 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       }
       return this;
    },
-   
+
    /**
-    * called by open(); loads the structure and instantiates the widgets. 
+    * called by open(); loads the structure and instantiates the widgets.
     * Don't call it from outside. Use open() and close().
     */
    loadFrame : function(options) {
-      
+
       var self = this;
-      
+
       if (options.layerFrame) {
          this.element().addClass('__CbUiLayerFrame');
       }
-      
+
       this.element().hide(); // don't fire the event here
       if (this.template) {
          var inner = $(this.element().children().eq(0));
@@ -373,7 +373,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       }
       return this;
    },
-   
+
    /**
     * center the widget in horizontal direction.
     * @return this
@@ -382,7 +382,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.moveToX(Math.max(Math.floor(jQuery(window).width() / 2 - this.width() / 2) - 10, 0));
       return this;
    },
-   
+
    /**
     * center the widget in vertical direction.
     * @return this
@@ -391,7 +391,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.moveToY(Math.max(Math.floor(jQuery(window).height() / 2 - this.height() / 2) - 30, 0));
       return this;
    },
-   
+
    /**
     * center the widget in both directions.
     * @return this
@@ -401,14 +401,14 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.centerY();
       return this;
    },
-   
+
    /**
     * automatically position the window with the given method when
     * a, "change" is triggered
     * b, the browser window is resized
     * @param method the method to be called to position the window
     * @param params the parameters to be passed to the positioning method
-    * @return this 
+    * @return this
     */
    autoposition : function(method, params) {
       var self = this;
@@ -416,7 +416,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       jQuery(window).bind('resize.window' + this.base2ID, function() {self[method](params);});
       return this;
    },
-   
+
    /**
     * automatically center in horizontal direction on change
     * @return this
@@ -424,7 +424,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    autocenterX : function() {
       return this.autoposition('centerX');
    },
-   
+
    /**
     * automatically center in vertical direction on change
     * @return this
@@ -432,7 +432,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    autocenterY : function() {
       return this.autoposition('centerY');
    },
-   
+
    /**
     * automatically center in both directions on change
     * @return this
@@ -440,7 +440,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    autocenter : function() {
       return this.autoposition('center');
    },
-   
+
    /**
     * if no explicit height given:
     * resize the window to fit its content in vertical direction.
@@ -451,7 +451,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.element().height(height);
       return this;
    },
-   
+
    /**
     * if no explicit width given:
     * resize the window to fit its content in horizontal direction.
@@ -470,7 +470,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    autoresizeY : function() {
       return this.autoposition('resizeY');
    },
-   
+
    /**
     * automatically resize to fit in horizontal direction on change
     * @return this
@@ -478,7 +478,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
    autoresizeX : function() {
       return this.autoposition('resizeX');
    },
-   
+
    /**
     * automatically resize to fit in both directions on change
     * @return this
@@ -493,17 +493,60 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
        * the widgets are initialized.
        */
       jQuery.CbEvent(this, 'load');
-      
+
       /**
        * error is called when a widget cannot be validated.
        */
       jQuery.CbEvent(this, 'error');
-      
+
       /**
        * called when all widgets have passed validation.
        */
       jQuery.CbEvent(this, 'valid');
       this.base();
+   },
+
+   /**
+    * Handle a click on an element <button> as follows:
+    * 1. if we're already handling a previous click call
+    *    <alreadyHandlingCallback>.
+    * 2. Try to validate <subject>, either with validate() or validateInput().
+    *    This can be a window or a single widget.
+    * 3. If valid add <submitClass> to <button> and call <callback>,
+    *    else call <invalidCallback>
+    * All callbacks are called in the same scope and with the same arguments as
+    * the button.click(), but adding, as a last argument a function that, if
+    * called:
+    * a, removes <submitClass> from the button
+    * b, resets the "handling" state so that 1. won't call
+    *    <alreadyHandlingCallback> anymore.
+    *
+    * This is the recommended way to submit data. If you do it with a primitive
+    * click handler the user may click twice, submitting the data twice which
+    * may lead to unexpected results.
+    */
+   onceOnClickIfValid : function(button, subject, callback, invalidCallback,
+            alreadyHandlingCallback, submitClass) {
+      var handling = false;
+      button.click(function() {
+         var args = [].concat.apply([], arguments);
+         args.push(function() {
+            handling = false;
+            button.removeClass(submitClass);
+         });
+         if (!handling) {
+            if ((typeof subject.validateInput === 'function' && subject.validateInput()) ||
+                  (typeof subject.validate === 'function' && subject.validate())) {
+               handling = true;
+               button.addClass(submitClass);
+               callback.apply(this, args);
+            } else if (invalidCallback !== undefined) {
+               invalidCallback.apply(this, args);
+            }
+         } else if (alreadyHandlingCallback !== undefined) {
+            alreadyHandlingCallback.apply(this, args);
+         }
+      });
    }
 });
 
