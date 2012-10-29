@@ -6,7 +6,7 @@ jQuery.CbWidget.textButton = jQuery.CbWidget.text.extend({});
 
 /**
  * A button intended for language selection. It always shows an isocode for the
- * current language. 
+ * current language.
  */
 jQuery.CbWidget.langSelect = jQuery.CbWidget.textButton.extend({
 
@@ -17,7 +17,7 @@ jQuery.CbWidget.langSelect = jQuery.CbWidget.textButton.extend({
          new jQuery.CbWidget.language_window().open();
       });
    },
-   
+
    changeLanguage : function(bricks) {
       this.element().html(jQuery.CbWidgetRegistry.language.split('_')[0]);
    }
@@ -30,7 +30,7 @@ jQuery.CbWidget.imgButton = jQuery.CbWidget.widget.extend({});
  * parent element which defines the "close" method. It then calls this method.
  */
 jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
-   
+
    constructor : function(element) {
       this.base(element);
       this.closer = new CbWindowCloser(element);
@@ -40,7 +40,13 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
 
    doClose : function() {
       var self = this;
-      return function() {self.closer.destroy()};
+      if (self.doClose.callback === undefined) {
+         self.doClose.callback = function(event) {
+            if (event !== undefined) event.preventDefault();
+            self.closer.destroy()
+         };
+      }
+      return self.doClose.callback;
    },
 
    refreshElement : function() {
@@ -99,7 +105,7 @@ jQuery.CbWidget.langSelectFlag = jQuery.CbWidget.langFlag.extend({
  * triggered, with {id : <id of chosen entry>} as parameter.
  */
 jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
-   
+
    constructor : function(element) {
       this.base(element);
       var self = this;
@@ -125,7 +131,7 @@ jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
       }
       element.append(node);
    },
-   
+
    init : function() {
       jQuery.CbEvent(this, 'select');
       this.base();
