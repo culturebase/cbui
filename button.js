@@ -39,14 +39,15 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
    },
 
    doClose : function() {
+      // we need self here, as click will run in a different context
       var self = this;
-      if (self.doClose.callback === undefined) {
-         self.doClose.callback = function(event) {
+      if (self.doCloseCallback === undefined) {
+         self.doCloseCallback = function(event) {
             if (event !== undefined) event.preventDefault();
             self.closer.destroy()
          };
       }
-      return self.doClose.callback;
+      return self.doCloseCallback;
    },
 
    refreshElement : function() {
