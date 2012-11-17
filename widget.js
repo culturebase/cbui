@@ -1,6 +1,6 @@
 /**
  * A widget toolkit for culturebase. A widget is a simle GUI element with some
- * functionality and an internal state. Widgets are 
+ * functionality and an internal state. Widgets are
  * - extendable: If you need a widget similar to one we already have you can
  *    subclass the existing one. Always keep this in mind when you do, though.
  * - reusable: Widgets are to be collected in a central place and are thus
@@ -9,21 +9,21 @@
  * - managable: Widgets have a life cycle. You can create and destroy them and
  *    they will behave nicely when you do. Widgets can be composed into windows
  *    which will take away much of the management burden.
- * - validatable: Certain widgets can accomodate subclassses of 
+ * - validatable: Certain widgets can accomodate subclassses of
  *    CbValidate.validator and provide validate() methods.
- *    
+ *
  * In order for this to work you need to include:
  * - jquery.js
  * - base2.js
  * - cb_ui/validate.js (if there are any widgets to be validated)
  * - some styles for '__CbUi*'
- * 
+ *
  */
 
 /**
  * The widget registry collects information about all available widget classes
  * and manages translation, instantiation and destruction of widgets.
- * 
+ *
  */
 jQuery.CbWidgetRegistry = {
    /**
@@ -32,7 +32,7 @@ jQuery.CbWidgetRegistry = {
    translateToClass : function(name, prefix) {
       return '.__Cb' + prefix + name.substring(0, 1).toUpperCase() + name.substring(1);
    },
-   
+
    /* some properties you can change to modify the behaviour of the widget registry */
 
    /**
@@ -43,19 +43,19 @@ jQuery.CbWidgetRegistry = {
    /** old API for querying bricks; deprecated */
    project : '',
    baseProject : '',
-   
+
    /**
     * language to be used
     */
    language : 'en_EN',
-   
+
    brickSource : "/module/lib/framework/getMlBricks.php",
 
    /**
     * The actual translated bricks. Be careful when modifying this.
     */
    bricks : {},
-   
+
    /**
     * Create a proper projects array from this.project and this.baseProject if
     * they're given.
@@ -81,7 +81,7 @@ jQuery.CbWidgetRegistry = {
       this.language = language;
       if (!this.language) return; // translation disabled
       var self = this;
-      
+
       /* collect labels */
       jQuery.each(jQuery.CbWidget, function(name, w) {
          var clazz = self.translateToClass(name, 'Ui');
@@ -106,32 +106,33 @@ jQuery.CbWidgetRegistry = {
          async : false,
          dataType : 'json',
          data : {
-            "projects" : this.projects, 
+            "projects" : this.projects,
             "language" : this.language,
             "labels[]" : labels
          },
          success : function(bricks) {
-         /* loop over widgets again and apply bricks */
-         self.bricks = bricks;
-         jQuery.each(jQuery.CbWidget, function(name, w) {
-            var clazz = self.translateToClass(name, 'Ui');
-            jQuery(clazz, context).each(function() {
-               jQuery(this).CbWidget().changeLanguage(bricks);
+            /* loop over widgets again and apply bricks */
+            self.bricks = bricks;
+            jQuery.each(jQuery.CbWidget, function(name, w) {
+                var clazz = self.translateToClass(name, 'Ui');
+                jQuery(clazz, context).each(function() {
+                   jQuery(this).CbWidget().changeLanguage(bricks);
+                });
+                if (context && context.is(clazz)) {
+                   jQuery(context).CbWidget().changeLanguage(bricks);
+                }
             });
-            if (context && context.is(clazz)) {
-               jQuery(context).CbWidget().changeLanguage(bricks);
-            }
-         });
-      }});
+         }
+     });
    },
-   
+
    /**
     * Instantiate widgets and validators in the given context and translate them.
-    * @param context A DOM element to restrict the operation to (e.g. a window) 
+    * @param context A DOM element to restrict the operation to (e.g. a window)
     */
    apply : function(context) {
       var self = this;
-      
+
       /* create widgets */
       jQuery.each(jQuery.CbWidget, function(name, widget) {
          jQuery(self.translateToClass(name, 'Ui'), context).each(function() {
@@ -141,13 +142,13 @@ jQuery.CbWidgetRegistry = {
             }
          });
       });
-      
+
       jQuery.each(jQuery.CbValidate, function(name, validator) {
          jQuery(self.translateToClass(name, 'Validate'), context).each(function() {
             new validator(jQuery(this).CbWidget());
          });
       });
-      
+
       this.changeLanguage(this.language, context);
    }
 };
@@ -155,65 +156,65 @@ jQuery.CbWidgetRegistry = {
 /**
  * Event Handling
  * --------------
- * 
+ *
  * Events are declared by implementing an "init" method in the class interface
- * of your widget and stating "jQuery.CbEvent(this, <name>)" there. There are 
+ * of your widget and stating "jQuery.CbEvent(this, <name>)" there. There are
  * two ways of triggering the event:
- * 
+ *
  * 1. Call widget.<name>() without parameters. This is the shortcut for events
  * you don't want to specify any special parameters for.
- * 
+ *
  * 2. Call widget.trigger(<name>, <parameters>) where <parameters> are a JS
  * object. The parameters will be passed on to the event handlers then.
- * 
+ *
  * Event handlers can be attached to events in three ways.
- * 
+ *
  * 1. Override handle<Name>(). This method is the first to be called every time
  * the event is triggered. You can use base2's inheritance mechanism here and
  * call base() to invoke the handle<Name>() method of super classes.
- * 
+ *
  * 2. Call widget.<name>(<handler>, <params>). <handler> should be a function to be
  * executed when the event is triggered. Like this you can attach multiple handlers
- * to the same event in jquery-style. They will be invoked after handle<Name>(). 
+ * to the same event in jquery-style. They will be invoked after handle<Name>().
  * Any parameters will be passed on to all event handlers when they are invoked.
  * You can extend and override them with trigger().
- * 
- * 3. Call widget.bind(<name>, <handler>, <params>). This is the same as 
+ *
+ * 3. Call widget.bind(<name>, <handler>, <params>). This is the same as
  * widget.<name>(<handler>, <params>).
- * 
+ *
  * You can unbind handlers from an event by calling widget.unbind(<event>, <handler>).
  * If you omit the second parameter all handlers will be unbound from the specified
  * event.
- * 
+ *
  * (Class interfaces aren't inherited in base2 so we have to create an external
  * CbEvent function to add events to classes.)
- * 
+ *
  */
 jQuery.CbEvent = function(target, name) {
    jQuery.CbEvent.getHandleName = function(name) {
       return "handle" + name.substring(0,1).toUpperCase() + name.substring(1);
    };
-   
+
    var event = {};
    event[name] = function(callback, staticParams) {
       if (callback) {
          if (typeof(this.handlers[name]) == 'undefined') this.handlers[name] = [];
          this.handlers[name].push({
-            'callback' : callback, 
+            'callback' : callback,
             'params': staticParams || {}
          });
       } else {
          this.trigger(name);
       }
    };
-   
+
    var handleName = jQuery.CbEvent.getHandleName(name);
    if (typeof(target.prototype[handleName]) == 'undefined') {
       event[handleName] = function() {return this;};
    }
-   
+
    target.implement(event);
-   return target[name];   
+   return target[name];
 };
 
 jQuery.CbWidget = function() {}; // maybe do something useful here; e.g. find elements belonging to certain widget types
@@ -222,7 +223,7 @@ jQuery.CbValidate = function() {};
 /**
  * jquery plugin to enable $(element).CbWidget() functionality. Saves information
  * about widgets via $.data(...).
- * @param widget if set attach the widget to the element otherwise find the 
+ * @param widget if set attach the widget to the element otherwise find the
  *    widget belonging to the element. If set to null remove widget information
  *    from the element.
  *    When querying for the widget CbWidget will recursively search the elements
@@ -240,7 +241,7 @@ jQuery.fn.CbWidget = function(widget, recursive) {
          this.removeData("cb_widget");
       }
    }
-   
+
    if (!this.data("cb_widget")) {
       var parent = this.parent();
       if (recursive && parent && parent != this) {
@@ -257,7 +258,7 @@ jQuery.fn.CbWidget = function(widget, recursive) {
  * the base widget. All widgets are to be subclassed from this one.
  */
 jQuery.CbWidget.widget = base2.Base.extend({
-   
+
    /**
     * create a widget on the given element.
     * @param element the element the widget should attach to
@@ -269,18 +270,18 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().CbWidget(this);
       /* element() and parentElement may differ */
       this.parentElement.CbWidget(this);
-      
+
       /**
        * association of positions -> labels
        */
       this.texts = {};
-      
+
       /**
        * event handlers
        */
       this.handlers = {};
    },
-   
+
    /**
     * show the widget
     */
@@ -288,7 +289,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().show();
       return this;
    },
-   
+
    /**
     * hide the widget
     */
@@ -296,26 +297,26 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().hide();
       return this;
    },
-   
+
    /**
     * get the element the widget belongs to. Some widgets might override this
-    * method and/or change their element. Don't assume the element to be the 
+    * method and/or change their element. Don't assume the element to be the
     * same every time you use it.
     */
    element : function() {
       return this.parentElement;
    },
-   
+
    /**
     * Refresh the element associated with this widget. This is necessary if it
     * has been inserted or moved in the DOM. You will want to rebind all events
-    * here. 
+    * here.
     */
    refreshElement : function() {
       this.parentElement = jQuery(this.parentElement);
       this.element().CbWidget(this);
    },
-   
+
    /**
     * get labels for all ML bricks needed by this widget.
     * @return an array of labels for all ML bricks needed.
@@ -327,13 +328,13 @@ jQuery.CbWidget.widget = base2.Base.extend({
       });
       return labels;
    },
-   
+
    /**
     * hook for changing or initializing the language.
-    * @param bricks map of labels to ML bricks for the new language. 
+    * @param bricks map of labels to ML bricks for the new language.
     */
    changeLanguage : function(bricks) {},
-   
+
    /**
     * bind a handler to an event
     * @param name name of the event
@@ -345,7 +346,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this[name](callback, staticParams);
       return this;
    },
-   
+
    /**
     * unbind a handler from an event
     * @param name the name of the event
@@ -368,7 +369,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       }
       return this;
    },
-   
+
    /**
     * trigger an event
     * @param name the event to be triggered
@@ -377,7 +378,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
     */
    trigger : function(name, extraParams) {
       this[jQuery.CbEvent.getHandleName(name)](extraParams || {});
-      
+
       if (typeof(this.handlers[name]) != 'undefined') {
          jQuery.each(this.handlers[name], function(i, handler) {
             var params = jQuery.extend({}, handler.params, extraParams || {});
@@ -387,7 +388,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       }
       return this;
    },
-   
+
    /**
     * get the width of this widget
     * @return the width
@@ -395,7 +396,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
    width : function() {
       return this.element().width();
    },
-   
+
    /**
     * get the height of this widget
     * @return the height
@@ -403,7 +404,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
    height : function() {
       return this.element().height();
    },
-   
+
    /**
     * resize the widget in horizontal direction
     * @param x the new width in pixels
@@ -413,7 +414,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().width(x);
       return this;
    },
-   
+
    /**
     * resize the widget in vertical direction
     * @param y the new height in pixels
@@ -423,7 +424,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().height(y);
       return this;
    },
-   
+
    /**
     * resize the widget in both directions
     * @param x the new width
@@ -435,7 +436,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.resizeY(y);
       return this;
    },
-   
+
    /**
     * move the widget in horizontal direction
     * @param x the new position in pixels
@@ -445,7 +446,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().css('left', x + 'px');
       return this;
    },
-   
+
    /**
     * move the widget in vertical direction
     * @param y the new position in pixels
@@ -455,7 +456,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().css('top', y + 'px');
       return this;
    },
-   
+
    /**
     * move the widget in both directions
     * @param x the new X position
@@ -467,7 +468,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.moveToY(y);
       return this;
    },
-   
+
    /**
     * destroy the widget. Leave the element alone, though.
     * As the widget doesn't create the element on construction it won't remove
@@ -479,8 +480,8 @@ jQuery.CbWidget.widget = base2.Base.extend({
       this.element().CbWidget(null);
    }
 }, {
-   
-      
+
+
    init : function() {
       /*
        * "ready" is triggered by the containing frame when everything has been
@@ -488,7 +489,7 @@ jQuery.CbWidget.widget = base2.Base.extend({
        * point, but it is in the DOM.
        */
       jQuery.CbEvent(this, 'ready');
-   
+
       jQuery.CbEvent(this, 'show');
       jQuery.CbEvent(this, 'hide');
       jQuery.CbEvent(this, 'destroy');
