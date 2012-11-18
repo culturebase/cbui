@@ -75,8 +75,9 @@ jQuery.CbWidgetRegistry = {
     * change the language of all widgets in the given context
     * @param language the new language (locale)
     * @param context the context to be manipulated - for example a window
+    * @param callback Function to be called when done
     */
-   changeLanguage : function(language, context) {
+   changeLanguage : function(language, context, callback) {
       var labels = [];
       this.language = language;
       if (!this.language) return; // translation disabled
@@ -103,7 +104,6 @@ jQuery.CbWidgetRegistry = {
       jQuery.ajax({
          type : 'GET',
          url : this.brickSource,
-         async : false,
          dataType : 'json',
          data : {
             "projects" : this.projects,
@@ -122,6 +122,7 @@ jQuery.CbWidgetRegistry = {
                    jQuery(context).CbWidget().changeLanguage(bricks);
                 }
             });
+            if (callback !== undefined) callback();
          }
      });
    },
@@ -129,8 +130,9 @@ jQuery.CbWidgetRegistry = {
    /**
     * Instantiate widgets and validators in the given context and translate them.
     * @param context A DOM element to restrict the operation to (e.g. a window)
+    * @param callback Function to be called when done
     */
-   apply : function(context) {
+   apply : function(context, callback) {
       var self = this;
 
       /* create widgets */
@@ -149,7 +151,7 @@ jQuery.CbWidgetRegistry = {
          });
       });
 
-      this.changeLanguage(this.language, context);
+      this.changeLanguage(this.language, context, callback);
    }
 };
 

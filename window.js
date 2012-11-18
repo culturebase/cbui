@@ -199,7 +199,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     * Open the window.
     * @param params if contains "delay" which is set to > 0 the window will fade in slowly in <delay> milliseconds.
     */
-   open : function(params) {
+   open : function(params, callback) {
       var options = jQuery.extend({}, this.options, params);
       var self = this;
       if (options.modal) {
@@ -221,7 +221,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
                   });
                }
 
-               self.loadFrame(options);
+               self.loadFrame(options, callback);
             } catch (err) {
                /* ignore to avoid fading loop created by jquery not being able
                 * to finish its work after calling the callback.
@@ -229,7 +229,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
             }
          });
       } else {
-         this.loadFrame(options);
+         this.loadFrame(options, callback);
       }
       return this;
    },
@@ -312,8 +312,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     * called after loading the frame. This method is considered private.
     * @param options the options for loading the window. Will be passed on to
     * show and close and will be used to determine if the shadow is to be shown.
+    * @param callback Function to be called when done.
     */
-   postLoadFrame : function(options) {
+   postLoadFrame : function(options, callback) {
       if (this.insertElement) {
          this.element().appendTo('body');
       }
@@ -335,16 +336,18 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
          addShadow(this.element());
       }
       this.load();
-      jQuery.CbWidgetRegistry.apply(this.element());
-      this.trigger('show', options);
-      this.trigger('ready', options);
       var self = this;
+      jQuery.CbWidgetRegistry.apply(this.element(), function() {
+         self.trigger('show', options);
+         self.trigger('ready', options);
 
-      if (options.overlayClose) {
-         this.element().keypress(function(key) {
-            if (key.keyCode == 27) self.close(options);
-         });
-      }
+         if (options.overlayClose) {
+            self.element().keypress(function(key) {
+               if (key.keyCode == 27) self.close(options);
+            });
+         }
+         if (callback !== undefined) callback();
+      });
       return this;
    },
 
@@ -352,24 +355,30 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     * called by open(); loads the structure and instantiates the widgets.
     * Don't call it from outside. Use open() and close().
     */
-   loadFrame : function(options) {
+   loadFrame : function(options, callback) {
 
       var self = this;
 
-      if (options.layerFrame) {
-         this.element().addClass('__CbUiLayerFrame');
-      }
+      if (options.layerFrame) this.element().addClass('__CbUiLayerFrame');
 
       this.element().hide(); // don't fire the event here
       if (this.template) {
          var inner = $(this.element().children().eq(0));
          if (this.postParams) {
-            inner.load(this.template, this.postParams, function() {$(document).ready(function() {self.postLoadFrame(options);})});
+            inner.load(this.template, this.postParams, function() {
+               $(document).ready(function() {
+                  self.postLoadFrame(options, callback);
+               });
+            });
          } else {
-            inner.load(this.template, function() {$(document).ready(function() {self.postLoadFrame(options);})});
+            inner.load(this.template, function() {
+               $(document).ready(function() {
+                  self.postLoadFrame(options, callback);
+               });
+            });
          }
       } else {
-         this.postLoadFrame(options);
+         this.postLoadFrame(options, callback);
       }
       return this;
    },
