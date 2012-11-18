@@ -81,7 +81,7 @@ jQuery.CbWidgetRegistry = {
       var labels = [];
       this.language = language;
       if (!this.language) {
-         callback();
+         if (callback !== undefined) callback();
          return; // translation disabled
       }
       var self = this;
@@ -99,7 +99,7 @@ jQuery.CbWidgetRegistry = {
       });
 
       if (labels.length === 0) {
-         callback();
+         if (callback !== undefined) callback();
          return; // no translation needed
       }
 

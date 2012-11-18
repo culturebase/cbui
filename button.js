@@ -155,8 +155,10 @@ jQuery.CbWidget.langChooseList = jQuery.CbWidget.chooseList.extend({
    },
 
    handleSelect : function(params) {
-      jQuery.CbWidgetRegistry.changeLanguage(params.id);
-      this.closer.destroy();
+      var self = this;
+      jQuery.CbWidgetRegistry.changeLanguage(params.id, undefined, function() {
+         self.closer.destroy();
+      });
       return this.base(params);
    },
 
