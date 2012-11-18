@@ -80,11 +80,14 @@ jQuery.CbWidgetRegistry = {
    changeLanguage : function(language, context, callback) {
       var labels = [];
       this.language = language;
-      if (!this.language) return; // translation disabled
+      if (!this.language) {
+         callback();
+         return; // translation disabled
+      }
       var self = this;
 
       /* collect labels */
-      jQuery.each(jQuery.CbWidget, function(name, w) {
+      jQuery.each(jQuery.CbWidget, function(name) {
          var clazz = self.translateToClass(name, 'Ui');
          jQuery(clazz, context).each(function() {
             jQuery.merge(labels, jQuery(this).CbWidget().getLabels());
@@ -95,7 +98,10 @@ jQuery.CbWidgetRegistry = {
          labels = jQuery.unique(labels);
       });
 
-      if (labels.length == 0) return; // no translation needed
+      if (labels.length === 0) {
+         callback();
+         return; // no translation needed
+      }
 
       /* for backward compatibility */
       this.retrofitProjects();
