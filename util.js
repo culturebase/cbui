@@ -1,5 +1,6 @@
 
-var CbElementCycler = base2.Base.extend({
+jQuery.CbUtil = {};
+jQuery.CbUtil.element_cycler = base2.Base.extend({
    /**
     * Cycle through the elements: show the next one or the
     * given one.
@@ -52,7 +53,7 @@ var CbElementCycler = base2.Base.extend({
    }
 });
 
-var CbElementPivot = base2.Base.extend({
+jQuery.CbUtil.element_pivot = base2.Base.extend({
 
    constructor : function(element, pivot_tag) {
       this.base();
@@ -76,7 +77,7 @@ var CbElementPivot = base2.Base.extend({
    }
 });
 
-var CbWindowCloser = base2.Base.extend({
+jQuery.CbUtil.window_closer = base2.Base.extend({
    constructor : function(element) {
       this.base();
       this.element = element;
@@ -100,7 +101,7 @@ var CbWindowCloser = base2.Base.extend({
    }
 });
 
-var CbBase64Codec = base2.Base.extend({
+jQuery.CbUtil.base64_codec = base2.Base.extend({
    b64 : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
 
    encode : function(input) {
@@ -166,3 +167,39 @@ var CbBase64Codec = base2.Base.extend({
       return window.decodeURIComponent(window.escape(output));
    }
 });
+
+jQuery.CbUtil.xml_codec = base2.Base.extend({
+   decode : function(element) {
+      var self = this;
+      switch (element.attr('type')) {
+         case 'number':
+            return +element.text();
+         case 'string':
+            return element.text();
+         case 'null':
+            return null;
+         case 'boolean':
+            return element.text() === '1' ? true : false;
+         case 'object':
+            var numeric = element.attr('numeric') === '1';
+            var result = numeric ? [] : {};
+            element.children().each(function(i, child) {
+               child = jQuery(child);
+               if (numeric) {
+                  result.push(self.decode(child));
+               } else {
+                  result[child.attr('key')] = self.decode(child);
+               }
+            });
+            return result;
+      }
+   }
+});
+
+/**
+ * @deprecated Use the properly scoped variants
+ */
+var CbElementCycler = jQuery.CbUtil.element_cycler;
+var CbWindowCloser = jQuery.CbUtil.window_closer;
+var CbBase64Codec = jQuery.CbUtil.base64_codec;
+var CbElementPivot = jQuery.CbUtil.element_pivot;
