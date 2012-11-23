@@ -1,6 +1,23 @@
+/* This file is part of cbui.
+ * Copyright © 2010-2012 stiftung kulturserver.de ggmbh <github@culturebase.org>
+ *
+ * cbui is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * cbui is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with cbui.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 /**
  * A frame with items sortable by the jquery_ui "sortable" effect. The
- * drag handle is defined by the CSS class "__CbUiDragIcon" and the 
+ * drag handle is defined by the CSS class "__CbUiDragIcon" and the
  * sortable items are child elements of this frame with the CSS class
  * "__CbUiSortableItem".
  * You get an event 'dragStart' when the drag handle is clicked and
@@ -8,7 +25,7 @@
  * class on the item, but only when it's actually moved.
  * The default handlers for dragStart and dragStop also set and remove
  * a helper CSS class "__CbUiSortableItemDragging".
- * 
+ *
  * You can add and remove items with the respective methods. Clicks
  * on elements with the CSS class '__CbUiAddIcon' insert an item at
  * the end of the list. Clicks on '__CbUiRemoveIcon' inside an item
@@ -36,7 +53,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
       this.base();
       this.element().sortable({
          handle : '.__CbUiDragIcon'
-      });      
+      });
    },
 
    /**
@@ -46,7 +63,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
     */
    addItem : function(index) {
       var item = null;
-      if (index === 0) { // this also works if the list is empty 
+      if (index === 0) { // this also works if the list is empty
          item = this.options.template.clone().prependTo(this.element());
       } else if (!index) { // default: append to the end of the list
          item = this.options.template.clone().appendTo(this.element());
@@ -113,7 +130,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
    clear : function() {
       this.element().find('.__CbUiSortableItem').remove();
    },
-   
+
    /**
     * pad or truncate the list to 'num' items. Items are added to the end
     * and removed from the end of the list.
@@ -130,7 +147,7 @@ jQuery.CbWidget.sortableFrame = jQuery.CbWidget.frame.extend({
          --present;
       }
    },
-   
+
    getNumItems : function() {
       return this.element().find('.__CbUiSortableItem').length;
    }
