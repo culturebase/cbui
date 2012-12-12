@@ -26,11 +26,19 @@ jQuery.CbWidget.input = jQuery.CbWidget.widget.extend({
     */
    constructor : function(element) {
       this.base(element);
-
+      var title = this.element().attr('title');
+      if (title !== null && title !== '') this.texts.title = title;
       /**
        * validators for this widget.
        */
       this.validators = [];
+   },
+
+   changeLanguage : function(bricks) {
+      if (this.texts.title) {
+         this.element().attr('title', bricks[this.texts.title]);
+      }
+      this.base(bricks);
    },
 
    /**
@@ -133,6 +141,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
          this.value(bricks[label]);
       }
       this.bricks[label] = bricks[label];
+      this.base(bricks);
    },
 
    reset : function() {
@@ -180,7 +189,7 @@ jQuery.CbWidget.inputText = jQuery.CbWidget.input.extend({
       this.bricks = {};
 
       var label = this.value();
-      this.texts = {text : label};
+      this.texts.text = label;
       this.bricks[label] = label;
       this.element().addClass('__CbUiFieldUnedited');
       this.bindEvents();
@@ -364,9 +373,9 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
    constructor : function(element) {
       this.base(element);
       var self = this;
-      this.element().children().each(function(index) {
+      this.element().children().each(function() {
          var label = jQuery(this).text();
-         self.texts[jQuery(this).val()] = label;
+         self.texts['value' + jQuery(this).val()] = label;
       });
    },
 
@@ -376,8 +385,8 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
     */
    changeLanguage : function(bricks) {
       var self = this;
-      this.element().children().each(function(index) {
-         var label = self.texts[jQuery(this).val()];
+      this.element().children().each(function() {
+         var label = self.texts['value' + jQuery(this).val()];
          jQuery(this).html(bricks[label]);
       });
    },

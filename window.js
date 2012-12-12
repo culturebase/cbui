@@ -92,6 +92,8 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
 
    constructor : function(element) {
       this.base(element);
+      var title = this.element().attr('title');
+      if (title !== null && title !== '') this.texts.title = title;
       var self = this;
       this.throwChange = function() {self.change();};
 
@@ -107,7 +109,9 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
 
    changeLanguage : function(bricks) {
       this.base(bricks);
-
+      if (this.texts.title) {
+         this.element().attr('title', bricks[this.texts.title]);
+      }
       // changing the language is a change as the sizes of texts may have changed
       return this.change();
    },

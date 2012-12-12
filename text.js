@@ -22,17 +22,19 @@
 jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
 
    changeLanguage : function(bricks) {
-      if (this.texts.text) {
-         this.element().html(bricks[this.texts.text]);
+      if (this.texts.text) this.element().html(bricks[this.texts.text]);
+      if (this.texts.title) {
+         this.element().attr('title', bricks[this.texts.title]);
       }
    },
 
    constructor : function(element) {
       this.base(element);
       var label = this.element().text();
-      if (label != '') {
-         this.texts = {text : label};
-      }
+      this.texts = {};
+      if (label !== '') this.texts.text = label;
+      var title = this.element().attr('title');
+      if (title !== null && title !== '') this.texts.title = title;
    },
 
    value : function(text) {
