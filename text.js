@@ -31,7 +31,6 @@ jQuery.CbWidget.text = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.base(element);
       var label = this.element().text();
-      this.texts = {};
       if (label !== '') this.texts.text = label;
       var title = this.element().attr('title');
       if (title !== null && title !== '') this.texts.title = title;

@@ -136,7 +136,7 @@ jQuery.CbWidgetRegistry = {
          success : function(bricks) {
             /* loop over widgets again and apply bricks */
             self.bricks = bricks;
-            jQuery.each(jQuery.CbWidget, function(name, w) {
+            jQuery.each(jQuery.CbWidget, function(name) {
                 var clazz = self.translateToClass(name, 'Ui');
                 jQuery(clazz, context).each(function() {
                    jQuery(this).CbWidget().changeLanguage(bricks);

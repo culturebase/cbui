@@ -358,7 +358,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       }
       this.load();
       var self = this;
+      var hidden = this.element().find('.__CbUiHiddenTemplates').remove();
       jQuery.CbWidgetRegistry.apply(this.element(), function() {
+         if (hidden) self.element().append(hidden); // don't apply widgets to hidden templates
          self.trigger('show', options);
          self.trigger('ready', options);
 
@@ -620,7 +622,7 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
 jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
    constructor : function(loadOptions, options, texts) {
       this.base(loadOptions, options); // creates an empty "texts" member
-      if (texts) this.texts = texts;
+      if (texts) this.texts = jQuery.extend(this.texts, texts);
       return this;
    },
 
