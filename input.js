@@ -389,6 +389,7 @@ jQuery.CbWidget.select = jQuery.CbWidget.input.extend({
          var label = self.texts['value' + jQuery(this).val()];
          jQuery(this).html(bricks[label]);
       });
+      this.base(bricks);
    },
 
    addOption : function(value, text, css_class, selected) {
