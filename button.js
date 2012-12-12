@@ -37,10 +37,24 @@ jQuery.CbWidget.langSelect = jQuery.CbWidget.textButton.extend({
 
    changeLanguage : function(bricks) {
       this.element().html(jQuery.CbWidgetRegistry.language.split('_')[0]);
+      this.base(bricks);
    }
 });
 
-jQuery.CbWidget.imgButton = jQuery.CbWidget.widget.extend({});
+jQuery.CbWidget.imgButton = jQuery.CbWidget.widget.extend({
+   constructor : function(element) {
+      this.base(element);
+      var title = this.element().attr('title');
+      if (title !== null && title !== '') this.texts.title = title;
+   },
+
+   changeLangauge : function(bricks) {
+      this.base(bricks);
+      if (this.texts.title) {
+         this.element().attr('title', bricks[this.texts.title]);
+      }
+   }
+});
 
 /**
  * close button for windows. When clicked this button searches for the next
