@@ -45,7 +45,7 @@ jQuery.CbWidget.imgButton = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.base(element);
       var title = this.element().attr('title');
-      if (title !== null && title !== '') this.texts.title = title;
+      if (title) this.texts.title = title;
    },
 
    changeLangauge : function(bricks) {
