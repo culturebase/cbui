@@ -204,8 +204,10 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       this.options = jQuery.extend({}, this.defaultOptions, options);
 
       var element = loadOptions.element;
-      if (element == undefined) {
-         element = jQuery(document.createElement('div')).addClass("__CbUiFrame");
+      var elCls = "__CbUiFrame ";
+      if (loadOptions.cls !== undefined) elCls += loadOptions.cls; 
+      if (element === undefined) {
+         element = jQuery(document.createElement('div')).addClass(elCls);
          jQuery(document.createElement('div')).appendTo(element);
          this.insertElement = true;
       }
