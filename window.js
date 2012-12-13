@@ -93,7 +93,7 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
    constructor : function(element) {
       this.base(element);
       var title = this.element().attr('title');
-      if (title !== null && title !== '') this.texts.title = title;
+      if (title) this.texts.title = title;
       var self = this;
       this.throwChange = function() {self.change();};
 
