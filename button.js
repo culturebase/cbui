@@ -92,13 +92,20 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
 });
 
 jQuery.CbWidget.langFlag = jQuery.CbWidget.imgButton.extend({
-   setLanguage : function(isocode) {
+   setLanguage : function(locale) {
+      var countrycode = null;
+      var parts = locale.split('_');
+      if (parts.length === 1) {
+         countrycode = parts[0];
+      } else {
+         countrycode = parts[1].substr(0, 2).toLowerCase();
+      }
       /* 123 is 97 + 26 where 97 is the offset of 'a' in the ascii alphabet and
        * 26 is the number of useful characters in the locale. So in fact we're
        * counting the flags from right/bottom here.
        */
-      var pos_x = (123 - isocode.charCodeAt(0)) * this.element().innerWidth();
-      var pos_y = (123 - isocode.charCodeAt(1)) * this.element().innerHeight();
+      var pos_x = (123 - countrycode.charCodeAt(0)) * this.element().innerWidth();
+      var pos_y = (123 - countrycode.charCodeAt(1)) * this.element().innerHeight();
       this.element().css('background-position', pos_x + 'px ' + pos_y + 'px');
    }
 });
@@ -154,7 +161,9 @@ jQuery.CbWidget.chooseList = jQuery.CbWidget.widget.extend({
     */
    addOption : function(element, id, description) {
       var node = jQuery(document.createElement('div'));
-      node.append(jQuery(document.createElement('span')).text(id).hide());
+      node.append(jQuery(document.createElement('span'))
+         .addClass('__CbUiListItemValue')
+         .text(id).hide());
       node.append(description);
       if (element.children().length % 2) {
          node.addClass("__CbUiListEvenColor");
@@ -180,7 +189,7 @@ jQuery.CbWidget.langChooseList = jQuery.CbWidget.chooseList.extend({
    handleReady : function(params) {
       this.element().children().each(function() {
          jQuery(this).find('.__CbUiLangFlag').CbWidget()
-               .setLanguage(jQuery(this).find('.__CbUiTextButton').text());
+               .setLanguage(jQuery(this).find('.__CbUiListItemValue').text());
       });
       return this.base(params);
    },
