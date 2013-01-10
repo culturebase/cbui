@@ -64,7 +64,7 @@ jQuery.CbWidget.closeButton = jQuery.CbWidget.imgButton.extend({
 
    constructor : function(element) {
       this.base(element);
-      this.closer = new CbWindowCloser(element);
+      this.closer = new jQuery.CbUtil.window_closer(element);
       this.element().click(this.doClose());
       return this;
    },

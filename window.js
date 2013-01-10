@@ -170,18 +170,6 @@ jQuery.CbWidget.frame = jQuery.CbWidget.widget.extend({
  */
 jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
 
-   defaultOptions : {
-      'showShadow'    : true,
-      'modal'         : true,
-      'layerColor'    : '#000000',
-      'layerFrame'    : true,
-      'layerOpacity'  : 0.25,
-      'overlayClose'  : false,
-      'width'         : 450,
-      'height'        : 450,
-      'delay'         : 0
-   },
-
    /**
     * create a window.
     * @param loadOptions Options for loading the template:
@@ -201,11 +189,11 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
     * Obviously some combinations don't make sense. Results for those are undefined.
     */
    constructor : function(loadOptions, options) {
-      this.options = jQuery.extend({}, this.defaultOptions, options);
+      this.options = jQuery.extend({}, jQuery.CbWidget.window.defaultOptions, options);
 
       var element = loadOptions.element;
       var elCls = "__CbUiFrame ";
-      if (loadOptions.cls !== undefined) elCls += loadOptions.cls; 
+      if (loadOptions.cls !== undefined) elCls += loadOptions.cls;
       if (element === undefined) {
          element = jQuery(document.createElement('div')).addClass(elCls);
          jQuery(document.createElement('div')).appendTo(element);
@@ -581,7 +569,19 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
             alreadyHandlingCallback.apply(this, args);
          }
       });
-   }
+   },
+
+   defaultOptions : {
+      'showShadow'    : true,
+      'modal'         : true,
+      'layerColor'    : '#000000',
+      'layerFrame'    : true,
+      'layerOpacity'  : 0.25,
+      'overlayClose'  : false,
+      'width'         : 450,
+      'height'        : 450,
+      'delay'         : 0
+   },
 });
 
 /**
@@ -623,7 +623,7 @@ jQuery.CbWidget.language_window = jQuery.CbWidget.window.extend({
 
 jQuery.CbWidget.text_window = jQuery.CbWidget.window.extend({
    constructor : function(loadOptions, options, texts) {
-      this.base(loadOptions, options); // creates an empty "texts" member
+      this.base(jQuery.extend({'cls' : '__CbUiLanguageWindow'}, loadOptions), options); // creates an empty "texts" member
       if (texts) this.texts = jQuery.extend(this.texts, texts);
       return this;
    },
