@@ -194,7 +194,9 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       var element = loadOptions.element;
       var elCls = "__CbUiFrame ";
       if (loadOptions.cls !== undefined) elCls += loadOptions.cls;
-      if (element === undefined) {
+      if (!element) {
+         // any falsy value is accepted as "create automatically". In some
+         // circumstances we get null, in others undefined. Both make sense.
          element = jQuery(document.createElement('div')).addClass(elCls);
          jQuery(document.createElement('div')).appendTo(element);
          this.insertElement = true;
