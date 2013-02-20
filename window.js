@@ -583,7 +583,7 @@ jQuery.CbWidget.window = jQuery.CbWidget.frame.extend({
       'width'         : 450,
       'height'        : 450,
       'delay'         : 0
-   },
+   }
 });
 
 /**
